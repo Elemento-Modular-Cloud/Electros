@@ -1,4 +1,0 @@
-[submodule "elemento-gui-new"]
-	path = elemento-gui-new
-	url = git@github.com:gabrielefronze/elemento-new-app-tests.git
-	branch = main
