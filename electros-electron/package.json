@@ -1,0 +1,90 @@
+{
+    "name": "electros",
+    "version": "1.0.0",
+    "description": "Electros Desktop Application",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder",
+        "pack": "electron-builder --dir"
+    },
+    "build": {
+        "appId": "com.elemento.electros",
+        "productName": "Electros",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "**/*",
+            "!**/*.{ts,map,md}",
+            "!**/{.git,.idea,.vscode,docs,test,tests}/**/*",
+            "!**/{tsconfig.json,tslint.json,package-lock.json}",
+            "!**/node_modules/*/{README.md,CHANGELOG.md,LICENSE,LICENSE.md}",
+            "!**/node_modules/*/{test,__tests__,tests,powered-test}/**/*",
+            "!**/node_modules/*.d.ts",
+            "!**/node_modules/.bin",
+            "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+            "!.editorconfig",
+            "!**/._*",
+            "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes}",
+            "!**/{__pycache__,*.pyc,*.pyo,*.pyd,*.spec}",
+            "!**/{.env,.env.*,.venv,venv,*.venv}",
+            "!**/node_modules/*/{CONTRIBUTING.md,HISTORY.md,History.md,AUTHORS,CONTRIBUTORS,CHANGES,CHANGELOG.md}",
+            "!.github",
+            "!docs"
+        ],
+        "win": {
+            "icon": "electros.iconset/Icon.ico",
+            "target": [
+                "nsis"
+            ]
+        },
+        "mac": {
+            "icon": "electros.iconset/icon.icns",
+            "target": {
+                "target": "dmg", 
+                "arch": ["arm64", "x64"]
+            }
+        },
+        "linux": {
+            "icon": "electros.iconset/Icon.png",
+            "target": [
+                "AppImage",
+                "deb"
+            ]
+        },
+        "compression": "maximum",
+        "asar": true,
+        "removePackageScripts": true,
+        "removePackageKeywords": true,
+        "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+        "asarUnpack": [
+            "node_modules/sharp/**/*"
+        ],
+        "protocols": [
+            {
+                "name": "Electros",
+                "schemes": [
+                    "electros"
+                ]
+            }
+        ]
+    },
+    "devDependencies": {
+        "electron": "^29.1.0",
+        "electron-builder": "^24.13.3"
+    },
+    "overrides": {
+        "inflight": "^2.0.0",
+        "glob": "^9.3.5",
+        "boolean": "^4.0.0"
+    },
+    "resolutions": {
+        "inflight": "^2.0.0",
+        "glob": "^9.3.5",
+        "boolean": "^4.0.0"
+    },
+    "dependencies": {
+        "watch": "^1.0.2"
+    }
+}
