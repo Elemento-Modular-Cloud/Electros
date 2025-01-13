@@ -34,7 +34,7 @@
             "!docs"
         ],
         "win": {
-            "icon": "electros.iconset/Icon.ico",
+            "icon": "electros.iconset/electros.ico",
             "target": [
                 {
                     "target": "nsis",
@@ -45,14 +45,14 @@
             ]
         },
         "mac": {
-            "icon": "electros.iconset/icon.icns",
+            "icon": "electros.iconset/electros.icns",
             "target": {
                 "target": "dmg", 
                 "arch": ["arm64", "x64"]
             }
         },
         "linux": {
-            "icon": "electros.iconset/Icon.png",
+            "icon": "electros.iconset/electros_icon_512x512@2x.png",
             "target": [
                 "AppImage",
                 "deb"
