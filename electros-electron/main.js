@@ -8,7 +8,8 @@ function createWindow() {
         width: 1800,
         height: 1200,
         frame: true, // Hide default window frame
-        titleBarStyle: 'hidden',
+        transparent: false,
+        // titleBarStyle: 'hiddenInset',
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
@@ -35,7 +36,7 @@ ipcMain.handle('read-config', async () => {
     try {
         if (fs.existsSync(CONFIG_PATH)) {
             const data = fs.readFileSync(CONFIG_PATH, 'utf8');
-            return JSON.parse(data).config;
+            return JSON.parse(data);
         }
         return {};
     } catch (error) {
