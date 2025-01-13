@@ -42,3 +42,9 @@ rm -rf nwjs-sdk-$NWJS_VERSION-$OS_TYPE-$CPU_ARCH.zip
 rm -rf nwjs-sdk-$NWJS_VERSION-$OS_TYPE-$CPU_ARCH
 
 echo "NW.js downloaded and installed successfully."
+echo
+
+# Install nwjs-builder-phoenix
+echo "Installing nwjs-builder-phoenix..."
+npm install nwjs-builder-phoenix --save-dev
+echo "nwjs-builder-phoenix installed successfully."

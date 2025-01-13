@@ -1,2 +1,5 @@
 nwjs.app
 nwjs
+dist
+node_modules
+package-lock.json
