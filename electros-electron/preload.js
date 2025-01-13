@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
     invoke: (channel, ...args) => {
-        const validChannels = ['read-config', 'write-config', 'read-hosts', 'write-hosts'];
+        const validChannels = ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'minimize-window', 'maximize-window', 'close-window', 'toggle-full-screen'];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
         }

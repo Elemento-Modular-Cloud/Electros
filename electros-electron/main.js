@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -7,9 +7,10 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 1800,
         height: 1200,
-        frame: true, // Hide default window frame
+        frame: false,
         transparent: false,
-        // titleBarStyle: 'hiddenInset',
+        titleBarStyle: 'hiddenInset',
+        trafficLightPosition: { x: -100, y: -100 },
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
@@ -17,6 +18,8 @@ function createWindow() {
             zoomFactor: 0.8
         }
     });
+
+    win.setWindowButtonVisibility(false);
 
     win.loadFile('electros/electros.html');
 }
@@ -127,7 +130,36 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
     }
 });
 
-app.whenReady().then(createWindow);
+// Add these IPC handlers
+ipcMain.handle('minimize-window', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) win.minimize();
+});
+
+ipcMain.handle('maximize-window', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+        if (win.isMaximized()) {
+            win.unmaximize();
+        } else {
+            win.maximize();
+        }
+    }
+});
+
+ipcMain.handle('toggle-full-screen', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+        win.setFullScreen(!win.isFullScreen());
+    }
+});
+
+
+
+ipcMain.handle('close-window', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) win.close();
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -140,3 +172,29 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+app.whenReady().then(() => {
+    const menuTemplate = [
+        {
+            label: 'Electros',
+            submenu:[
+                {role: 'quit'}
+            ]
+        },
+        {
+            label: 'Developer',
+            submenu:[
+                {label: 'Reload', role: 'reload'},
+                {label: 'Toggle DevTools', role: 'toggleDevTools'},
+                {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
+                {label: 'Toggle Zoom', role: 'toggleZoom'},
+                {label: 'Toggle Developer Tools', role: 'toggleDevTools'},
+                {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
+                {label: 'Toggle Zoom', role: 'toggleZoom'},
+            ]
+        }
+    ]
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+    createWindow();
+  });

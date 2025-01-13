@@ -1,6 +1,6 @@
 {
     "name": "electros",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Electros Desktop Application",
     "main": "main.js",
     "scripts": {
@@ -9,7 +9,7 @@
         "pack": "electron-builder --dir"
     },
     "build": {
-        "appId": "com.elemento.electros",
+        "appId": "cloud.elemento.electros",
         "productName": "Electros",
         "directories": {
             "output": "dist"
@@ -36,7 +36,12 @@
         "win": {
             "icon": "electros.iconset/Icon.ico",
             "target": [
-                "nsis"
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                }
             ]
         },
         "mac": {
