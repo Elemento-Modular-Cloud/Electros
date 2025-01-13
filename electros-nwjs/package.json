@@ -1,0 +1,11 @@
+{
+    "name": "electros",
+    "main": "electros/electros.html",
+    "node-main": "utilities.js",
+    "window": {
+        "width": 1800,
+        "height": 1200,
+        "frame": true,
+        "toolbar": true
+    }
+}
