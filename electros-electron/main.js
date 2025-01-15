@@ -231,7 +231,9 @@ function createWindow() {
         }
     });
 
-    win.setWindowButtonVisibility(false);
+    if (platform === 'mac') {
+        win.setWindowButtonVisibility(false);
+    }
     win.loadFile('electros/electros.html');
     
     return win;
