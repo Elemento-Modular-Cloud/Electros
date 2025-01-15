@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
+    <script src="node_modules/xterm/lib/xterm.js"></script>
+    <style>
+        body { margin: 0; }
+        #terminal { 
+            width: 100vw; 
+            height: 100vh;
+            font-size: 12px; /* Smaller font size */
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal"></div>
+    <script>
+        const { Terminal } = require('xterm');
+        const { ipcRenderer } = require('electron');
+        
+        const term = new Terminal({
+            fontSize: 12, // Smaller font size
+            lineHeight: 1.2,
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            cursorBlink: true,
+            cols: 120,
+            rows: Math.floor(window.innerHeight / 16), // Calculate rows to fill the space
+            wraparoundMode: true, // Enable line wrapping
+            convertEol: true,
+            theme: {
+                foreground: '#ffa600' // Set terminal text color to green
+            }
+        });
+        
+        term.open(document.getElementById('terminal'));
+
+        // Listen for output from the main process
+        ipcRenderer.on('terminal-output', (event, data) => {
+            term.write(data);
+        });
+    </script>
+</body>
+</html> 

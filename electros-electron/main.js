@@ -1,7 +1,219 @@
-const { app, BrowserWindow, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Tray, nativeTheme } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { spawn } = require('child_process');
+const nativeImage = require('electron').nativeImage;
+
+let platform = null;
+let mainWindow = null;
+
+function getDaemonCommand() {
+    platform = os.platform();
+    console.log(`The platform is: ${platform}`);
+    var arch = os.arch();
+    console.log(`The CPU architecture is: ${arch}`);
+
+    if (platform === 'darwin') {
+        platform = 'mac';
+    } else if (platform === 'linux') {
+        platform = 'linux';
+    } else if (platform.includes('win')) {
+        platform = 'win';
+    }
+
+    if (arch.toLowerCase() === 'x86' || arch.toLowerCase() === 'x64') {
+        arch = 'x86';
+    }
+
+    // Use process.resourcesPath in production, fallback to __dirname in development
+    const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+    const deamons_path = path.join(baseDir, 'electros-daemons', platform, arch);
+    console.log(`The deamons path is: ${deamons_path}`);
+    
+    let daemons_cmd = "";
+    
+    if (platform === 'mac') {
+        daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
+    } else if (platform === 'linux') {
+        daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_${arch}`);
+    } else if (platform === 'win') {
+        daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_${arch}.exe`);
+    }
+
+    console.log(`The daemons command is: ${daemons_cmd}`);
+    return daemons_cmd;
+}
+
+const daemons_cmd = getDaemonCommand();
+
+let tray = null;
+let terminalWindow = null;
+let daemonProcess = null;
+
+// Add this function to create different tray icons
+function createTrayIcon() {
+    const isLight = nativeTheme.shouldUseDarkColors;
+    console.log(`The theme is light: ${isLight}`);
+
+    if (platform === 'mac') {
+        const templateIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black_32x32@2x.png');
+        const icon = nativeImage.createFromPath(templateIcon);
+        icon.setTemplateImage(true);
+        return icon;
+    }
+
+    if (platform === 'win') {
+        const lightIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_white.ico');
+        const darkIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black.ico');
+        const iconName = !isLight ? darkIcon : lightIcon;
+        const icon = nativeImage.createFromPath(iconName);
+        return icon;
+    }
+
+    if (platform === 'linux') {
+        const lightIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_white_32x32@2x.png');
+        const darkIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black_32x32@2x.png');
+        const iconName = !isLight ? darkIcon : lightIcon;
+        const icon = nativeImage.createFromPath(iconName);
+        return icon;
+    }
+}
+
+// Replace the daemon spawn code with this
+function createTerminalWindow() {
+    terminalWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        },
+        backgroundColor: '#000000', // Add dark background
+        title: 'Electros Daemons'
+    });
+
+    terminalWindow.loadFile('terminal.html');
+
+    // Wait for the terminal window to be ready
+    terminalWindow.webContents.on('did-finish-load', () => {
+        // Start the daemon process with the actual daemon command
+        daemonProcess = spawn(daemons_cmd, [], {
+            env: {
+                ...process.env,
+                GUI_APP: '1'
+            }
+        });
+
+        // Send process output to the renderer
+        daemonProcess.stdout.on('data', (data) => {
+            terminalWindow.webContents.send('terminal-output', data.toString());
+        });
+
+        daemonProcess.stderr.on('data', (data) => {
+            terminalWindow.webContents.send('terminal-output', data.toString());
+        });
+
+        daemonProcess.on('error', (error) => {
+            terminalWindow.webContents.send('terminal-output', `Error: ${error.message}\n`);
+        });
+    });
+
+    // Create tray icon if it doesn't exist
+    if (!tray) {
+        tray = new Tray(createTrayIcon());
+        
+        // Update icon when system theme changes
+        nativeTheme.on('updated', () => {
+            tray.setImage(createTrayIcon());
+        });
+
+        const contextMenu = Menu.buildFromTemplate([
+            { 
+                label: 'Show Terminal', 
+                click: () => {
+                    terminalWindow.show();
+                }
+            },
+            { 
+                label: 'Hide Terminal', 
+                click: () => {
+                    terminalWindow.hide();
+                }
+            },
+            { type: 'separator' },
+            { 
+                label: 'Quit', 
+                click: () => {
+                    app.quit();
+                }
+            }
+        ]);
+        
+        tray.setToolTip('Electros Daemons');
+        tray.setContextMenu(contextMenu);
+    }
+
+    // Handle window close button
+    terminalWindow.on('close', (event) => {
+        event.preventDefault(); // Prevent window from closing
+        terminalWindow.hide(); // Hide instead of close
+    });
+}
+
+// Add cleanup handler when app is quitting
+app.on('before-quit', () => {
+    console.log('Quitting app, killing daemon process');
+    
+    // Close all windows except terminal
+    const windows = BrowserWindow.getAllWindows();
+    windows.forEach(window => {
+        if (window !== terminalWindow && !window.isDestroyed()) {
+            window.destroy();
+        }
+    });
+
+    // Kill daemon process
+    if (daemonProcess) {
+        if (platform === 'mac') {
+            try {
+                spawn('pkill', ['-f', 'elemento_client_daemons'], { stdio: 'ignore' });
+                spawn('osascript', ['-e', 'tell application "Terminal" to quit'], { stdio: 'ignore' });
+            } catch (err) {
+                console.error('Error killing daemon process on macOS:', err);
+            }
+        } else if (platform === 'linux' && daemonProcess.pid) {
+            try {
+                process.kill(daemonProcess.pid, 0);
+                process.kill(-daemonProcess.pid);
+            } catch (err) {
+                if (err.code === 'ESRCH') {
+                    console.log('Daemon process group already terminated');
+                } else {
+                    console.error('Error killing daemon process group:', err);
+                }
+            }
+        }
+        
+        try {
+            if (!daemonProcess.killed) {
+                daemonProcess.kill();
+            }
+        } catch (err) {
+            if (err.code === 'ESRCH') {
+                console.log('Daemon process already terminated');
+            } else {
+                console.error('Error killing daemon process:', err);
+            }
+        }
+    }
+
+    // Finally destroy the terminal window
+    if (terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.destroy();
+    }
+});
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -20,9 +232,46 @@ function createWindow() {
     });
 
     win.setWindowButtonVisibility(false);
-
     win.loadFile('electros/electros.html');
+    
+    return win;
 }
+
+
+function createWindows() {
+    createTerminalWindow();
+    mainWindow = createWindow();
+
+    mainWindow.on('closed', () => {
+        if (terminalWindow) {
+            terminalWindow.hide();
+        }
+    });
+}
+
+
+app.whenReady().then(() => {
+    const menuTemplate = [
+        {
+            label: 'Electros',
+            submenu:[
+                {role: 'quit'}
+            ]
+        },
+        {
+            label: 'Developer',
+            submenu:[
+                {label: 'Reload', role: 'reload'},
+                {label: 'Toggle DevTools', role: 'toggleDevTools'},
+                {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
+                {label: 'Toggle Zoom', role: 'toggleZoom'},
+            ]
+        }
+    ]
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+    createWindows();
+});
 
 // File paths
 const CONFIG_DIR = path.join(os.homedir(), '.elemento');
@@ -162,39 +411,25 @@ ipcMain.handle('close-window', () => {
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
+    if (process.platform !== 'mac') {
         app.quit();
     }
 });
 
 app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
+    const mainWindows = BrowserWindow.getAllWindows().filter(win => 
+        win !== terminalWindow && !win.isDestroyed()
+    );
+
+    if (mainWindows.length === 0) {
         createWindow();
+    } else {
+        // Show the first hidden main window if it exists
+        for (const win of mainWindows) {
+            if (!win.isVisible()) {
+                win.show();
+                break;
+            }
+        }
     }
 });
-
-app.whenReady().then(() => {
-    const menuTemplate = [
-        {
-            label: 'Electros',
-            submenu:[
-                {role: 'quit'}
-            ]
-        },
-        {
-            label: 'Developer',
-            submenu:[
-                {label: 'Reload', role: 'reload'},
-                {label: 'Toggle DevTools', role: 'toggleDevTools'},
-                {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
-                {label: 'Toggle Zoom', role: 'toggleZoom'},
-                {label: 'Toggle Developer Tools', role: 'toggleDevTools'},
-                {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
-                {label: 'Toggle Zoom', role: 'toggleZoom'},
-            ]
-        }
-    ]
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
-    createWindow();
-  });

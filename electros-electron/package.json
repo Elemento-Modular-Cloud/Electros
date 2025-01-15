@@ -3,6 +3,11 @@
     "version": "2.0.0",
     "description": "Electros Desktop Application",
     "main": "main.js",
+    "homepage": "https://elemento.cloud",
+    "author": {
+        "name": "Gabriele Fronzé",
+        "email": "gabriele.fronze@elemento.cloud"
+    },
     "scripts": {
         "start": "electron .",
         "build": "electron-builder",
@@ -16,6 +21,7 @@
         },
         "files": [
             "**/*",
+            "electros-daemons/**/*",
             "!**/*.{ts,map,md}",
             "!**/{.git,.idea,.vscode,docs,test,tests}/**/*",
             "!**/{tsconfig.json,tslint.json,package-lock.json}",
@@ -42,21 +48,30 @@
                         "x64"
                     ]
                 }
-            ]
+            ],
+            "requestedExecutionLevel": "requireAdministrator"
         },
         "mac": {
             "icon": "electros.iconset/electros.icns",
             "target": {
-                "target": "dmg", 
-                "arch": ["arm64", "x64"]
-            }
+                "target": "dmg",
+                "arch": [
+                    "arm64",
+                    "x64"
+                ]
+            },
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "entitlements.plist",
+            "entitlementsInherit": "entitlements.plist"
         },
         "linux": {
             "icon": "electros.iconset/electros_icon_512x512@2x.png",
             "target": [
                 "AppImage",
                 "deb"
-            ]
+            ],
+            "maintainer": "Gabriele Fronzé <gabriele.fronze@elemento.cloud>"
         },
         "compression": "maximum",
         "asar": true,
@@ -72,6 +87,13 @@
                 "schemes": [
                     "electros"
                 ]
+            }
+        ],
+        "extraResources": [
+            {
+                "from": "electros-daemons",
+                "to": "electros-daemons",
+                "filter": ["**/*"]
             }
         ]
     },
@@ -90,6 +112,6 @@
         "boolean": "^4.0.0"
     },
     "dependencies": {
-        "watch": "^1.0.2"
+        "xterm": "^5.3.0"
     }
 }
