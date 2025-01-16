@@ -71,7 +71,8 @@
                 "AppImage",
                 "deb"
             ],
-            "maintainer": "Gabriele Fronzé <gabriele.fronze@elemento.cloud>"
+            "maintainer": "Gabriele Fronzé <gabriele.fronze@elemento.cloud>",
+            "category": "Utility"
         },
         "compression": "maximum",
         "asar": true,

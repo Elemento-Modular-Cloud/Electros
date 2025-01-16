@@ -23,7 +23,7 @@ function getDaemonCommand() {
     }
 
     if (arch.toLowerCase() === 'x86' || arch.toLowerCase() === 'x64') {
-        arch = 'x86';
+        arch = 'x64';
     }
 
     // Use process.resourcesPath in production, fallback to __dirname in development
