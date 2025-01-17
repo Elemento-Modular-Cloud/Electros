@@ -320,8 +320,13 @@ ipcMain.handle('read-hosts', async () => {
 });
 
 ipcMain.handle('write-config', async (event, config) => {
+    if (config.config) {
+        config = config.config;
+    }
     try {
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 4));
+        const json = JSON.stringify(config, null, 4);
+        console.error('Writing config:', json);
+        fs.writeFileSync(CONFIG_PATH, json);
         return true;
     } catch (error) {
         console.error('Error writing config:', error);
