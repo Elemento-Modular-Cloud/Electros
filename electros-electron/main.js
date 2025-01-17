@@ -38,7 +38,14 @@ function getDaemonCommand() {
     } else if (platform === 'linux') {
         daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_${arch}`);
     } else if (platform === 'win') {
-        daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_${arch}.exe`);
+        if (arch === 'x64' || arch === 'x86') {
+            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x86.exe`);
+            if (!fs.existsSync(daemons_cmd)) {
+                daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x64.exe`);
+            }
+        } else {
+            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_arm64.exe`);
+        }
     }
 
     console.log(`The daemons command is: ${daemons_cmd}`);
