@@ -5,6 +5,7 @@ const os = require('os');
 const { spawn } = require('child_process');
 const nativeImage = require('electron').nativeImage;
 
+// Import handlers from separate files. They are apparently unused since called by name in the preload.js
 const configHandlers = require('./js/config-ipc');
 const titlebarHandlers = require('./js/titlebar-ipc');
 
@@ -155,9 +156,7 @@ function createTrayIcon() {
     }
 
     if (platform === 'win') {
-        const lightIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_white.ico');
-        const darkIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black.ico');
-        const iconName = !isLight ? darkIcon : lightIcon;
+        const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.ico');
         const icon = nativeImage.createFromPath(iconName);
         return icon;
     }
