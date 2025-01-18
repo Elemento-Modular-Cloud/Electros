@@ -1,0 +1,139 @@
+.titlebar {
+    -webkit-app-region: drag;
+    height: 43px;
+    width: 100%;
+    z-index: 100000;
+    /* background: purple; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.titlebar-title {
+    font-size: 17px;
+    line-height: 43px;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    color: var(--titlebar-color);
+}
+
+.titlebar-buttons {
+    height: 100%;
+    -webkit-app-region: no-drag;
+    position: absolute;
+    top: 0;
+    display: flex;
+    padding-left: 8px;
+}
+
+.titlebar-buttons-align-left {
+    left: 0;
+}
+
+.titlebar-buttons-align-right {
+    right: 12px;
+}
+
+.titlebar-button {
+    height: 16px;
+    width: 16px;
+    background: transparent;
+    border: none;
+    /* cursor: pointer; */
+    border-radius: 50%;
+    margin: calc((43px - 16px) / 2) 6px;
+    padding: 0;
+    position: relative;
+}
+
+.titlebar-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+}
+
+.titlebar-button:hover::before {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#close-button {
+    background: #ff5f57;
+}
+
+#minimize-button {
+    background: #ffbd2e;
+}
+
+#maximize-button {
+    background: #28c940;
+}
+
+#fullscreen-button {
+    background: #218cfd; /* Blue color */
+}
+
+#close-button:hover::after {
+    content: '\2715'; /* Unicode for a square cross */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-48%, -45%);
+    font-size: 10px;
+    line-height: 10px;
+    color: #8B0000; /* Darker red color */
+    font-weight: bold;
+    animation: fadeIn 0.08s ease-in forwards;
+}
+
+#minimize-button:hover::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 1.5px;
+    background: #846108; /* Darker yellow color */
+    border-radius: 1px;
+    animation: fadeIn 0.08s ease-in forwards;
+}
+
+#maximize-button:hover::after {
+    content: '\25A3'; /* Unicode for a square with a diagonal cross */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: #006400; /* Darker green color */
+    animation: fadeIn 0.08s ease-in forwards;
+}
+
+#fullscreen-button:hover::after {
+    content: '+'; /* Plus symbol */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px; /* Increased font size for a bigger plus symbol */
+    color: #001e8b; /* Darker blue color */
+    animation: fadeIn 0.08s ease-in forwards;
+}

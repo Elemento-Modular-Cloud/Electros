@@ -27,7 +27,7 @@ archs=()
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --platform) platforms+=("$2"); shift ;;
-        --arch) archs+=("$2"); shift ;;
+        --arch) user_archs+=("$2"); shift ;;
     esac
     shift
 done
@@ -41,14 +41,16 @@ echo "Platforms: ${platforms[@]}"
 
 for platform in "${platforms[@]}"; do
     # Default to all architectures for each platform if none specified
-    if [ ${#archs[@]} -eq 0 ]; then
+    if [ ${#user_archs[@]} -eq 0 ]; then
         if [ "$platform" == "mac" ]; then
-            archs+=("x64" "arm64")
+            archs=("x64" "arm64")
         elif [ "$platform" == "linux" ]; then
-            archs+=("x64" "arm64")
+            archs=("x64" "arm64")
         elif [ "$platform" == "win" ]; then
-            archs+=("x64")
+            archs=("x64")
         fi
+    else
+        archs=("${user_archs[@]}")
     fi
     echo "Architectures: ${archs[@]}"
 

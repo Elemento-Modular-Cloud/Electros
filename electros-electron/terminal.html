@@ -3,16 +3,24 @@
 <head>
     <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
     <script src="node_modules/xterm/lib/xterm.js"></script>
+    <link rel="stylesheet" href="electros/css/style.css" />
     <style>
-        body { margin: 0; }
+        body {
+            margin: 0;
+            background-color: #0a0e14 !important;
+        }
         #terminal { 
             width: 100vw; 
             height: 100vh;
             font-size: 12px; /* Smaller font size */
+            padding-top: 43px; /* Add top padding */
+            padding-left: 13px;
         }
     </style>
+    <link rel="stylesheet" href="titlebar/titlebar.css" />
 </head>
 <body>
+    <div class="titlebar"></div>
     <div id="terminal"></div>
     <script>
         const { Terminal } = require('xterm');
@@ -23,11 +31,12 @@
             lineHeight: 1.2,
             fontFamily: 'Menlo, Monaco, "Courier New", monospace',
             cursorBlink: true,
-            cols: 120,
+            cols: Math.floor(window.innerWidth / 8), // Calculate columns to fill the space
             rows: Math.floor(window.innerHeight / 16), // Calculate rows to fill the space
             wraparoundMode: true, // Enable line wrapping
             convertEol: true,
             theme: {
+                background: '#0a0e14',
                 foreground: '#ffa600' // Set terminal text color to green
             }
         });
@@ -38,6 +47,27 @@
         ipcRenderer.on('terminal-output', (event, data) => {
             term.write(data);
         });
+    </script>
+    <script>
+        function initializeTitlebarOnlyClose() {
+            console.log('Electron is defined');
+            const titlebar = document.querySelector('.titlebar');
+            const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
+                                navigator.userAgent.includes('Win') ? 'win' : 'linux';
+            const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
+            titlebar.innerHTML = `
+                <div class='titlebar-buttons ${buttonsAlignClass}'>
+                    <button class='titlebar-button' id='close-button' onclick='ipcRenderer.invoke("close-window")'></button>
+                </div>
+            `;
+
+            var titleElement = document.createElement('div');
+            titleElement.className = 'titlebar-title';
+            titleElement.textContent = "Electros Terminal";
+            titlebar.appendChild(titleElement);
+        }
+
+        initializeTitlebarOnlyClose();
     </script>
 </body>
 </html> 
