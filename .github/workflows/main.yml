@@ -18,8 +18,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          submodules: true
 
-      - name: Setup submodules
+      - name: Setup step
         if: runner.os != 'Windows'
         run: |
           chmod +x ./setup.sh
