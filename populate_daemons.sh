@@ -2,6 +2,14 @@
 
 export GITHUB_TOKEN="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"
 
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --platform) selected_platforms+=("$2"); shift ;;
+        --arch) selected_archs+=("$2"); shift ;;
+    esac
+    shift
+done
+
 # Function to check if required tools are installed
 check_requirements() {
     command -v curl >/dev/null 2>&1 && echo "Dependency satisfied: curl" || { echo "Error: curl is required but not installed." >&2; exit 1; }
@@ -90,6 +98,10 @@ get_platform_info() {
 }
 
 main() {
+    echo "Selected platforms: ${selected_platforms[@]}"
+    echo "Selected architectures: ${selected_archs[@]}"
+
+
     check_requirements
     
     # Get latest version
@@ -109,6 +121,16 @@ main() {
         # Create target directory and download
         IFS='|' read -r platform arch <<< "$platform_info"
         local target_dir="${output_dir}/${platform}/${arch}"
+
+
+        if [[ ! " ${selected_platforms[@]} " =~ " ${platform} " ]]; then
+            continue
+        fi
+
+        if [[ ! " ${selected_archs[@]} " =~ " ${arch} " ]]; then
+            continue
+        fi
+
         mkdir -p "$target_dir"
         
         download_asset "$asset_id" "$filename" "$target_dir"
@@ -119,8 +141,7 @@ main() {
             dmg_mount_point="/Volumes/Elemento_daemons"
             echo "Mount point: ${dmg_mount_point}"
             ls -la "${dmg_mount_point}"
-            cp -r "${dmg_mount_point}/elemento_client_daemons.app" "$target_dir/"
-            xattr -c "${target_dir}/elemento_client_daemons.app"
+            rsync -E -p -t -r -l "${dmg_mount_point}/elemento_client_daemons.app" "$target_dir/"
             hdiutil detach "${dmg_mount_point}"
             rm "${target_dir}/${filename}"
         fi

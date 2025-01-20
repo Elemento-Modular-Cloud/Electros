@@ -17,7 +17,7 @@ setup_daemons() {
     # Create new directory for appropriate daemon folder
     mkdir -p "${script_dir}/electros-daemons/${platform}"
 
-    cp -r "${script_dir}/../electros-daemons/${platform}/${arch}" "${script_dir}/electros-daemons/${platform}/"    
+    rsync -E -p -t -r -l "${script_dir}/../electros-daemons/${platform}/${arch}" "${script_dir}/electros-daemons/${platform}/"    
 }
 
 platforms=()
