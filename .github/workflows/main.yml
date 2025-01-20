@@ -23,6 +23,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           chmod +x ./setup.sh
+          ./setup.sh
         shell: bash
 
       - uses: actions/checkout@v2
