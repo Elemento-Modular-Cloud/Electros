@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export GITHUB_TOKEN="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"
+export GITHUB_TOKEN="YOUR_TOKEN"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
