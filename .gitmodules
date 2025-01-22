@@ -1,0 +1,4 @@
+[submodule "elemento-gui-new"]
+	path = elemento-gui-new
+	url = git@github.com:Elemento-Modular-Cloud/elemento-gui-new.git
+	branch = develop
