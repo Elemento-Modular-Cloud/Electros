@@ -1,14 +1,6 @@
 #!/bin/bash
 
-export GITHUB_TOKEN="YOUR_TOKEN"
-
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --platform) selected_platforms+=("$2"); shift ;;
-        --arch) selected_archs+=("$2"); shift ;;
-    esac
-    shift
-done
+export GITHUB_TOKEN="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"
 
 # Function to check if required tools are installed
 check_requirements() {
@@ -98,6 +90,27 @@ get_platform_info() {
 }
 
 main() {
+    selected_platforms=()
+    selected_archs=()
+
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            --platform) selected_platforms+=("$2"); shift ;;
+            --arch) selected_archs+=("$2"); shift ;;
+        esac
+        shift
+    done
+
+    # Default to all platforms if none specified
+    if [ ${#selected_platforms[@]} -eq 0 ]; then
+        selected_platforms=("mac" "linux" "win")
+    fi
+
+    # Default to all architectures if none specified
+    if [ ${#selected_archs[@]} -eq 0 ]; then
+        selected_archs=("x64" "arm64")
+    fi
+
     echo "Selected platforms: ${selected_platforms[@]}"
     echo "Selected architectures: ${selected_archs[@]}"
 
