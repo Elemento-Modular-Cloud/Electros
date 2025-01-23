@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
-    <script src="node_modules/xterm/lib/xterm.js"></script>
+    <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
+    <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
     <link rel="stylesheet" href="electros/css/style.css" />
     <style>
         body {
@@ -26,7 +26,7 @@
     <div class="titlebar"></div>
     <div id="terminal"></div>
     <script>
-        const { Terminal } = require('xterm');
+        const { Terminal } = require('@xterm/xterm');
         const { ipcRenderer } = require('electron');
         
         const term = new Terminal({

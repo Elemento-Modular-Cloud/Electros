@@ -22,7 +22,7 @@
         "files": [
             "**/*",
             "electros-daemons/**/*",
-            "!**/*.{ts,map,md}",
+            "!**/*.{ts,map,md,txt,log}",
             "!**/{.git,.idea,.vscode,docs,test,tests}/**/*",
             "!**/{tsconfig.json,tslint.json,package-lock.json}",
             "!**/node_modules/*/{README.md,CHANGELOG.md,LICENSE,LICENSE.md}",
@@ -37,7 +37,9 @@
             "!**/{.env,.env.*,.venv,venv,*.venv}",
             "!**/node_modules/*/{CONTRIBUTING.md,HISTORY.md,History.md,AUTHORS,CONTRIBUTORS,CHANGES,CHANGELOG.md}",
             "!.github",
-            "!docs"
+            "!docs",
+            "!**/node_modules/*/{benchmark,coverage,example,examples}/**/*",
+            "!**/node_modules/**/*.{ts,map,md,txt,log,yml,yaml}"
         ],
         "win": {
             "icon": "electros.iconset/electros.ico",
@@ -78,6 +80,13 @@
         "asar": true,
         "removePackageScripts": true,
         "removePackageKeywords": true,
+        "removePackageJsonFields": [
+            "scripts",
+            "devDependencies",
+            "husky",
+            "lint-staged",
+            "config"
+        ],
         "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
         "asarUnpack": [
             "node_modules/sharp/**/*"
@@ -113,6 +122,6 @@
         "boolean": "^4.0.0"
     },
     "dependencies": {
-        "xterm": "^5.3.0"
+        "@xterm/xterm": "^5.5.0"
     }
 }
