@@ -11,5 +11,8 @@
     "version": "2.0.0",
     "author": "Elemento Cloud",
     "license": "",
-    "description": ""
+    "description": "",
+    "devDependencies": {
+        "nwjs-builder-phoenix": "^1.15.0"
+    }
 }
