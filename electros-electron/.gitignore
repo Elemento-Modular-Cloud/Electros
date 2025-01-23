@@ -2,3 +2,4 @@ node_modules
 build
 dist
 electros-daemons
+package-lock.json
