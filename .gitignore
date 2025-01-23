@@ -1,7 +1,4 @@
 build
 electros-daemons
 electros-nwjs/nwjs-sdk-*
-
-*/package-lock.json
 .DS_Store
-electros-electron/package-lock.json
