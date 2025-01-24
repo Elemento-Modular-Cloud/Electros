@@ -80,13 +80,6 @@
         "asar": true,
         "removePackageScripts": true,
         "removePackageKeywords": true,
-        "removePackageJsonFields": [
-            "scripts",
-            "devDependencies",
-            "husky",
-            "lint-staged",
-            "config"
-        ],
         "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
         "asarUnpack": [
             "node_modules/sharp/**/*"
