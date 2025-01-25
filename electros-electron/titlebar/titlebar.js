@@ -2,8 +2,10 @@ function initializeTitlebar() {
     console.log('Electron is defined');
     const titlebar = document.querySelector('.titlebar');
     const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
-                        navigator.userAgent.includes('Win') ? 'win' : 'linux';
-    
+                     navigator.userAgent.includes('Win') ? 'win' :
+                     'linux';
+
+
     titlebar.classList.add(platform);
 
     const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';

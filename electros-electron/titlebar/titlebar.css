@@ -1,3 +1,11 @@
+:root {
+    --mac-button-outer-size: 16px;
+    --mac-button-glow-size: calc(var(--mac-button-outer-size) - 4px);
+    --mac-button-icon-size: calc(var(--mac-button-glow-size) * 0.65 );
+    --win-button-icon-size: 12px;
+}
+
+
 .titlebar {
     -webkit-app-region: drag;
     height: 43px;
@@ -37,13 +45,13 @@
 }
 
 .titlebar-button {
-    height: 16px;
-    width: 16px;
+    height: var(--mac-button-outer-size);
+    width: var(--mac-button-outer-size);
     background: transparent;
     border: none;
     /* cursor: pointer; */
     border-radius: 50%;
-    margin: calc((43px - 16px) / 2) 6px;
+    margin: calc((43px - 16px) / 2) 5px;
     padding: 0;
     position: relative;
 }
@@ -54,8 +62,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
+    width: var(--mac-button-glow-size);
+    height: var(--mac-button-glow-size);
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.1);
     transition: background 0.3s;
@@ -74,94 +82,107 @@
     }
 }
 
-#close-button {
+.mac #close-button {
     background: #ff5f57;
 }
 
-#minimize-button {
+.mac #minimize-button {
     background: #ffbd2e;
 }
 
-#maximize-button {
+.mac #maximize-button {
     background: #28c940;
 }
 
-#fullscreen-button {
+.mac #fullscreen-button {
     background: #218cfd; /* Blue color */
 }
 
-#close-button:hover::after {
-    content: '\2715'; /* Unicode for a square cross */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-48%, -45%);
-    font-size: 10px;
-    line-height: 10px;
-    color: #8B0000; /* Darker red color */
-    font-weight: bold;
-    animation: fadeIn 0.08s ease-in forwards;
-}
-
-#minimize-button:hover::after {
+.mac .titlebar-buttons:hover #close-button::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 8px;
-    height: 1.5px;
-    background: #846108; /* Darker yellow color */
-    border-radius: 1px;
+    width: var(--mac-button-icon-size);
+    height: var(--mac-button-icon-size);
+    background-image: url('../titlebar/mac/close.svg');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
     animation: fadeIn 0.08s ease-in forwards;
 }
 
-#maximize-button:hover::after {
-    content: '\25A3'; /* Unicode for a square with a diagonal cross */
+.mac .titlebar-buttons:hover #minimize-button::after {
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 10px;
-    color: #006400; /* Darker green color */
+    width: var(--mac-button-icon-size);
+    height: var(--mac-button-icon-size);
+    background-image: url('../titlebar/mac/minimize.svg');
+    background-position: center;
+    background-size: contain cover;
+    background-repeat: no-repeat;
     animation: fadeIn 0.08s ease-in forwards;
 }
 
-#fullscreen-button:hover::after {
-    content: '+'; /* Plus symbol */
+.mac .titlebar-buttons:hover #maximize-button::after {
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 16px; /* Increased font size for a bigger plus symbol */
-    color: #001e8b; /* Darker blue color */
+    width: var(--mac-button-icon-size);
+    height: var(--mac-button-icon-size);
+    background-image: url('../titlebar/mac/maximize.svg');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: fadeIn 0.08s ease-in forwards;
+}
+
+.mac .titlebar-buttons:hover #fullscreen-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--mac-button-icon-size);
+    height: var(--mac-button-icon-size);
+    background-image: url('../titlebar/mac/full.svg');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
     animation: fadeIn 0.08s ease-in forwards;
 }
 
 /* Windows-specific styles */
-.win .titlebar-buttons {
+.win .titlebar-buttons, .linux .titlebar-buttons {
     padding-left: 0;
 }
 
-.win .titlebar-buttons .titlebar-button:first-of-type {
-    border-radius: 0 0 0 5px;
-}
-
-.win .titlebar-button {
+.win .titlebar-button, .linux .titlebar-button {
     height: 28px;
     width: 45px;
     border-radius: 0;
     color: black;
     margin: 0;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, backdrop-filter 0.2s;
     position: relative;
 }
 
-.win .titlebar-button::before {
+.linux .titlebar-button {
+    width: 30px;
+    height: 30px;
+}
+
+.win .titlebar-button::before, .linux .titlebar-button::before {
     display: none;
 }
 
-.win .titlebar-button::after {
+.win .titlebar-button::after, .linux .titlebar-button::after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -170,58 +191,79 @@
     transition: color 0.2s;
 }
 
-.win #minimize-button::after {
-    content: '−';
-    font-size: 20px;
-    font-weight: 2000;
-}
-
-.win #maximize-button::after {
-    content: '\25FB';
-    font-size: 24px;
-    font-weight: 2000;
+.win #minimize-button::after, .linux #minimize-button::after {
+    content: '';
     top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--win-button-icon-size);
+    height: var(--win-button-icon-size);
+    background-image: url('../titlebar/win/minimize.svg');
+    background-position: center;
+    background-size: contain cover;
+    background-repeat: no-repeat;
+
 }
 
-.win #fullscreen-button::after {
-    content: '⛶';
-    font-size: 18px;
+.win #maximize-button::after, .linux #maximize-button::after {
+    content: '';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--win-button-icon-size);
+    height: var(--win-button-icon-size);
+    background-image: url('../titlebar/win/maximize.svg');
+    background-position: center;
+    background-size: contain cover;
+    background-repeat: no-repeat;
 }
 
-.win #close-button::after {
-    content: '\2715';
-    font-size: 17px;
-    font-weight: 2000;
+.win #fullscreen-button::after, .linux #fullscreen-button::after {
+    content: '';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--win-button-icon-size);
+    height: var(--win-button-icon-size);
+    background-image: url('../titlebar/win/maximize.svg');
+    background-position: center;
+    background-size: contain cover;
+    background-repeat: no-repeat;
 }
 
-.win .titlebar-button:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+.win #close-button::after, .linux #close-button::after {
+    content: '';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--win-button-icon-size);
+    height: var(--win-button-icon-size);
+    background-image: url('../titlebar/win/close.svg');
+    background-position: center;
+    background-size: contain cover;
+    background-repeat: no-repeat;
 }
 
-.win #close-button {
-    background-color: #a10d19;
-}
-
-.win #close-button:hover {
-    background-color: #e81123;
-}
-
-.win #maximize-button {
-    background-color: rgb(34, 186, 7);
-}
-
-.win #maximize-button:hover {
-    background-color: #28c940;
-}
-
-.win #minimize-button {
-    background-color: #ffa600;
-}
-
-.win #minimize-button:hover {
-    background-color: #ffb732;
+.win .titlebar-buttons .titlebar-button:first-of-type {
+    border-radius: 0 0 0 5px;
 }
 
 .win .titlebar-button:hover::after {
-    color: white;
+    filter: brightness(20);
+}
+
+.win .titlebar-button:hover {
+    backdrop-filter: invert(0.5);
+}
+
+.win #close-button:hover {
+    background-color: #e83c11;
+}
+
+.linux .titlebar-button:hover {
+    background-color: #ffa600;
+}
+
+.linux .titlebar-button:hover::after {
+    filter: brightness(0);
 }
