@@ -9,7 +9,7 @@
         "email": "gabriele.fronze@elemento.cloud"
     },
     "scripts": {
-        "start": "electron .",
+        "start": "electron . --trace-warnings",
         "build": "electron-builder",
         "pack": "electron-builder --dir"
     },
