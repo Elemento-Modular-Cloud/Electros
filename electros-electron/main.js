@@ -125,7 +125,11 @@ function getDaemonCommand() {
     if (platform === 'mac') {
         daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
     } else if (platform === 'linux') {
-        daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_${arch}`);
+        if (arch === 'arm64') {
+            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_arm`);
+        } else {
+            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_${arch}`);
+        }
     } else if (platform === 'win') {
         if (arch === 'x64' || arch === 'x86') {
             daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x86.exe`);
@@ -162,9 +166,7 @@ function createTrayIcon() {
     }
 
     if (platform === 'linux') {
-        const lightIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_white_32x32@2x.png');
-        const darkIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black_32x32@2x.png');
-        const iconName = !isLight ? darkIcon : lightIcon;
+        const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.png');
         const icon = nativeImage.createFromPath(iconName);
         return icon;
     }

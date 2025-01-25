@@ -68,7 +68,7 @@
             "entitlementsInherit": "entitlements.plist"
         },
         "linux": {
-            "icon": "electros.iconset/electros_icon_512x512@2x.png",
+            "icon": "electros.iconset",
             "target": [
                 "AppImage",
                 "deb"
