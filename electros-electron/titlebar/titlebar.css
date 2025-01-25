@@ -33,7 +33,7 @@
 }
 
 .titlebar-buttons-align-right {
-    right: 12px;
+    right: 0;
 }
 
 .titlebar-button {
@@ -136,4 +136,92 @@
     font-size: 16px; /* Increased font size for a bigger plus symbol */
     color: #001e8b; /* Darker blue color */
     animation: fadeIn 0.08s ease-in forwards;
+}
+
+/* Windows-specific styles */
+.win .titlebar-buttons {
+    padding-left: 0;
+}
+
+.win .titlebar-buttons .titlebar-button:first-of-type {
+    border-radius: 0 0 0 5px;
+}
+
+.win .titlebar-button {
+    height: 28px;
+    width: 45px;
+    border-radius: 0;
+    color: black;
+    margin: 0;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.win .titlebar-button::before {
+    display: none;
+}
+
+.win .titlebar-button::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.win #minimize-button::after {
+    content: '−';
+    font-size: 20px;
+    font-weight: 2000;
+}
+
+.win #maximize-button::after {
+    content: '\25FB';
+    font-size: 24px;
+    font-weight: 2000;
+    top: 50%;
+}
+
+.win #fullscreen-button::after {
+    content: '⛶';
+    font-size: 18px;
+}
+
+.win #close-button::after {
+    content: '\2715';
+    font-size: 17px;
+    font-weight: 2000;
+}
+
+.win .titlebar-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.win #close-button {
+    background-color: #a10d19;
+}
+
+.win #close-button:hover {
+    background-color: #e81123;
+}
+
+.win #maximize-button {
+    background-color: rgb(34, 186, 7);
+}
+
+.win #maximize-button:hover {
+    background-color: #28c940;
+}
+
+.win #minimize-button {
+    background-color: #ffa600;
+}
+
+.win #minimize-button:hover {
+    background-color: #ffb732;
+}
+
+.win .titlebar-button:hover::after {
+    color: white;
 }

@@ -60,7 +60,7 @@
             const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
             titlebar.innerHTML = `
                 <div class='titlebar-buttons ${buttonsAlignClass}'>
-                    <button class='titlebar-button' id='close-button' onclick='ipcRenderer.invoke("close-window")'></button>
+                    <button class='titlebar-button' id='minimize-button' onclick='ipcRenderer.invoke("close-window")'></button>
                 </div>
             `;
 
