@@ -191,7 +191,16 @@ function createMainWindow() {
 
     // Inject custom titlebar after the page loads
     win.webContents.on('did-finish-load', () => {
-        win.webContents.executeJavaScript(titlebarCustomJS);
+        try {
+            // Ensure titlebarCustomJS is a string and properly escaped
+            const safeJS = typeof titlebarCustomJS === 'string' 
+                ? titlebarCustomJS 
+                : JSON.stringify(titlebarCustomJS);
+            
+            win.webContents.executeJavaScript(safeJS).catch(err => {});
+        } catch (error) {
+            console.error('Error injecting titlebar:', error);
+        }
     });
     
     return win;
@@ -283,14 +292,18 @@ function createTerminalWindow() {
 }
 
 function createWindows() {
-    createTerminalWindow();
-    mainWindow = createMainWindow();
+    try {
+        createTerminalWindow();
+        mainWindow = createMainWindow();
 
-    mainWindow.on('closed', () => {
-        if (terminalWindow) {
-            terminalWindow.hide();
-        }
-    });
+        mainWindow.on('closed', () => {
+            if (terminalWindow) {
+                terminalWindow.hide();
+            }
+        });
+    } catch (error) {
+        console.error('Error creating windows:', error);
+    }
 }
 
 ipcMain.handle('create-popup', async (event, options = {}) => {
