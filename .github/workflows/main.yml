@@ -48,8 +48,8 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           cd ./electros-electron
-          chmod +x ./auto_build.sh
-          ./auto_build.sh
+          chmod +x ./autobuild.sh
+          ./autobuild.sh
         shell: bash
 
       - name: List what you built
