@@ -128,7 +128,7 @@ function getDaemonCommand() {
         if (arch === 'arm64') {
             daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_arm`);
         } else {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_${arch}`);
+            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_x86`);
         }
     } else if (platform === 'win') {
         if (arch === 'x64' || arch === 'x86') {
