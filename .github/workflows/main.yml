@@ -22,7 +22,7 @@ jobs:
         shell: bash
 
       - name: Checkout code
-        uses: actions/checkout@latest
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.CI_TOKEN }}
           submodules: true
