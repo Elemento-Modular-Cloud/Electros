@@ -69,12 +69,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd ./electros-electron/build
           gh release upload ${{ steps.get_tag_name.outputs.tag_name }} \
-            mac/x64/Electros-2.0.0-mac-x64.dmg \
-            mac/arm64/Electros-2.0.0-mac-arm64.dmg \
-            win/x64/Electros-2.0.0-win-x64.exe \
-            linux/arm64/Electros-2.0.0-linux-arm64.AppImage \
-            linux/arm64/Electros-2.0.0-linux-arm64.deb \
-            linux/x64/Electros-2.0.0-linux-x64.AppImage \
-            linux/x64/Electros-2.0.0-linux-x64.deb
+            ./electros-electron/build/mac/x64/Electros-2.0.0-mac-x64.dmg \
+            ./electros-electron/build/mac/arm64/Electros-2.0.0-mac-arm64.dmg \
+            ./electros-electron/build/win/x64/Electros-2.0.0-win-x64.exe \
+            ./electros-electron/build/linux/arm64/Electros-2.0.0-linux-arm64.AppImage \
+            ./electros-electron/build/linux/arm64/Electros-2.0.0-linux-arm64.deb \
+            ./electros-electron/build/linux/x64/Electros-2.0.0-linux-x64.AppImage \
+            ./electros-electron/build/linux/x64/Electros-2.0.0-linux-x64.deb
