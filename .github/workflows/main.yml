@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/mac/x64/Electros-2.0.0-mac-x64.dmg
+          asset_path: ./electros-electron/build/mac/x64/Electros-2.0.0-mac-x64.dmg
           asset_name: Electros-mac-x64.dmg
           asset_content_type: application/octet-stream
 
@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/mac/arm64/Electros-2.0.0-mac-arm64.dmg
+          asset_path: ./electros-electron/build/mac/arm64/Electros-2.0.0-mac-arm64.dmg
           asset_name: Electros-mac-arm64.dmg
           asset_content_type: application/octet-stream
 
@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/win/x64/Electros-2.0.0-win-x64.exe
+          asset_path: ./electros-electron/build/win/x64/Electros-2.0.0-win-x64.exe
           asset_name: Electros-win-x64.exe
           asset_content_type: application/octet-stream
 
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/linux/arm64/Electros-2.0.0-linux-arm64.AppImage
+          asset_path: ./electros-electron/build/linux/arm64/Electros-2.0.0-linux-arm64.AppImage
           asset_name: Electros-linux-arm64.AppImage
           asset_content_type: application/octet-stream
 
@@ -102,7 +102,7 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/linux/arm64/Electros-2.0.0-linux-arm64.deb
+          asset_path: ./electros-electron/build/linux/arm64/Electros-2.0.0-linux-arm64.deb
           asset_name: Electros-linux-arm64.deb
           asset_content_type: application/octet-stream
 
@@ -110,7 +110,7 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/linux/x64/Electros-2.0.0-linux-x64.AppImage
+          asset_path: ./electros-electron/build/linux/x64/Electros-2.0.0-linux-x64.AppImage
           asset_name: Electros-linux-x64.AppImage
           asset_content_type: application/octet-stream
 
@@ -118,6 +118,6 @@ jobs:
         uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/linux/x64/Electros-2.0.0-linux-x64.deb
+          asset_path: ./electros-electron/build/linux/x64/Electros-2.0.0-linux-x64.deb
           asset_name: Electros-linux-x64.deb
           asset_content_type: application/octet-stream
