@@ -25,6 +25,7 @@ jobs:
       - name: Get tag name
         id: get_tag_name
         run: |
+          cd ./electros-electron
           tag_name=$(jq -r '.version' package.json)
           echo "tag_name=${tag_name}" >> $GITHUB_OUTPUT
           echo "tag_name=${tag_name}"
