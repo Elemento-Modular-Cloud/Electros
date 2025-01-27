@@ -22,7 +22,7 @@ jobs:
         shell: bash
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@latest
         with:
           token: ${{ secrets.CI_TOKEN }}
           submodules: true
@@ -53,7 +53,7 @@ jobs:
         shell: bash
 
       - name: Create release
-        uses: actions/create-release@v4
+        uses: actions/create-release@latest
         with:
           tag_name: ${{ github.event.release.tag_name }}
           release_name: ${{ github.event.release.name }}
@@ -61,7 +61,7 @@ jobs:
           prerelease: false
 
       - name: Upload artifacts Mac x64
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/mac/x64/Electros-2.0.0-mac-x64.dmg
@@ -69,7 +69,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload artifacts Mac arm64
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/mac/arm64/Electros-2.0.0-mac-arm64.dmg
@@ -77,7 +77,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload artifacts Windows x64
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/win/x64/Electros-2.0.0-win-x64.exe
@@ -85,7 +85,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload artifacts Linux arm64 AppImage
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/linux/arm64/Electros-2.0.0-linux-arm64.AppImage
@@ -93,7 +93,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload artifacts Linux arm64 deb
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/linux/arm64/Electros-2.0.0-linux-arm64.deb
@@ -101,7 +101,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload artifacts Linux x64 AppImage
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/linux/x64/Electros-2.0.0-linux-x64.AppImage
@@ -109,7 +109,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload artifacts Linux x64 deb
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@latest
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/linux/x64/Electros-2.0.0-linux-x64.deb
