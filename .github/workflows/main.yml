@@ -64,16 +64,20 @@ jobs:
             --draft \
             --title "ElectrosRelease ${{ steps.get_tag_name.outputs.tag_name }}" \
             --generate-notes
+          # Add a small delay to ensure release is created
+          sleep 5
 
       - name: Upload release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Verify release exists before uploading
+          gh release view ${{ steps.get_tag_name.outputs.tag_name }} || exit 1
           gh release upload ${{ steps.get_tag_name.outputs.tag_name }} \
-            ./electros-electron/build/mac/x64/Electros-2.0.0-mac-x64.dmg \
-            ./electros-electron/build/mac/arm64/Electros-2.0.0-mac-arm64.dmg \
-            ./electros-electron/build/win/x64/Electros-2.0.0-win-x64.exe \
-            ./electros-electron/build/linux/arm64/Electros-2.0.0-linux-arm64.AppImage \
-            ./electros-electron/build/linux/arm64/Electros-2.0.0-linux-arm64.deb \
-            ./electros-electron/build/linux/x64/Electros-2.0.0-linux-x64.AppImage \
-            ./electros-electron/build/linux/x64/Electros-2.0.0-linux-x64.deb
+            "./electros-electron/build/mac/x64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-mac-x64.dmg" \
+            "./electros-electron/build/mac/arm64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-mac-arm64.dmg" \
+            "./electros-electron/build/win/x64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-win-x64.exe" \
+            "./electros-electron/build/linux/arm64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-linux-arm64.AppImage" \
+            "./electros-electron/build/linux/arm64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-linux-arm64.deb" \
+            "./electros-electron/build/linux/x64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-linux-x64.AppImage" \
+            "./electros-electron/build/linux/x64/Electros-${{ steps.get_tag_name.outputs.tag_name }}-linux-x64.deb"
