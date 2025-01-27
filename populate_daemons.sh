@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export GITHUB_TOKEN="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"
+export GITHUB_TOKEN=$CI_TOKEN
 
 # Function to check if required tools are installed
 check_requirements() {
