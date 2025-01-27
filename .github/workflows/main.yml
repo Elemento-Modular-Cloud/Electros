@@ -52,7 +52,7 @@ jobs:
         run: |
           cd ./electros-electron
           chmod +x ./autobuild.sh
-          ./autobuild.sh --arch arm64 --platform mac
+          ./autobuild.sh
         shell: bash
 
       - name: Create release
