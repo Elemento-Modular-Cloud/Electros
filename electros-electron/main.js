@@ -131,6 +131,24 @@ const menuTemplate = [
     }
 ]
 
+const activePorts = new Set();
+
+function getAvailablePort() {
+    const MIN_PORT = 49152;
+    const MAX_PORT = 65535;
+    let port;
+    do {
+        port = Math.floor(Math.random() * (MAX_PORT - MIN_PORT) + MIN_PORT);
+    } while (activePorts.has(port));
+    
+    activePorts.add(port);
+    return port;
+}
+
+function releasePort(port) {
+    activePorts.delete(port);
+}
+
 function getDaemonCommand() {
     console.log(`The platform is: ${platform}`);
     var arch = os.arch();
@@ -547,23 +565,54 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
         throw error;
     }
 
+    // Add this after creating the RDP window
+    rdpWindow.on('close', async (event) => {
+        try {
+            // Prevent the window from closing immediately
+            event.preventDefault();
+            
+            // Send the close event to the renderer
+            if (!rdpWindow.isDestroyed()) {
+                rdpWindow.webContents.send('window-close');
+            }
+            
+            // Wait a moment for cleanup
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Now destroy the window
+            if (!rdpWindow.isDestroyed()) {
+                rdpWindow.destroy();
+            }
+        } catch (error) {
+            console.error('Error during window cleanup:', error);
+            // Ensure the window is destroyed even if there's an error
+            if (!rdpWindow.isDestroyed()) {
+                rdpWindow.destroy();
+            }
+        }
+    });
+
     return rdpWindow.id;
 });
 
 // Add these IPC handlers
 ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height }) => {
     try {
+        const ws_port = getAvailablePort().toString();
+
         const args = [
             '--target', credentials.ip,
             '--user', credentials.username,
+            '--dom', credentials.domain,
             '--pass', credentials.password,
             '--width', width.toString(),
-            '--height', height.toString()
+            '--height', height.toString(),
+            '--ws_port', ws_port
         ];
 
         const mstscProcess = spawn('electros/pages/js/virtual-machines/remotes/rdp/mstsc-rs', args);
 
-        // Store process reference
+        // Store process reference and port
         event.sender.mstscProcess = mstscProcess;
 
         mstscProcess.stdout.on('data', (data) => {
@@ -576,19 +625,26 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
 
         mstscProcess.on('close', (code) => {
             console.log(`mstsc-rs process exited with code ${code}`);
-            event.sender.send('rdp-process-closed');
+            // Release the port when the process closes
+            releasePort(parseInt(ws_port));
+            // Check if the window still exists before sending the message
+            if (!event.sender.isDestroyed()) {
+                event.sender.send('rdp-process-closed');
+            }
         });
 
-        return { success: true };
+        return { success: true, ws_port: ws_port };
     } catch (error) {
         console.error('Error launching RDP process:', error);
+        if (ws_port) {
+            releasePort(parseInt(ws_port));
+        }
         return { success: false, error: error.message };
     }
 });
 
-ipcMain.handle('cleanup-rdp-process', (event) => {
-    if (event.sender.mstscProcess) {
-        event.sender.mstscProcess.kill();
-        event.sender.mstscProcess = null;
+ipcMain.handle('cleanup-rdp-process', (event, port) => {
+    if (port) {
+        releasePort(parseInt(port));
     }
 });
