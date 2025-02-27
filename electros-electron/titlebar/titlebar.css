@@ -17,6 +17,9 @@
     left: 0;
     right: 0;
 }
+.titlebar * {
+    font-family: var(--font-primary);
+}
 
 .titlebar-title {
     font-size: 17px;

@@ -23,27 +23,60 @@ const commonWindowOptions = {
     trafficLightPosition: { x: -100, y: -100 }
 }
 
-const titlebarCustomJS = `
+const themesLoaderJS = `
     // Create and load CSS inline
+    var theme = document.createElement('style');
+    theme.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8'))};
+    document.head.appendChild(theme);
+`
+
+const formStyleLoaderJS = `
+    // Create and load CSS inline
+    var formstyle = document.createElement('style');
+    formstyle.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8'))};
+    document.head.appendChild(formstyle);
+`
+
+const titlebarCustomJS = `
+    console.log('Titlebar custom JS');
+
+    ${themesLoaderJS}
+    ${formStyleLoaderJS}
+
     var style = document.createElement('style');
     style.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8'))};
     document.head.appendChild(style);
 
+    console.log('Titlebar CSS loaded');
+
     // Create titlebar div and title element
     var titlebar = document.createElement('div');
     titlebar.className = 'titlebar';
+
+    console.log('Titlebar div created');
     
     var titleElement = document.createElement('div');
     titleElement.className = 'titlebar-title';
     titleElement.textContent = document.title;
     
+    console.log('Titlebar title element created');
+
     document.body.insertBefore(titlebar, document.body.firstChild);
+
+    console.log('Titlebar inserted into body');
     
     // Load and execute titlebar.js content
     ${fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8')}
+
+    console.log('Titlebar.js loaded');  
     
     initializeTitlebar();
+
+    console.log('Titlebar initialized');
+
     titlebar.appendChild(titleElement);
+
+    console.log('Titlebar appended to body');
 `;
 
 const menuTemplate = [
@@ -350,21 +383,23 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         });
 
         // Set certificate error handler before loading URL
-        popup.webContents.session.setCertificateVerifyProc((request, callback) => {
-            callback(0);
-        });
-
         popup.webContents.on('certificate-error', (event, url, error, certificate, callback) => {
             event.preventDefault();
             callback(true);
         });
 
-        await popup.loadURL(options.url, {
-            validateCertificate: (certificate) => true
-        });
+        // Check if we should load from file or URL
+        if (options.isFile) {
+            await popup.loadFile(options.url);
+        } else {
+            await popup.loadURL(options.url, {
+                validateCertificate: (certificate) => true
+            });
+        }
+        
         return popup.id;
     } catch (error) {
-        console.error('Error loading popup URL:', error);
+        console.error('Error loading popup:', error);
         popup.destroy();
         throw error;
     }
@@ -456,5 +491,104 @@ app.on('activate', () => {
                 break;
             }
         }
+    }
+});
+
+ipcMain.handle('open-rdp', async (event, connectionDetails) => {
+    const rdpWindow = new BrowserWindow({
+        width: 1024,
+        height: 768,
+        ...commonWindowOptions,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js'),
+            webSecurity: false,
+            zoomFactor: 0.8
+        }
+    });
+
+    // Set up ALL certificate handlers before loading the page
+    rdpWindow.webContents.session.setCertificateVerifyProc((request, callback) => {
+        callback(0);  // 0 means success
+    });
+
+    rdpWindow.webContents.on('certificate-error', (event, url, error, certificate, callback) => {
+        event.preventDefault();
+        callback(true);
+    });
+
+    // Additional certificate bypass for self-signed certificates
+    rdpWindow.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+        callback(true);
+    });
+
+    // Set additional security options
+    rdpWindow.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
+        callback({ requestHeaders: { ...details.requestHeaders } });
+    });
+
+    // Inject custom titlebar after the page loads
+    rdpWindow.webContents.on('did-finish-load', () => {
+        const rdpTitlebarJS = titlebarCustomJS.replace(
+            'titleElement.textContent = document.title;',
+            `titleElement.textContent = "RDP connection to ${connectionDetails.vmName}";`
+        );
+        rdpWindow.webContents.executeJavaScript(rdpTitlebarJS);
+    });
+
+    // Load the RDP client page with connection details
+    try {
+        await rdpWindow.loadFile('electros/pages/js/virtual-machines/remotes/rdp/index.html', {
+            query: connectionDetails
+        });
+    } catch (error) {
+        console.error('Error loading RDP window:', error);
+        throw error;
+    }
+
+    return rdpWindow.id;
+});
+
+// Add these IPC handlers
+ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height }) => {
+    try {
+        const args = [
+            '--target', credentials.ip,
+            '--user', credentials.username,
+            '--pass', credentials.password,
+            '--width', width.toString(),
+            '--height', height.toString()
+        ];
+
+        const mstscProcess = spawn('electros/pages/js/virtual-machines/remotes/rdp/mstsc-rs', args);
+
+        // Store process reference
+        event.sender.mstscProcess = mstscProcess;
+
+        mstscProcess.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+
+        mstscProcess.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+
+        mstscProcess.on('close', (code) => {
+            console.log(`mstsc-rs process exited with code ${code}`);
+            event.sender.send('rdp-process-closed');
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error launching RDP process:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('cleanup-rdp-process', (event) => {
+    if (event.sender.mstscProcess) {
+        event.sender.mstscProcess.kill();
+        event.sender.mstscProcess = null;
     }
 });
