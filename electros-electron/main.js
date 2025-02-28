@@ -648,3 +648,79 @@ ipcMain.handle('cleanup-rdp-process', (event, port) => {
         releasePort(parseInt(port));
     }
 });
+
+ipcMain.handle('open-ssh', async (event, connectionDetails) => {
+    const sshWindow = new BrowserWindow({
+        width: 1024,
+        height: 768,
+        ...commonWindowOptions,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js'),
+            webSecurity: false,
+            zoomFactor: 0.8
+        }
+    });
+
+    try {
+        // Get an available port for the SSH server
+        const ssh_port = getAvailablePort().toString();
+
+        console.log("connectionDetails: ", connectionDetails)
+
+        // Start the SSH server process
+        const sshServer = require('./electros/pages/js/virtual-machines/remotes/ssh/ssh.js');
+        await sshServer.runSSHServer(ssh_port, connectionDetails.ip, connectionDetails.username, connectionDetails.password);
+
+        // Store port reference
+        event.sender.ssh_port = ssh_port;
+
+        // Inject custom titlebar after the page loads
+        sshWindow.webContents.on('did-finish-load', () => {
+            const sshTitlebarJS = titlebarCustomJS.replace(
+                'titleElement.textContent = document.title;',
+                `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
+            );
+            sshWindow.webContents.executeJavaScript(sshTitlebarJS);
+        });
+
+        // Add connection cleanup on window close
+        sshWindow.on('close', async (event) => {
+            try {
+                event.preventDefault();
+                
+                if (!sshWindow.isDestroyed()) {
+                    sshWindow.webContents.send('window-close');
+                }
+                
+                // Release the port
+                releasePort(parseInt(ssh_port));
+                
+                // Wait a moment for cleanup
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                if (!sshWindow.isDestroyed()) {
+                    sshWindow.destroy();
+                }
+            } catch (error) {
+                console.error('Error during SSH window cleanup:', error);
+                if (!sshWindow.isDestroyed()) {
+                    sshWindow.destroy();
+                }
+            }
+        });
+
+        // Load the SSH client page with connection details and port
+        await sshWindow.loadURL(`http://localhost:${ssh_port}/?host=${encodeURIComponent(connectionDetails.ip)}&username=${encodeURIComponent(connectionDetails.username)}&password=${encodeURIComponent(connectionDetails.password)}`);
+
+        return sshWindow.id;
+
+    } catch (error) {
+        console.error('Error setting up SSH window:', error);
+        if (ssh_port) {
+            releasePort(parseInt(ssh_port));
+        }
+        throw error;
+    }
+});

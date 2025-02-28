@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('electron', {
             'read-hosts', 
             'write-hosts', 
             'minimize-window', 
+            'open-ssh',
             'maximize-window', 
             'close-window', 
             'toggle-full-screen',
@@ -35,4 +36,5 @@ contextBridge.exposeInMainWorld('electron', {
             }
         }
     }
+
 }); 
