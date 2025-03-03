@@ -667,8 +667,6 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         // Get an available port for the SSH server
         const ssh_port = getAvailablePort().toString();
 
-        console.log("connectionDetails: ", connectionDetails)
-
         // Start the SSH server process
         const sshServer = require('./electros/pages/js/virtual-machines/remotes/ssh/ssh.js');
         await sshServer.runSSHServer(ssh_port, connectionDetails.ip, connectionDetails.username, connectionDetails.password);
