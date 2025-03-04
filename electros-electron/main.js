@@ -610,7 +610,7 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
             '--ws_port', ws_port
         ];
 
-        const mstscProcess = spawn('electros/pages/js/virtual-machines/remotes/rdp/mstsc-rs', args);
+        const mstscProcess = spawn('electros/remotes/rdp/mstsc-rs', args);
 
         // Store process reference and port
         event.sender.mstscProcess = mstscProcess;
@@ -668,7 +668,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         const ssh_port = getAvailablePort().toString();
 
         // Start the SSH server process
-        const sshServer = require('./electros/pages/js/virtual-machines/remotes/ssh/ssh.js');
+        const sshServer = require('./electros/remotes/ssh/ssh.js');
         await sshServer.runSSHServer(ssh_port, connectionDetails.ip, connectionDetails.username, connectionDetails.password);
 
         // Store port reference
