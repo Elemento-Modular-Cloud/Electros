@@ -363,6 +363,9 @@ function createWindows() {
                 terminalWindow.hide();
             }
         });
+        
+        // Register a local shortcut for the main window
+        setupWindowShortcuts(mainWindow);
     } catch (error) {
         console.error('Error creating windows:', error);
     }
@@ -370,34 +373,46 @@ function createWindows() {
 
 // Add this function to set up window-specific shortcuts
 function setupWindowShortcuts(window) {
+    // Keep track of registered shortcuts for this window
+    const registeredShortcuts = [];
+    
     // When window is focused, set up its shortcuts
     window.on('focus', () => {
+        // First unregister any existing shortcuts to avoid conflicts
+        globalShortcut.unregisterAll();
+        
         // For Windows/Linux: Alt+F4 closes current window instead of app
-        globalShortcut.register('Alt+F4', () => {
+        registeredShortcuts.push(globalShortcut.register('Alt+F4', () => {
             const focusedWindow = BrowserWindow.getFocusedWindow();
-            if (focusedWindow && focusedWindow !== mainWindow) {
+            if (focusedWindow) {
                 focusedWindow.close();
-            } else if (focusedWindow === mainWindow) {
-                app.quit(); // Still quit if main window
+                return true; // Prevent default behavior
             }
-        });
+            // For main window, let the default Alt+F4 behavior happen
+            return false;
+        }));
         
         // For macOS: Cmd+Q closes current window if it's not main
-        globalShortcut.register('CommandOrControl+Q', () => {
+        registeredShortcuts.push(globalShortcut.register('Command+Q', () => {
             const focusedWindow = BrowserWindow.getFocusedWindow();
-            if (focusedWindow && focusedWindow !== mainWindow) {
+            if (focusedWindow) {
                 focusedWindow.close();
-                return false; // Prevent default quit
+                return true; // Prevent default quit
             }
             // Let the default Cmd+Q behavior happen for main window
-            return true;
-        });
+            return false;
+        }));
     });
     
     // When window loses focus, unregister shortcuts
     window.on('blur', () => {
-        globalShortcut.unregister('Alt+F4');
-        globalShortcut.unregister('CommandOrControl+Q');
+        // Unregister all shortcuts when window loses focus
+        globalShortcut.unregisterAll();
+    });
+    
+    // Clean up when window is closed
+    window.on('closed', () => {
+        globalShortcut.unregisterAll();
     });
 }
 
