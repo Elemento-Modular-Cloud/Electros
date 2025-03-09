@@ -5,6 +5,7 @@ const os = require('os');
 const { spawn } = require('child_process');
 const nativeImage = require('electron').nativeImage;
 const net = require('net');
+const { globalShortcut } = require('electron');
 
 // Import handlers from separate files. They are apparently unused since called by name in the preload.js
 const configHandlers = require('./js/config-ipc');
@@ -367,6 +368,39 @@ function createWindows() {
     }
 }
 
+// Add this function to set up window-specific shortcuts
+function setupWindowShortcuts(window) {
+    // When window is focused, set up its shortcuts
+    window.on('focus', () => {
+        // For Windows/Linux: Alt+F4 closes current window instead of app
+        globalShortcut.register('Alt+F4', () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow();
+            if (focusedWindow && focusedWindow !== mainWindow) {
+                focusedWindow.close();
+            } else if (focusedWindow === mainWindow) {
+                app.quit(); // Still quit if main window
+            }
+        });
+        
+        // For macOS: Cmd+Q closes current window if it's not main
+        globalShortcut.register('CommandOrControl+Q', () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow();
+            if (focusedWindow && focusedWindow !== mainWindow) {
+                focusedWindow.close();
+                return false; // Prevent default quit
+            }
+            // Let the default Cmd+Q behavior happen for main window
+            return true;
+        });
+    });
+    
+    // When window loses focus, unregister shortcuts
+    window.on('blur', () => {
+        globalShortcut.unregister('Alt+F4');
+        globalShortcut.unregister('CommandOrControl+Q');
+    });
+}
+
 ipcMain.handle('create-popup', async (event, options = {}) => {
     console.log(options);
 
@@ -385,6 +419,9 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         },
         ...options
     });
+
+    // Set up window-specific shortcuts for this popup
+    setupWindowShortcuts(popup);
 
     if (options.title) {
         popup.setTitle(options.title);
@@ -592,6 +629,9 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
         rdpWindow.webContents.executeJavaScript(rdpTitlebarJS);
     });
 
+    // Set up window-specific shortcuts
+    setupWindowShortcuts(rdpWindow);
+
     // Load the RDP client page with connection details
     try {
         await rdpWindow.loadFile('electros/remotes/rdp/index.html', {
@@ -721,6 +761,9 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
             );
             sshWindow.webContents.executeJavaScript(sshTitlebarJS);
         });
+
+        // Set up window-specific shortcuts
+        setupWindowShortcuts(sshWindow);
 
         // Add connection cleanup on window close
         sshWindow.on('close', async (event) => {
