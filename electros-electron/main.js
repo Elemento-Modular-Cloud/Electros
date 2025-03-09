@@ -21,7 +21,14 @@ const commonWindowOptions = {
     frame: false,
     transparent: false,
     titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: -100, y: -100 }
+    trafficLightPosition: { x: -100, y: -100 },
+    alwaysOnTop: false
+}
+
+const defaultWindowOptions = {
+    frame: true,
+    transparent: false,
+    alwaysOnTop: false
 }
 
 const themesLoaderJS = `
@@ -366,9 +373,9 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
     const popup = new BrowserWindow({
         width: options.width || 800,
         height: options.height || 600,
-        ...commonWindowOptions,
+        ...(options.defaultTitlebar ? defaultWindowOptions : commonWindowOptions),
         movable: true,
-        parent: BrowserWindow.getFocusedWindow(),
+        // parent: BrowserWindow.getFocusedWindow(),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
@@ -393,13 +400,15 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
     
     try {
         // Inject custom titlebar CSS and HTML before loading the URL
-        popup.webContents.on('did-finish-load', () => {
+        if (!options.defaultTitlebar) {
+            popup.webContents.on('did-finish-load', () => {
             const popupTitlebarJS = titlebarCustomJS.replace(
                 'titleElement.textContent = document.title;',
                 `titleElement.textContent = ${JSON.stringify(options.title)};`
-            );
-            popup.webContents.executeJavaScript(popupTitlebarJS);
-        });
+                );
+                popup.webContents.executeJavaScript(popupTitlebarJS);
+            });
+        }
 
         // Set certificate error handler before loading URL
         popup.webContents.on('certificate-error', (event, url, error, certificate, callback) => {
