@@ -4,6 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const { spawn } = require('child_process');
 const nativeImage = require('electron').nativeImage;
+const net = require('net');
 
 // Import handlers from separate files. They are apparently unused since called by name in the preload.js
 const configHandlers = require('./js/config-ipc');
@@ -51,12 +52,12 @@ const titlebarCustomJS = `
 
     // Create titlebar div and title element
     var titlebar = document.createElement('div');
-    titlebar.className = 'titlebar';
+    titlebar.className = 'electros-titlebar';
 
     console.log('Titlebar div created');
     
     var titleElement = document.createElement('div');
-    titleElement.className = 'titlebar-title';
+    titleElement.className = 'electros-titlebar-title';
     titleElement.textContent = document.title;
     
     console.log('Titlebar title element created');
@@ -482,6 +483,33 @@ app.on('before-quit', () => {
     }
 });
 
+// Add this IPC handler before app.whenReady()
+ipcMain.handle('check-port', async (event, { ip, port }) => {
+    return new Promise((resolve) => {
+        const socket = new net.Socket();
+        
+        // Set a timeout of 1 second
+        socket.setTimeout(1000);
+        
+        socket.on('connect', () => {
+            socket.destroy();
+            resolve(true);
+        });
+        
+        socket.on('timeout', () => {
+            socket.destroy();
+            resolve(false);
+        });
+        
+        socket.on('error', () => {
+            socket.destroy();
+            resolve(false);
+        });
+        
+        socket.connect(port, ip);
+    });
+});
+
 app.whenReady().then(() => {
     const menu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(menu);
@@ -557,7 +585,7 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
 
     // Load the RDP client page with connection details
     try {
-        await rdpWindow.loadFile('electros/pages/js/virtual-machines/remotes/rdp/index.html', {
+        await rdpWindow.loadFile('electros/remotes/rdp/index.html', {
             query: connectionDetails
         });
     } catch (error) {
@@ -666,6 +694,8 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     try {
         // Get an available port for the SSH server
         const ssh_port = getAvailablePort().toString();
+
+        console.log("connectionDetails: ", connectionDetails)
 
         // Start the SSH server process
         const sshServer = require('./electros/remotes/ssh/ssh.js');

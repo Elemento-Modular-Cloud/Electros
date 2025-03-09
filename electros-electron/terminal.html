@@ -16,7 +16,7 @@
             padding-top: 43px; /* Add top padding */
             padding-left: 13px;
         }
-        .titlebar-title {
+        .electros-titlebar-title {
             color: #ffa600 !important;
         }
     </style>
@@ -54,14 +54,14 @@
     <script>
         function initializeTitlebarOnlyClose() {
             console.log('Electron is defined');
-            const titlebar = document.querySelector('.titlebar');
+            const titlebar = document.querySelector('.electros-titlebar');
             const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
                                 navigator.userAgent.includes('Win') ? 'win' : 'linux';
             titlebar.classList.add(platform);
             const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
             titlebar.innerHTML = `
-                <div class='titlebar-buttons ${buttonsAlignClass}'>
-                    <button class='titlebar-button' id='minimize-button' onclick='ipcRenderer.invoke("close-window")'></button>
+                <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
+                    <button class='electros-titlebar-button' id='minimize-button' onclick='ipcRenderer.invoke("close-window")'></button>
                 </div>
             `;
 

@@ -1,6 +1,6 @@
 function initializeTitlebar() {
     console.log('Electron is defined');
-    const titlebar = document.querySelector('.titlebar');
+    const titlebar = document.querySelector('.electros-titlebar');
     const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
                      navigator.userAgent.includes('Win') ? 'win' :
                      'linux';
@@ -11,19 +11,19 @@ function initializeTitlebar() {
     const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
     if (platform === 'mac') {
         titlebar.innerHTML = `
-            <div class='titlebar-buttons ${buttonsAlignClass}'>
-                <button class='titlebar-button' id='close-button'></button>
-                <button class='titlebar-button' id='minimize-button'></button>
-                <button class='titlebar-button' id='maximize-button'></button>
-                <button class='titlebar-button' id='fullscreen-button'></button>
+            <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
+                <button class='electros-titlebar-button' id='close-button'></button>
+                <button class='electros-titlebar-button' id='minimize-button'></button>
+                <button class='electros-titlebar-button' id='maximize-button'></button>
+                <button class='electros-titlebar-button' id='fullscreen-button'></button>
             </div>
         `;
     } else {
         titlebar.innerHTML = `
-            <div class='titlebar-buttons ${buttonsAlignClass}'>
-                <button class='titlebar-button' id='minimize-button'></button>
-                <button class='titlebar-button' id='maximize-button'></button>
-                <button class='titlebar-button' id='close-button'></button>
+            <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
+                <button class='electros-titlebar-button' id='minimize-button'></button>
+                <button class='electros-titlebar-button' id='maximize-button'></button>
+                <button class='electros-titlebar-button' id='close-button'></button>
             </div>
         `;
     }

@@ -14,7 +14,8 @@ contextBridge.exposeInMainWorld('electron', {
             'toggle-full-screen',
             'open-rdp',
             'launch-rdp-process',
-            'cleanup-rdp-process'
+            'cleanup-rdp-process',
+            'check-port'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

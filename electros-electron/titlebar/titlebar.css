@@ -6,7 +6,7 @@
 }
 
 
-.titlebar {
+.electros-titlebar {
     -webkit-app-region: drag;
     height: 43px;
     width: 100%;
@@ -17,11 +17,11 @@
     left: 0;
     right: 0;
 }
-.titlebar * {
+.electros-titlebar * {
     font-family: var(--font-primary);
 }
 
-.titlebar-title {
+.electros-titlebar-title {
     font-size: 17px;
     line-height: 43px;
     width: 100%;
@@ -30,7 +30,7 @@
     color: var(--titlebar-color);
 }
 
-.titlebar-buttons {
+.electros-titlebar-buttons {
     height: 100%;
     -webkit-app-region: no-drag;
     position: absolute;
@@ -39,15 +39,15 @@
     padding-left: 8px;
 }
 
-.titlebar-buttons-align-left {
+.electros-titlebar-buttons-align-left {
     left: 0;
 }
 
-.titlebar-buttons-align-right {
+.electros-titlebar-buttons-align-right {
     right: 0;
 }
 
-.titlebar-button {
+.electros-titlebar-button {
     height: var(--mac-button-outer-size);
     width: var(--mac-button-outer-size);
     background: transparent;
@@ -59,7 +59,7 @@
     position: relative;
 }
 
-.titlebar-button::before {
+.electros-titlebar-button::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -72,7 +72,7 @@
     transition: background 0.3s;
 }
 
-.titlebar-button:hover::before {
+.electros-titlebar-button:hover::before {
     background: rgba(0, 0, 0, 0.2);
 }
 
@@ -101,7 +101,7 @@
     background: #218cfd; /* Blue color */
 }
 
-.mac .titlebar-buttons:hover #close-button::after {
+.mac .electros-titlebar-buttons:hover #close-button::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -116,7 +116,7 @@
     animation: fadeIn 0.08s ease-in forwards;
 }
 
-.mac .titlebar-buttons:hover #minimize-button::after {
+.mac .electros-titlebar-buttons:hover #minimize-button::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -131,7 +131,7 @@
     animation: fadeIn 0.08s ease-in forwards;
 }
 
-.mac .titlebar-buttons:hover #maximize-button::after {
+.mac .electros-titlebar-buttons:hover #maximize-button::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -146,7 +146,7 @@
     animation: fadeIn 0.08s ease-in forwards;
 }
 
-.mac .titlebar-buttons:hover #fullscreen-button::after {
+.mac .electros-titlebar-buttons:hover #fullscreen-button::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -162,11 +162,11 @@
 }
 
 /* Windows-specific styles */
-.win .titlebar-buttons, .linux .titlebar-buttons {
+.win .electros-titlebar-buttons, .linux .electros-titlebar-buttons {
     padding-left: 0;
 }
 
-.win .titlebar-button, .linux .titlebar-button {
+.win .electros-titlebar-button, .linux .electros-titlebar-button {
     height: 28px;
     width: 45px;
     border-radius: 0;
@@ -176,16 +176,16 @@
     position: relative;
 }
 
-.linux .titlebar-button {
+.linux .electros-titlebar-button {
     width: 30px;
     height: 30px;
 }
 
-.win .titlebar-button::before, .linux .titlebar-button::before {
+.win .electros-titlebar-button::before, .linux .electros-titlebar-button::before {
     display: none;
 }
 
-.win .titlebar-button::after, .linux .titlebar-button::after {
+.win .electros-titlebar-button::after, .linux .electros-titlebar-button::after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -247,15 +247,15 @@
     background-repeat: no-repeat;
 }
 
-.win .titlebar-buttons .titlebar-button:first-of-type {
+.win .electros-titlebar-buttons .electros-titlebar-button:first-of-type {
     border-radius: 0 0 0 5px;
 }
 
-.win .titlebar-button:hover::after {
+.win .electros-titlebar-button:hover::after {
     filter: brightness(20);
 }
 
-.win .titlebar-button:hover {
+.win .electros-titlebar-button:hover {
     backdrop-filter: invert(0.5);
 }
 
@@ -263,10 +263,10 @@
     background-color: #e83c11;
 }
 
-.linux .titlebar-button:hover {
+.linux .electros-titlebar-button:hover {
     background-color: #ffa600;
 }
 
-.linux .titlebar-button:hover::after {
+.linux .electros-titlebar-button:hover::after {
     filter: brightness(0);
 }
