@@ -51,6 +51,9 @@ jobs:
         shell: bash
 
       - name: Build step
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: runner.os != 'Windows'
         run: |
           cd ./electros-electron
@@ -62,6 +65,7 @@ jobs:
         id: create_release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ steps.get_tag_name.outputs.tag_name }} \
             --draft \
