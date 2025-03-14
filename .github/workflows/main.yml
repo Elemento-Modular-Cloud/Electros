@@ -72,6 +72,7 @@ jobs:
 
       - name: Upload release assets
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Verify release exists before uploading
