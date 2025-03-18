@@ -21,6 +21,7 @@ jobs:
         with:
           token: ${{ secrets.CI_TOKEN }}
           submodules: recursive
+          ref: 'main'
 
       - name: Get current date
         id: date
