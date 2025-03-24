@@ -777,9 +777,11 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         }
     });
 
+    var ssh_port = undefined;
+
     try {
         // Get an available port for the SSH server
-        const ssh_port = getAvailablePort().toString();
+        ssh_port = getAvailablePort().toString();
 
         console.log("connectionDetails: ", connectionDetails)
 
