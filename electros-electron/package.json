@@ -4,6 +4,10 @@
     "description": "Electros Desktop Application",
     "main": "main.js",
     "homepage": "https://elemento.cloud",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Elemento-Modular-Cloud/ElectrosGUI.git"
+    },
     "author": {
         "name": "Gabriele Fronzé",
         "email": "gabriele.fronze@elemento.cloud"
