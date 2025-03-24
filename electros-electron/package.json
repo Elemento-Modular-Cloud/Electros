@@ -103,6 +103,13 @@
                 "filter": [
                     "**/*"
                 ]
+            },
+            {
+                "from": "electros/remotes",
+                "to": "remotes",
+                "filter": [
+                    "**/*"
+                ]
             }
         ]
     },
