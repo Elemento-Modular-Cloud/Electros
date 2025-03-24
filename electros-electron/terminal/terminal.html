@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css" />
+    <script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <link rel="stylesheet" href="../electros/css/style.css" />
+    <style>
+        body {
+            margin: 0;
+            background-color: #0a0e14 !important;
+        }
+        #terminal { 
+            width: 100vw; 
+            height: 100vh;
+            font-size: 12px; /* Smaller font size */
+            padding-top: 43px; /* Add top padding */
+            padding-left: 13px;
+        }
+        .electros-titlebar-title {
+            color: #ffa600 !important;
+        }
+    </style>
+    <link rel="stylesheet" href="../titlebar/titlebar.css" />
+</head>
+<body>
+    <div class="electros-titlebar"></div>
+    <div id="terminal"></div>
+    <script>
+        const { Terminal } = require('@xterm/xterm');
+        const { ipcRenderer } = require('electron');
+        
+        // Initialize titlebar with minimize-only option
+        function initializeTitlebar() {
+            const titlebar = document.querySelector('.electros-titlebar');
+            const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
+                           navigator.userAgent.includes('Win') ? 'win' : 
+                           'linux';
+
+            titlebar.classList.add(platform);
+            const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
+            
+            if (platform === 'mac') {
+                titlebar.innerHTML = `
+                    <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
+                        <button class='electros-titlebar-button' id='minimize-button'></button>
+                        <button class='electros-titlebar-button' id='hide-button'></button>
+                    </div>
+                `;
+            } else {
+                titlebar.innerHTML = `
+                    <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
+                        <button class='electros-titlebar-button' id='minimize-button'></button>
+                        <button class='electros-titlebar-button' id='hide-button'></button>
+                    </div>
+                `;
+            }
+
+            // Add title element
+            const titleElement = document.createElement('div');
+            titleElement.className = 'electros-titlebar-title';
+            titleElement.textContent = 'Electros Daemons';
+            titlebar.appendChild(titleElement);
+
+            // Add event listeners
+            document.getElementById('minimize-button').addEventListener('click', () => {
+                console.log('Minimize clicked');
+                ipcRenderer.send('minimize-window');
+            });
+
+            document.getElementById('hide-button').addEventListener('click', () => {
+                console.log('Hide clicked');
+                ipcRenderer.send('hide-window');
+            });
+        }
+
+        // Initialize the terminal
+        const term = new Terminal({
+            fontSize: 12, // Smaller font size
+            lineHeight: 1.2,
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            cursorBlink: true,
+            cols: Math.floor(window.innerWidth / 8), // Calculate columns to fill the space
+            rows: Math.floor(window.innerHeight / 16), // Calculate rows to fill the space
+            wraparoundMode: true, // Enable line wrapping
+            convertEol: true,
+            theme: {
+                background: '#0a0e14',
+                foreground: '#ffa600' // Set terminal text color to green
+            }
+        });
+        
+        term.open(document.getElementById('terminal'));
+
+        // Initialize the titlebar
+        initializeTitlebar();
+
+        // Listen for output from the main process
+        ipcRenderer.on('terminal-output', (event, data) => {
+            term.write(data);
+        });
+    </script>
+</body>
+</html> 

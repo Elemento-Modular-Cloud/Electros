@@ -79,7 +79,7 @@ const titlebarCustomJS = `
 
     console.log('Titlebar.js loaded');  
     
-    initializeTitlebar();
+    initializeTitlebar(options = { minimizeOnly: false });
 
     console.log('Titlebar initialized');
 
@@ -275,16 +275,17 @@ function createTerminalWindow() {
         height: 600,
         ...commonWindowOptions,
         show: false,
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
             zoomFactor: 0.8
         },
-        backgroundColor: '#000000', // Add dark background
+        backgroundColor: '#000000',
         title: 'Electros Daemons'
     });
 
-    terminalWindow.loadFile('terminal.html');
+    terminalWindow.loadFile('terminal/terminal.html');
 
     // Wait for the terminal window to be ready
     terminalWindow.webContents.on('did-finish-load', () => {
@@ -309,6 +310,18 @@ function createTerminalWindow() {
         daemonProcess.on('error', (error) => {
             terminalWindow.webContents.send('terminal-output', `Error: ${error.message}\n`);
         });
+    });
+
+    terminalWindow.webContents.on('did-finish-load', () => {
+        const popupTitlebarJS = titlebarCustomJS.replace(
+            'titleElement.textContent = document.title;',
+            `titleElement.textContent = ${JSON.stringify(terminalWindow.title)};`
+        ).replace(
+            'initializeTitlebar(options = { minimizeOnly: false });',
+            'initializeTitlebar(options = { minimizeOnly: true });'
+        );
+        
+        terminalWindow.webContents.executeJavaScript(popupTitlebarJS);
     });
 
     // Create tray icon if it doesn't exist
@@ -350,6 +363,15 @@ function createTerminalWindow() {
     terminalWindow.on('close', (event) => {
         event.preventDefault(); // Prevent window from closing
         terminalWindow.hide(); // Hide instead of close
+    });
+
+    // Add IPC handlers for window controls
+    ipcMain.on('minimize-window', () => {
+        terminalWindow.minimize();
+    });
+
+    ipcMain.on('hide-window', () => {
+        terminalWindow.hide();
     });
 }
 
