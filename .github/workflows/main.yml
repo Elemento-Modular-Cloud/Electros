@@ -25,13 +25,15 @@ jobs:
 
       - name: Get current date
         id: date
-        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+        run: |
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "time=$(date +'%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Get tag name
         id: get_tag_name
         run: |
           VERSION=$(node -p "require('./electros-electron/package.json').version")
-          echo "tag_name=v${VERSION}-${GITHUB_SHA::7}-${{ steps.date.outputs.date }}" >> $GITHUB_OUTPUT
+          echo "tag_name=v${VERSION}-${{ steps.date.outputs.date }}-${{ steps.date.outputs.time }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "tag_name_nodate=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Setup step
