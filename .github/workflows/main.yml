@@ -2,19 +2,44 @@ name: Build Electron App
 
 on:
   push:
-    branches: [ main, master ]  # Trigger on push to main/master
+    branches: [ main ]  # Trigger on push to main
   pull_request:
-    branches: [ main, master ]  # Trigger on PRs to main/master
+    branches: [ main ]  # Trigger on PRs to main
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  build:
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest]
-        
+  remove-old-releases:
+    name: Remove old releases
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Delete old releases
+        uses: s00d/delete-older-releases@0.2.1
+        with:
+          repo: Elemento-Modular-Cloud/Electros
+          keep_latest: 3
+          delete_type: 'release'
+          delete_branch: 'main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete old prereleases
+        uses: s00d/delete-older-releases@0.2.1
+        with:
+          repo: Elemento-Modular-Cloud/Electros
+          keep_latest: 1
+          delete_type: 'prerelease'
+          delete_branch: 'main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  create-release:
+    name: Create Release
+    needs: remove-old-releases
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    outputs:
+      tag_name: ${{ steps.get_tag_name.outputs.tag_name }}
+      tag_name_nodate: ${{ steps.get_tag_name.outputs.tag_name_nodate }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,6 +61,56 @@ jobs:
           echo "tag_name=v${VERSION}-${{ steps.date.outputs.date }}-${{ steps.date.outputs.time }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "tag_name_nodate=${VERSION}" >> $GITHUB_OUTPUT
 
+      - name: Create release
+        id: create_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.get_tag_name.outputs.tag_name }} \
+            --prerelease \
+            --title "ElectrosRelease ${{ steps.get_tag_name.outputs.tag_name }}" \
+            --generate-notes
+
+  build:
+    name: Build (${{ matrix.platform }}-${{ matrix.arch }})
+    needs: create-release
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            os: mac
+            arch: x64
+          - platform: macos-latest
+            os: mac
+            arch: arm64
+          - platform: macos-latest
+            os: win
+            arch: x64
+          - platform: ubuntu-latest
+            os: linux
+            arch: x64
+          - platform: ubuntu-latest
+            os: linux
+            arch: arm64
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          submodules: recursive
+          ref: 'main'
+
+      - name: Get tag name
+        id: get_tag_name
+        run: |
+          VERSION=$(node -p "require('./electros-electron/package.json').version")
+          echo "tag_name=v${VERSION}-${{ steps.date.outputs.date }}-${{ steps.date.outputs.time }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "tag_name_nodate=${VERSION}" >> $GITHUB_OUTPUT
+      
       - name: Setup step
         if: runner.os != 'Windows'
         run: |
@@ -50,42 +125,130 @@ jobs:
         run: |
           export CI_TOKEN=${{ secrets.CI_TOKEN }}
           chmod +x ./populate_daemons.sh
-          ./populate_daemons.sh
+          ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
 
-      - name: Build step
+      - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
         if: runner.os != 'Windows'
         run: |
           cd ./electros-electron
           chmod +x ./autobuild.sh
-          ./autobuild.sh
+          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
 
-      - name: Create release
-        id: create_release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate checksums
         run: |
-          gh release create ${{ steps.get_tag_name.outputs.tag_name }} \
-            --draft \
-            --title "ElectrosRelease ${{ steps.get_tag_name.outputs.tag_name }}" \
-            --generate-notes
-          # Add a small delay to ensure release is created
-          sleep 5
+          cd electros-electron/build
 
-      - name: Upload release assets
+          # Create the checksum file with absolute path
+          checksum_file="$(pwd)/checksums-${{ matrix.os }}-${{ matrix.arch }}.txt"
+
+          # Create a single checksums file
+          echo "# Electros ${{ needs.create-release.outputs.tag_name }} Checksums" > "$checksum_file"
+          echo "# Generated on $(date)" >> "$checksum_file"
+          echo "" >> "$checksum_file"
+          
+          # Function to generate checksums for a file
+          generate_checksums() {
+            local file=$1
+            if [ -f "$file" ]; then
+              echo "Generating checksums for $file"
+              echo "## $file" >> "$checksum_file"
+              if [[ "$RUNNER_OS" == "macOS" ]]; then
+                echo "MD5: $(md5 -r "$file" | cut -d' ' -f1)" >> "$checksum_file"
+                echo "SHA256: $(shasum -a 256 "$file" | cut -d' ' -f1)" >> "$checksum_file"
+              else
+                echo "MD5: $(md5sum "$file" | cut -d' ' -f1)" >> "$checksum_file"
+                echo "SHA256: $(sha256sum "$file" | cut -d' ' -f1)" >> "$checksum_file"
+              fi
+              echo "" >> "$checksum_file"
+            fi
+          }
+
+          cd "${{ matrix.os }}/${{ matrix.arch }}"
+          
+          if [ ${{ matrix.os }} == "mac" ]; then
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+            
+            gh release upload ${{ needs.create-release.outputs.tag_name }} \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          elif [ ${{ matrix.os }} == "win" ]; then
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
+            
+            gh release upload ${{ needs.create-release.outputs.tag_name }} \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
+          elif [ ${{ matrix.os }} == "linux" ]; then
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage"
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
+            
+            gh release upload ${{ needs.create-release.outputs.tag_name }} \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage" \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload checksums artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums-${{ matrix.os }}-${{ matrix.arch }}
+          path: electros-electron/build/checksums-${{ matrix.os }}-${{ matrix.arch }}.txt
+
+  combine-checksums:
+    name: Combine Checksums
+    needs: [create-release, build]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          ref: 'main'
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Combine checksums and update release notes
         run: |
-          # Verify release exists before uploading
-          gh release view ${{ steps.get_tag_name.outputs.tag_name }} || exit 1
-          gh release upload ${{ steps.get_tag_name.outputs.tag_name }} \
-            "./electros-electron/build/mac/x64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-mac-x64.dmg" \
-            "./electros-electron/build/mac/arm64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-mac-arm64.dmg" \
-            "./electros-electron/build/win/x64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-win-x64.exe" \
-            "./electros-electron/build/linux/arm64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-linux-arm64.AppImage" \
-            "./electros-electron/build/linux/arm64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-linux-arm64.deb" \
-            "./electros-electron/build/linux/x64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-linux-x64.AppImage" \
-            "./electros-electron/build/linux/x64/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-linux-x64.deb"
+          # Create header for combined checksums
+          {
+            echo "# Electros ${{ needs.create-release.outputs.tag_name }} Checksums"
+            echo "# Generated on $(date)"
+            echo "# This file contains checksums for all platform builds"
+            echo ""
+          } > combined_checksums.txt
+          
+          # Find and combine all checksum files
+          find artifacts -name "checksums-*.txt" -type f | while read -r file; do
+            echo "Processing $file"
+            platform=$(basename "$file" | sed 's/checksums-\(.*\)\.txt/\1/')
+            echo "## Platform: $platform" >> combined_checksums.txt
+            # Skip the header lines and add the content
+            tail -n +4 "$file" >> combined_checksums.txt
+            echo "" >> combined_checksums.txt
+          done
+
+          # Get existing release notes
+          gh release view ${{ needs.create-release.outputs.tag_name }} --json body -q .body > existing_notes.txt
+
+          # Combine existing notes with checksums
+          {
+            cat existing_notes.txt
+            echo ""
+            echo "<details>"
+            echo "<summary>Build Checksums</summary>"
+            echo ""
+            cat combined_checksums.txt
+            echo "</details>"
+          } > updated_notes.txt
+
+          # Update release notes
+          gh release edit ${{ needs.create-release.outputs.tag_name }} --notes-file updated_notes.txt
+
+          # Still upload the checksums file separately for direct access
+          gh release upload ${{ needs.create-release.outputs.tag_name }} combined_checksums.txt --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
