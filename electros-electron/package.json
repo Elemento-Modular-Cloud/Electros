@@ -72,7 +72,10 @@
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
                 "node_modules"
-            ]
+            ],
+            "notarize": {
+                "teamId": "<<REPLACE_WITH_TEAM_ID>>"
+            }
         },
         "linux": {
             "icon": "electros.iconset",

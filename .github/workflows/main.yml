@@ -113,9 +113,12 @@ jobs:
       
       - name: Setup step
         if: runner.os != 'Windows'
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           export CI_TOKEN=${{ secrets.CI_TOKEN }}
           cd ./electros-electron
+          sed -i '' "s/<<REPLACE_WITH_TEAM_ID>>/${APPLE_TEAM_ID}/g" package.json
           chmod +x ./setup.sh
           ./setup.sh
         shell: bash
