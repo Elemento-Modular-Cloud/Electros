@@ -156,6 +156,13 @@ jobs:
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
 
+      - name: Upload unsigned DMG artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'mac'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}-unsigned.dmg
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg
+
       - name: Apple notarize step
         if: runner.os != 'Windows' && matrix.os == 'mac'
         env:
