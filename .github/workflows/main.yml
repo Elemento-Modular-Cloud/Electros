@@ -127,16 +127,17 @@ jobs:
           chmod +x ./populate_daemons.sh
           ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
-
-      - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
-        if: runner.os != 'Windows' && matrix.os != 'mac'
+      
+      - name: Build step (mac-${{ matrix.arch }})
+        if: runner.os != 'Windows'
         run: |
+          # Clean up
           cd ./electros-electron
           chmod +x ./autobuild.sh
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
-      
-      - name: Build step (mac-${{ matrix.arch }})
+
+      - name: Notarize step
         if: runner.os != 'Windows' && matrix.os == 'mac'
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -145,6 +146,7 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_ID: app.elemento.cloud
         run: |
           # Create keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
@@ -156,31 +158,18 @@ jobs:
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output certificate.p12
           security import certificate.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          rm -fr *.p12
 
-          export APPLE_ID=${{ secrets.APPLE_ID }}
-          export APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          export APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}
-          export APP_ID=app.elemento.cloud
-
-          # Clean up
-          rm -fr *.p12 
-          cd ./electros-electron
-          chmod +x ./autobuild.sh
-          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
-
-          # cd electros-electron/build
-          # cd "${{ matrix.os }}/${{ matrix.arch }}"
-
-          # # Notarize the app
-          # xcrun notarytool submit "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" \
-          #   --apple-id "$APPLE_ID" \
-          #   --password "$APPLE_APP_SPECIFIC_PASSWORD" \
-          #   --team-id "$APPLE_TEAM_ID" \
-          #   --wait
-
-          # # Staple the notarization ticket to the DMG
-          # xcrun stapler staple "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          # Notarize
+          cd "electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}"
+          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
         shell: bash
+      
+      - name: Upload notarize logs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/${{ matrix.os }}-${{ matrix.arch }}-notarize.log
 
       - name: Generate checksums
         run: |
