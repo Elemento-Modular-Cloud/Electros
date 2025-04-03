@@ -113,12 +113,9 @@ jobs:
       
       - name: Setup step
         if: runner.os != 'Windows'
-        env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           export CI_TOKEN=${{ secrets.CI_TOKEN }}
           cd ./electros-electron
-          sed -i '' "s/<<REPLACE_WITH_TEAM_ID>>/${APPLE_TEAM_ID}/g" package.json
           chmod +x ./setup.sh
           ./setup.sh
         shell: bash
@@ -137,6 +134,7 @@ jobs:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           if [ ${{ matrix.os }} == "mac" ]; then
             # Create keychain
@@ -171,9 +169,40 @@ jobs:
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
 
-          # Notarize
           cd "electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}"
+          
+          # First, notarize the .app bundle before it's packaged into the DMG
+          echo "Notarizing .app bundle..."
+          ditto -c -k --keepParent "Electros.app" "Electros.zip"
+          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros.zip | tee app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          
+          # Wait for app notarization to complete and staple the app
+          while read -r line; do
+            if [[ $line =~ "id: "([^\ ]+) ]]; then
+              submission_id="${BASH_REMATCH[1]}"
+              echo "Waiting for app notarization to complete..."
+              xcrun notarytool wait "$submission_id" --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID
+              xcrun stapler staple "Electros.app"
+              break
+            fi
+          done < app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          
+          rm Electros.zip
+          
+          # Now create and notarize the DMG with the notarized app
+          echo "Notarizing DMG..."
           xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          
+          # Wait for DMG notarization to complete and staple
+          while read -r line; do
+            if [[ $line =~ "id: "([^\ ]+) ]]; then
+              submission_id="${BASH_REMATCH[1]}"
+              echo "Waiting for DMG notarization to complete..."
+              xcrun notarytool wait "$submission_id" --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID
+              xcrun stapler staple "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+              break
+            fi
+          done < ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
         shell: bash
       
       - name: Upload Apple notarize logs artifact
@@ -181,7 +210,7 @@ jobs:
         if: matrix.os == 'mac'
         with:
           name: ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
-          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/${{ matrix.os }}-${{ matrix.arch }}-notarize.log electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
 
       - name: Generate checksums
         run: |
