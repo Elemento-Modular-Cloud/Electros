@@ -94,7 +94,8 @@
         "removePackageKeywords": true,
         "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
         "asarUnpack": [
-            "node_modules/sharp/**/*"
+            "node_modules/sharp/**/*",
+            "node_modules/ssh2/**/*"
         ],
         "protocols": [
             {

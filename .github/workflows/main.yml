@@ -183,6 +183,10 @@ jobs:
           VOLUME_NAME=$(hdiutil attach "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
           cp -R "$VOLUME_NAME/Electros.app" ./
           hdiutil detach "$VOLUME_NAME"
+
+          # First get the signing identity from the keychain
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning build.keychain | grep -o '".*"' | head -1 | tr -d '"')
+          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --entitlements electros-electron/entitlements.plist Electros.app/Contents/Resources/app.asar.unpacked/node_modules/ssh2/lib/protocol/crypto/build/node_gyp_bins/python3 --force
           
           # Now notarize the extracted .app bundle
           echo "Notarizing .app bundle..."
