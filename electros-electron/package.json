@@ -19,7 +19,6 @@
     },
     "build": {
         "appId": "app.elemento.cloud",
-        "appBundleId": "app.elemento.cloud",
         "productName": "Electros",
         "directories": {
             "output": "dist"
@@ -58,7 +57,6 @@
             ],
             "requestedExecutionLevel": "requireAdministrator"
         },
-        "afterSign": "electron-builder-notarize",
         "mac": {
             "icon": "electros.iconset/electros.icns",
             "target": {
@@ -74,8 +72,7 @@
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
                 "node_modules"
-            ],
-            "appBundleId": "app.elemento.cloud"
+            ]
         },
         "linux": {
             "icon": "electros.iconset",
@@ -114,8 +111,7 @@
     },
     "devDependencies": {
         "electron": "^29.1.0",
-        "electron-builder": "^24.13.3",
-        "electron-builder-notarize": "^1.5.2"
+        "electron-builder": "^25.1.8"
     },
     "overrides": {
         "inflight": "^2.0.0",
