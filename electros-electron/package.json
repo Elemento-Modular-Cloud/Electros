@@ -71,13 +71,8 @@
             "entitlements": "entitlements.plist",
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
-                "node_modules/ssh2/lib/protocol/crypto/build/node_gyp_bins/python3"
-            ],
-            "extendInfo": {
-                "NSAppleEventsUsageDescription": "Please allow access to script the terminal for development purposes.",
-                "com.apple.security.cs.allow-unsigned-executable-memory": true,
-                "com.apple.security.cs.allow-jit": true
-            }
+                "node_modules"
+            ]
         },
         "linux": {
             "icon": "electros.iconset",
@@ -94,8 +89,7 @@
         "removePackageKeywords": true,
         "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
         "asarUnpack": [
-            "node_modules/sharp/**/*",
-            "node_modules/ssh2/**/*"
+            "node_modules/sharp/**/*"
         ],
         "protocols": [
             {
