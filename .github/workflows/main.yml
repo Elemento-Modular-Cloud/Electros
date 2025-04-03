@@ -163,18 +163,18 @@ jobs:
           chmod +x ./autobuild.sh
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
 
-          cd electros-electron/build
-          cd "${{ matrix.os }}/${{ matrix.arch }}"
+          # cd electros-electron/build
+          # cd "${{ matrix.os }}/${{ matrix.arch }}"
 
-          # Notarize the app
-          xcrun notarytool submit "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" \
-            --apple-id "$APPLE_ID" \
-            --password "$APPLE_APP_SPECIFIC_PASSWORD" \
-            --team-id "$APPLE_TEAM_ID" \
-            --wait
+          # # Notarize the app
+          # xcrun notarytool submit "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" \
+          #   --apple-id "$APPLE_ID" \
+          #   --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+          #   --team-id "$APPLE_TEAM_ID" \
+          #   --wait
 
-          # Staple the notarization ticket to the DMG
-          xcrun stapler staple "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          # # Staple the notarization ticket to the DMG
+          # xcrun stapler staple "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
         shell: bash
 
       - name: Generate checksums

@@ -73,9 +73,7 @@
             "signIgnore": [
                 "node_modules"
             ],
-            "notarize": {
-                "teamId": "${process.env.APPLE_TEAM_ID}"
-            }
+            "afterSign": "electron-builder-notarize"
         },
         "linux": {
             "icon": "electros.iconset",
@@ -114,7 +112,8 @@
     },
     "devDependencies": {
         "electron": "^29.1.0",
-        "electron-builder": "^24.13.3"
+        "electron-builder": "^24.13.3",
+        "electron-builder-notarize": "^1.5.2"
     },
     "overrides": {
         "inflight": "^2.0.0",
