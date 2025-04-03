@@ -74,10 +74,8 @@
                 "node_modules"
             ],
             "notarize": {
-                "teamId": "${process.env.APPLE_TEAM_ID}",
-                "appleId": "${process.env.APPLE_ID}",
-                "appleIdPassword": "${process.env.APPLE_APP_SPECIFIC_PASSWORD}",
-                "appPath": "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+                "appBundleId": "cloud.elemento.electros",
+                "ascProvider": "${process.env.APPLE_TEAM_ID}"
             }
         },
         "linux": {
