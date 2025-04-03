@@ -86,7 +86,7 @@ jobs:
           - platform: macos-latest
             os: mac
             arch: arm64
-          - platform: ubuntu-latest
+          - platform: macos-latest
             os: win
             arch: x64
           - platform: ubuntu-latest
@@ -156,7 +156,7 @@ jobs:
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
 
-      - name: Upload unsigned DMG artifact
+      - name: Upload un-notarized & un-stapled DMG artifact
         uses: actions/upload-artifact@v4
         if: matrix.os == 'mac'
         with:
@@ -181,8 +181,8 @@ jobs:
           # First, extract the .app from the unsigned DMG
           echo "Extracting .app bundle from DMG..."
           hdiutil attach "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-          cp -R "/Volumes/Electros/Electros.app" ./
-          hdiutil detach "/Volumes/Electros"
+          cp -R "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}/Electros.app" ./
+          hdiutil detach "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}"
           
           # Now notarize the extracted .app bundle
           echo "Notarizing .app bundle..."
