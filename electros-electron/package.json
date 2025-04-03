@@ -18,7 +18,8 @@
         "pack": "electron-builder --dir"
     },
     "build": {
-        "appId": "cloud.elemento.electros",
+        "appId": "app.elemento.cloud",
+        "appBundleId": "app.elemento.cloud",
         "productName": "Electros",
         "directories": {
             "output": "dist"
@@ -73,7 +74,8 @@
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
                 "node_modules"
-            ]
+            ],
+            "appBundleId": "app.elemento.cloud"
         },
         "linux": {
             "icon": "electros.iconset",
