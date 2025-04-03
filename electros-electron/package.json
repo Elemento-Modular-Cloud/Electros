@@ -57,6 +57,7 @@
             ],
             "requestedExecutionLevel": "requireAdministrator"
         },
+        "afterSign": "electron-builder-notarize",
         "mac": {
             "icon": "electros.iconset/electros.icns",
             "target": {
@@ -72,8 +73,7 @@
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
                 "node_modules"
-            ],
-            "afterSign": "electron-builder-notarize"
+            ]
         },
         "linux": {
             "icon": "electros.iconset",
