@@ -69,7 +69,10 @@
             "hardenedRuntime": true,
             "gatekeeperAssess": false,
             "entitlements": "entitlements.plist",
-            "entitlementsInherit": "entitlements.plist"
+            "entitlementsInherit": "entitlements.plist",
+            "signIgnore": [
+                "node_modules"
+            ]
         },
         "linux": {
             "icon": "electros.iconset",
