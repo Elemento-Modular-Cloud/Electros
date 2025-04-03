@@ -129,7 +129,7 @@ jobs:
         shell: bash
 
       - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
-        if: runner.os != 'Windows' and matrix.os != 'mac'
+        if: runner.os != 'Windows' && matrix.os != 'mac'
         run: |
           cd ./electros-electron
           chmod +x ./autobuild.sh
@@ -137,7 +137,7 @@ jobs:
         shell: bash
       
       - name: Build step (mac-${{ matrix.arch }})
-        if: runner.os != 'Windows' and matrix.os == 'mac'
+        if: runner.os != 'Windows' && matrix.os == 'mac'
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
