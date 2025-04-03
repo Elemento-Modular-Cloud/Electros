@@ -73,7 +73,7 @@ jobs:
             --generate-notes
 
   build:
-    name: Build (${{ matrix.platform }}-${{ matrix.arch }})
+    name: Build (${{ matrix.os }}-${{ matrix.arch }})
     needs: create-release
     runs-on: ${{ matrix.platform }}
     strategy:
@@ -155,7 +155,7 @@ jobs:
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
 
-      - name: Notarize step
+      - name: Apple notarize step
         if: runner.os != 'Windows' && matrix.os == 'mac'
         env:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -173,8 +173,9 @@ jobs:
           xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
         shell: bash
       
-      - name: Upload notarize logs artifact
+      - name: Upload Apple notarize logs artifact
         uses: actions/upload-artifact@v4
+        if: matrix.os == 'mac'
         with:
           name: ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
           path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/${{ matrix.os }}-${{ matrix.arch }}-notarize.log
