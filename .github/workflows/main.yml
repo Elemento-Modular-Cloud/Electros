@@ -157,10 +157,10 @@ jobs:
           security import certificate.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
 
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_ID_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APP_ID: app.elemento.cloud
+          export APPLE_ID=${{ secrets.APPLE_ID }}
+          export APPLE_ID_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          export APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}
+          export APP_ID=app.elemento.cloud
 
           # Clean up
           rm -fr *.p12 
