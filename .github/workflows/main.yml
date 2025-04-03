@@ -181,8 +181,8 @@ jobs:
           # First, extract the .app from the unsigned DMG
           echo "Extracting .app bundle from DMG..."
           hdiutil attach "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-          cp -R "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}/Electros.app" ./
-          hdiutil detach "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}"
+          cp -R "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}/Electros.app" ./
+          hdiutil detach "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}"
           
           # Now notarize the extracted .app bundle
           echo "Notarizing .app bundle..."
@@ -202,7 +202,21 @@ jobs:
           
           rm Electros.zip
           
-          # Now create and notarize the DMG with the notarized app
+          # Create new DMG with the notarized and stapled app
+          echo "Creating new DMG with notarized app..."
+          mv "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" "./unsigned.dmg"
+          create-dmg \
+            --volname "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}" \
+            --app-drop-link 380 205 \
+            --icon "Electros.app" 110 205 \
+            --window-pos 200 120 \
+            --window-size 500 320 \
+            --icon-size 100 \
+            --hide-extension "Electros.app" \
+            "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" \
+            "Electros.app"
+          
+          # Now notarize the new DMG
           echo "Notarizing DMG..."
           xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
           
@@ -216,8 +230,10 @@ jobs:
               break
             fi
           done < ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
-        shell: bash
-      
+          
+          # Clean up
+          rm "./unsigned.dmg"
+
       - name: Upload Apple notarize logs artifact
         uses: actions/upload-artifact@v4
         if: matrix.os == 'mac'
