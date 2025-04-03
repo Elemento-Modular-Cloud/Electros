@@ -158,8 +158,6 @@ jobs:
       - name: Notarize step
         if: runner.os != 'Windows' && matrix.os == 'mac'
         env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -167,16 +165,8 @@ jobs:
           APP_ID: app.elemento.cloud
         run: |
           # Create keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
-          security set-keychain-settings -t 3600 -u build.keychain
-
-          # Import certificate
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output certificate.p12
-          security import certificate.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
-          rm -fr *.p12
 
           # Notarize
           cd "electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}"
