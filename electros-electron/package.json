@@ -71,8 +71,13 @@
             "entitlements": "entitlements.plist",
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
-                "node_modules"
-            ]
+                "node_modules/ssh2/lib/protocol/crypto/build/node_gyp_bins/python3"
+            ],
+            "extendInfo": {
+                "NSAppleEventsUsageDescription": "Please allow access to script the terminal for development purposes.",
+                "com.apple.security.cs.allow-unsigned-executable-memory": true,
+                "com.apple.security.cs.allow-jit": true
+            }
         },
         "linux": {
             "icon": "electros.iconset",
