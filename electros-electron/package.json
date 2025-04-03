@@ -72,6 +72,9 @@
             "entitlementsInherit": "entitlements.plist",
             "signIgnore": [
                 "node_modules"
+            ],
+            "asarUnpack": [
+                "node_modules/ssh2/**/*"
             ]
         },
         "linux": {
