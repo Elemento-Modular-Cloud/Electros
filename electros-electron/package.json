@@ -75,7 +75,8 @@
             ],
             "notarize": {
                 "appBundleId": "cloud.elemento.electros",
-                "ascProvider": "${process.env.APPLE_TEAM_ID}"
+                "ascProvider": "${process.env.APPLE_TEAM_ID}",
+                "teamId": "${process.env.APPLE_TEAM_ID}"
             }
         },
         "linux": {
