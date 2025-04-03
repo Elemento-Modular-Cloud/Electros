@@ -180,9 +180,9 @@ jobs:
           
           # First, extract the .app from the unsigned DMG
           echo "Extracting .app bundle from DMG..."
-          hdiutil attach "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-          cp -R "/Volumes/Electros ${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}/Electros.app" ./
-          hdiutil detach "/Volumes/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}"
+          VOLUME_NAME=$(hdiutil attach "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
+          cp -R "$VOLUME_NAME/Electros.app" ./
+          hdiutil detach "$VOLUME_NAME"
           
           # Now notarize the extracted .app bundle
           echo "Notarizing .app bundle..."
