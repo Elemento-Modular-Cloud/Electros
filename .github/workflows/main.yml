@@ -207,19 +207,31 @@ jobs:
           
           rm Electros.zip
           
-          # Create new DMG with the notarized and stapled app
+          # Create new DMG with the notarized app
           echo "Creating new DMG with notarized app..."
           mv "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" "./unsigned.dmg"
-          create-dmg \
-            --volname "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}" \
-            --app-drop-link 380 205 \
-            --icon "Electros.app" 110 205 \
-            --window-pos 200 120 \
-            --window-size 500 320 \
-            --icon-size 100 \
-            --hide-extension "Electros.app" \
-            "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" \
-            "Electros.app"
+          
+          # Create a temporary directory for DMG creation
+          TEMP_DMG_DIR="temp_dmg"
+          mkdir -p "$TEMP_DMG_DIR"
+          
+          # Copy the app to the temporary directory
+          cp -R "Electros.app" "$TEMP_DMG_DIR/"
+          
+          # Create the DMG
+          hdiutil create -volname "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}" \
+            -srcfolder "$TEMP_DMG_DIR" \
+            -ov \
+            -format UDZO \
+            "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          
+          # Clean up temporary directory
+          rm -rf "$TEMP_DMG_DIR"
+
+          # Sign the DMG with the same identity used for the app
+          echo "Signing DMG..."
+          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --options=runtime \
+            "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
           
           # Now notarize the new DMG
           echo "Notarizing DMG..."
