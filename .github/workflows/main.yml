@@ -186,7 +186,7 @@ jobs:
 
           # First get the signing identity from the keychain
           SIGNING_IDENTITY=$(security find-identity -v -p codesigning build.keychain | grep -o '".*"' | head -1 | tr -d '"')
-          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --entitlements ../../../entitlements.plist Electros.app/Contents/Resources/app.asar.unpacked/node_modules/ssh2/lib/protocol/crypto/build/node_gyp_bins/python3 --force
+          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --options=runtime --entitlements ../../../entitlements.plist ./Electros.app --force
           
           # Now notarize the extracted .app bundle
           echo "Notarizing .app bundle..."
