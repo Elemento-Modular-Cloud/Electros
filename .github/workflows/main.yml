@@ -172,7 +172,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APP_ID: app.elemento.cloud
         run: |
-          # Create keychain
+                    # Load keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
 
@@ -207,26 +207,32 @@ jobs:
           
           rm Electros.zip
           
-          # Create new DMG with the notarized app
+          # Create new DMG with the notarized app while preserving electron-builder layout
           echo "Creating new DMG with notarized app..."
-          mv "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" "./unsigned.dmg"
+          mv "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" "./original.dmg"
           
-          # Create a temporary directory for DMG creation
-          TEMP_DMG_DIR="temp_dmg"
-          mkdir -p "$TEMP_DMG_DIR"
+          # Mount the original DMG
+          VOLUME_NAME=$(hdiutil attach -nobrowse "./original.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
           
-          # Copy the app to the temporary directory
-          cp -R "Electros.app" "$TEMP_DMG_DIR/"
+          # Create a temporary read-write DMG
+          hdiutil convert "./original.dmg" -format UDRW -o "./temp.dmg"
+          hdiutil detach "$VOLUME_NAME"
           
-          # Create the DMG
-          hdiutil create -volname "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.arch }}" \
-            -srcfolder "$TEMP_DMG_DIR" \
-            -ov \
-            -format UDZO \
-            "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          # Mount the temporary DMG
+          VOLUME_NAME=$(hdiutil attach -nobrowse "./temp.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
           
-          # Clean up temporary directory
-          rm -rf "$TEMP_DMG_DIR"
+          # Replace the .app with the notarized version
+          rm -rf "$VOLUME_NAME/Electros.app"
+          cp -R "./Electros.app" "$VOLUME_NAME/"
+          
+          # Unmount the temporary DMG
+          hdiutil detach "$VOLUME_NAME"
+          
+          # Convert back to compressed read-only DMG
+          hdiutil convert "./temp.dmg" -format UDZO -o "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          
+          # Clean up temporary files
+          rm "./temp.dmg" "./original.dmg"
 
           # Sign the DMG with the same identity used for the app
           echo "Signing DMG..."
