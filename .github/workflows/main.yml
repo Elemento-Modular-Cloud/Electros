@@ -253,9 +253,6 @@ jobs:
               break
             fi
           done < ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
-          
-          # Clean up
-          rm "./unsigned.dmg"
 
       - name: Upload Apple notarize logs artifact
         uses: actions/upload-artifact@v4
