@@ -792,10 +792,16 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         ssh_port = getAvailablePort().toString();
 
         console.log("connectionDetails: ", connectionDetails)
+        const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+        const sshPath = path.join(
+            baseDir,
+            app.isPackaged ? 'app.asar.unpacked' : '',
+            'electros', 'remotes', 'ssh', 'ssh.js'
+        );
 
         // Start the SSH server process
-        const sshServer = require('./electros/remotes/ssh/ssh.js');
-        await sshServer.runSSHServer(ssh_port, connectionDetails.ip, connectionDetails.username, connectionDetails.password);
+        const sshServer = require(sshPath);
+        await sshServer.runSSHServer(ssh_port, baseDir);
 
         // Store port reference
         event.sender.ssh_port = ssh_port;
