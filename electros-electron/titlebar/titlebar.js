@@ -7,7 +7,8 @@ function initializeTitlebar(options = { minimizeOnly: false }) {
 
     titlebar.classList.add(platform);
 
-    const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
+    const buttonsAlignClass = platform === 'mac' ? 'electros-titlebar-buttons-align-left' : 'electros-titlebar-buttons-align-right';
+    console.log(buttonsAlignClass);
     
     if (platform === 'mac') {
         titlebar.innerHTML = `
@@ -29,8 +30,8 @@ function initializeTitlebar(options = { minimizeOnly: false }) {
                 <button class='electros-titlebar-button' id='minimize-button'></button>
                 ${!options.minimizeOnly ? `
                     <button class='electros-titlebar-button' id='maximize-button'></button>
+                    <button class='electros-titlebar-button' id='close-button'></button>
                 ` : ''}
-                <button class='electros-titlebar-button' id='${options.minimizeOnly ? 'hide' : 'close'}-button'></button>
             </div>
         `;
     }

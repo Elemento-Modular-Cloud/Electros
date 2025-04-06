@@ -37,23 +37,13 @@
                            'linux';
 
             titlebar.classList.add(platform);
-            const buttonsAlignClass = platform === 'mac' ? 'titlebar-buttons-align-left' : 'titlebar-buttons-align-right';
+            const buttonsAlignClass = platform === 'mac' ? 'electros-titlebar-buttons-align-left' : 'electros-titlebar-buttons-align-right';
             
-            if (platform === 'mac') {
-                titlebar.innerHTML = `
+            titlebar.innerHTML = `
                     <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
                         <button class='electros-titlebar-button' id='minimize-button'></button>
-                        <button class='electros-titlebar-button' id='hide-button'></button>
                     </div>
                 `;
-            } else {
-                titlebar.innerHTML = `
-                    <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
-                        <button class='electros-titlebar-button' id='minimize-button'></button>
-                        <button class='electros-titlebar-button' id='hide-button'></button>
-                    </div>
-                `;
-            }
 
             // Add title element
             const titleElement = document.createElement('div');
@@ -65,11 +55,6 @@
             document.getElementById('minimize-button').addEventListener('click', () => {
                 console.log('Minimize clicked');
                 ipcRenderer.send('minimize-window');
-            });
-
-            document.getElementById('hide-button').addEventListener('click', () => {
-                console.log('Hide clicked');
-                ipcRenderer.send('hide-window');
             });
         }
 
@@ -90,6 +75,21 @@
         });
         
         term.open(document.getElementById('terminal'));
+
+        // Add window resize handler
+        window.addEventListener('resize', () => {
+            const terminalElement = document.getElementById('terminal');
+            // Account for padding in calculations
+            const availableWidth = window.innerWidth - 13; // Subtract left padding
+            const availableHeight = window.innerHeight - 43; // Subtract top padding
+            
+            // Calculate new dimensions
+            const newCols = Math.floor(availableWidth / 8); // Assuming 8px per character width
+            const newRows = Math.floor(availableHeight / 16); // Assuming 16px per character height
+            
+            // Resize the terminal
+            term.resize(newCols, newRows);
+        });
 
         // Initialize the titlebar
         initializeTitlebar();
