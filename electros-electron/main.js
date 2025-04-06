@@ -724,7 +724,15 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
             '--ws_port', ws_port
         ];
 
-        const mstscProcess = spawn('electros/remotes/rdp/mstsc-rs', args);
+        // Use process.resourcesPath in production, fallback to __dirname in development
+        const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+        const mstscPath = path.join(
+            baseDir,
+            app.isPackaged ? 'app.asar.unpacked' : '',
+            'electros', 'remotes', 'rdp', 'mstsc-rs'
+        );
+
+        const mstscProcess = spawn(mstscPath, args);
 
         // Store process reference and port
         event.sender.mstscProcess = mstscProcess;

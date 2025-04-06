@@ -26,6 +26,7 @@
         "files": [
             "**/*",
             "electros-daemons/**/*",
+            "electros/remotes/**/*",
             "!**/*.{ts,map,md,txt,log}",
             "!**/{.git,.idea,.vscode,docs,test,tests}/**/*",
             "!**/{tsconfig.json,tslint.json,package-lock.json}",
@@ -44,6 +45,10 @@
             "!docs",
             "!**/node_modules/*/{benchmark,coverage,example,examples}/**/*",
             "!**/node_modules/**/*.{ts,map,md,txt,log,yml,yaml}"
+        ],
+        "asarUnpack": [
+            "node_modules/sharp/**/*",
+            "electros/remotes/**/*"
         ],
         "win": {
             "icon": "electros.iconset/electros.ico",
@@ -74,7 +79,9 @@
                 "node_modules"
             ],
             "asarUnpack": [
-                "node_modules/ssh2/**/*"
+                "node_modules/ssh2/**/*",
+                "node_modules/sharp/**/*",
+                "electros/remotes/**/*"
             ]
         },
         "linux": {
@@ -91,9 +98,6 @@
         "removePackageScripts": true,
         "removePackageKeywords": true,
         "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
-        "asarUnpack": [
-            "node_modules/sharp/**/*"
-        ],
         "protocols": [
             {
                 "name": "Electros",
