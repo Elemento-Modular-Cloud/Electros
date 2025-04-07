@@ -176,7 +176,7 @@ function getDaemonCommand() {
     }
 
     // Use process.resourcesPath in production, fallback to __dirname in development
-    const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+    const baseDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
     const deamons_path = path.join(baseDir, 'electros-daemons', platform, arch);
     console.log(`The deamons path is: ${deamons_path}`);
     
@@ -507,13 +507,85 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
     }
 });
 
-// Add cleanup handler when app is quitting
+// First, let's define our cleanup function separately so we can reuse it
+function cleanupRDPProcess(webContents, port) {
+    // Release the port
+    if (port) {
+        releasePort(parseInt(port));
+    }
+    
+    // Kill the mstsc process if it exists
+    if (webContents.mstscProcess) {
+        try {
+            const proc = webContents.mstscProcess;
+            
+            if (platform === 'mac' || platform === 'linux') {
+                // On Unix systems, kill the entire process group
+                try {
+                    process.kill(-proc.pid, 'SIGTERM');
+                    setTimeout(() => {
+                        try {
+                            process.kill(-proc.pid, 'SIGKILL');
+                        } catch (e) {
+                            // Process already dead, ignore
+                        }
+                    }, 1000);
+                } catch (err) {
+                    if (err.code !== 'ESRCH') {
+                        console.error('Error killing mstsc process group:', err);
+                    }
+                }
+            } else if (platform === 'win') {
+                // On Windows, use taskkill to force kill the process tree
+                try {
+                    spawn('taskkill', ['/pid', proc.pid.toString(), '/T', '/F']);
+                } catch (err) {
+                    console.error('Error killing mstsc process on Windows:', err);
+                }
+            }
+            
+            // Also try to kill the process directly
+            try {
+                if (!proc.killed) {
+                    proc.kill('SIGTERM');
+                    setTimeout(() => {
+                        try {
+                            if (!proc.killed) {
+                                proc.kill('SIGKILL');
+                            }
+                        } catch (e) {
+                            // Process already dead, ignore
+                        }
+                    }, 1000);
+                }
+            } catch (err) {
+                if (err.code !== 'ESRCH') {
+                    console.error('Error killing mstsc process directly:', err);
+                }
+            }
+        } finally {
+            // Clear the process reference
+            webContents.mstscProcess = null;
+            if (webContents.mstscPort) {
+                releasePort(parseInt(webContents.mstscPort));
+                webContents.mstscPort = null;
+            }
+        }
+    }
+}
+
+// Then modify the before-quit handler to use the cleanup function directly
 app.on('before-quit', () => {
-    console.log('Quitting app, killing daemon process');
+    console.log('Quitting app, killing processes');
     
     // Close all windows except terminal
     const windows = BrowserWindow.getAllWindows();
     windows.forEach(window => {
+        // Clean up any mstsc processes
+        if (window.webContents.mstscProcess) {
+            cleanupRDPProcess(window.webContents);
+        }
+        
         if (window !== terminalWindow && !window.isDestroyed()) {
             window.destroy();
         }
@@ -679,7 +751,7 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
         throw error;
     }
 
-    // Add this after creating the RDP window
+    // Modify the RDP window close handler
     rdpWindow.on('close', async (event) => {
         try {
             // Prevent the window from closing immediately
@@ -688,6 +760,11 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
             // Send the close event to the renderer
             if (!rdpWindow.isDestroyed()) {
                 rdpWindow.webContents.send('window-close');
+            }
+            
+            // Clean up the RDP process directly
+            if (rdpWindow.webContents.mstscProcess) {
+                cleanupRDPProcess(rdpWindow.webContents);
             }
             
             // Wait a moment for cleanup
@@ -732,10 +809,17 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
             'electros', 'remotes', 'rdp', 'mstsc-rs'
         );
 
-        const mstscProcess = spawn(mstscPath, args);
+        // Set detached option for proper process group handling on Unix systems
+        const spawnOptions = {
+            detached: platform === 'mac' || platform === 'linux',
+            env: process.env
+        };
+
+        const mstscProcess = spawn(mstscPath, args, spawnOptions);
 
         // Store process reference and port
         event.sender.mstscProcess = mstscProcess;
+        event.sender.mstscPort = ws_port;
 
         mstscProcess.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
@@ -748,7 +832,10 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
         mstscProcess.on('close', (code) => {
             console.log(`mstsc-rs process exited with code ${code}`);
             // Release the port when the process closes
-            releasePort(parseInt(ws_port));
+            if (event.sender.mstscPort) {
+                releasePort(parseInt(event.sender.mstscPort));
+                event.sender.mstscPort = null;
+            }
             // Check if the window still exists before sending the message
             if (!event.sender.isDestroyed()) {
                 event.sender.send('rdp-process-closed');
@@ -765,10 +852,9 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
     }
 });
 
+// Keep only one IPC handler for cleanup-rdp-process
 ipcMain.handle('cleanup-rdp-process', (event, port) => {
-    if (port) {
-        releasePort(parseInt(port));
-    }
+    cleanupRDPProcess(event.sender, port);
 });
 
 ipcMain.handle('open-ssh', async (event, connectionDetails) => {
