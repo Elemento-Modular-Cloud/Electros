@@ -180,7 +180,7 @@ function getDaemonCommand() {
     const deamons_path = path.join(baseDir, 'electros-daemons', platform, arch);
     console.log(`The deamons path is: ${deamons_path}`);
     
-    let daemons_cmd = "";
+    let daemons_cmd = '';
     
     if (platform === 'mac') {
         daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
