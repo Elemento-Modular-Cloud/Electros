@@ -148,15 +148,39 @@ main() {
         
         download_asset "$asset_id" "$filename" "$target_dir"
 
-        if [[ "$filename" == *.dmg ]]; then
+        if [[ "$filename" == *.zip ]]; then
             echo "Extracting contents of $filename"
-            hdiutil attach "${target_dir}/${filename}"
+            unzip "${target_dir}/${filename}" -d "$target_dir"
+            # Find the DMG file inside the extracted contents
+            dmg_file=$(find "$target_dir" -name "*.dmg" -type f)
+            if [[ -n "$dmg_file" ]]; then
+                echo "Found DMG file: $dmg_file"
+                # Move the DMG file to the target directory if it's in a subdirectory
+                if [[ "$(dirname "$dmg_file")" != "$target_dir" ]]; then
+                    mv "$dmg_file" "$target_dir/"
+                fi
+                dmg_filename=$(basename "$dmg_file")
+                # Clean up everything except the DMG
+                find "$target_dir" -not -name "$dmg_filename" -not -path "$target_dir" -delete
+            fi
+            rm "${target_dir}/${filename}"
+        elif [[ "$filename" == *.tar.gz ]]; then
+            echo "Extracting contents of $filename"
+            tar -xzf "${target_dir}/${filename}" -C "$target_dir"
+            rm "${target_dir}/${filename}"
+        fi
+
+        # Now handle the DMG file that was either downloaded directly or extracted from ZIP
+        dmg_file=$(find "$target_dir" -name "*.dmg" -type f)
+        if [[ -n "$dmg_file" ]]; then
+            echo "Processing DMG file: $dmg_file"
+            hdiutil attach "$dmg_file"
             dmg_mount_point="/Volumes/Elemento_daemons"
             echo "Mount point: ${dmg_mount_point}"
             ls -la "${dmg_mount_point}"
             rsync -E -p -t -r -l "${dmg_mount_point}/elemento_client_daemons.app" "$target_dir/"
             hdiutil detach "${dmg_mount_point}"
-            rm "${target_dir}/${filename}"
+            rm "$dmg_file"
         fi
     done
 }

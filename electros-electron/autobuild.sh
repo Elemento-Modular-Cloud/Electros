@@ -1,5 +1,6 @@
 #! /bin/bash
 script_dir="$(cd "$(dirname "$0")" && pwd)"
+source "${script_dir}/venv/bin/activate" || exit 1
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
