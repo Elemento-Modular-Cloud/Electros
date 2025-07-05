@@ -13,7 +13,7 @@
         "email": "gabriele.fronze@elemento.cloud"
     },
     "scripts": {
-        "start": "electron . --trace-warnings",
+        "start": "electron . --trace-warnings --enable-logging --v=1 --js-flags=\"--max-old-space-size=4096\"",
         "build": "electron-builder",
         "pack": "electron-builder --dir"
     },

@@ -16,6 +16,12 @@ let terminalWindow = null;
 let daemonProcess = null;
 let tray = null;
 
+// Add buffering variables for daemon output
+let stdoutBuffer = '';
+let stderrBuffer = '';
+const BUFFER_SIZE = 1024; // 1KB chunks
+let flushInterval = null;
+
 let platform = os.platform();
 
 const commonWindowOptions = {
@@ -32,17 +38,37 @@ const defaultWindowOptions = {
     alwaysOnTop: false
 }
 
+// Pre-load CSS files to avoid synchronous file reading during startup
+let themesCSS = null;
+let formControlsCSS = null;
+let titlebarCSS = null;
+let titlebarJS = null;
+
+function preloadCSSFiles() {
+    try {
+        themesCSS = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8');
+        formControlsCSS = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8');
+        titlebarCSS = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8');
+        titlebarJS = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8');
+    } catch (error) {
+        console.error('Error preloading CSS files:', error);
+    }
+}
+
+// Pre-load files before creating windows
+preloadCSSFiles();
+
 const themesLoaderJS = `
     // Create and load CSS inline
     var theme = document.createElement('style');
-    theme.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8'))};
+    theme.textContent = ${JSON.stringify(themesCSS || '')};
     document.head.appendChild(theme);
 `
 
 const formStyleLoaderJS = `
     // Create and load CSS inline
     var formstyle = document.createElement('style');
-    formstyle.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8'))};
+    formstyle.textContent = ${JSON.stringify(formControlsCSS || '')};
     document.head.appendChild(formstyle);
 `
 
@@ -53,7 +79,7 @@ const titlebarCustomJS = `
     ${formStyleLoaderJS}
 
     var style = document.createElement('style');
-    style.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8'))};
+    style.textContent = ${JSON.stringify(titlebarCSS || '')};
     document.head.appendChild(style);
 
     console.log('Titlebar CSS loaded');
@@ -75,7 +101,7 @@ const titlebarCustomJS = `
     console.log('Titlebar inserted into body');
     
     // Load and execute titlebar.js content
-    ${fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8')}
+    ${titlebarJS || ''}
 
     console.log('Titlebar.js loaded');  
     
@@ -141,17 +167,15 @@ const menuTemplate = [
 ]
 
 const activePorts = new Set();
+let nextPort = 49152;
 
 function getAvailablePort() {
-    const MIN_PORT = 49152;
-    const MAX_PORT = 65535;
-    let port;
-    do {
-        port = Math.floor(Math.random() * (MAX_PORT - MIN_PORT) + MIN_PORT);
-    } while (activePorts.has(port));
-    
-    activePorts.add(port);
-    return port;
+    while (activePorts.has(nextPort)) {
+        nextPort++;
+        if (nextPort > 65535) nextPort = 49152;
+    }
+    activePorts.add(nextPort);
+    return nextPort++;
 }
 
 function releasePort(port) {
@@ -241,7 +265,10 @@ function createMainWindow() {
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         }
     });
 
@@ -279,7 +306,11 @@ function createTerminalWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false,
+            webSecurity: false
         },
         backgroundColor: '#000000',
         title: 'Electros Daemons'
@@ -295,24 +326,45 @@ function createTerminalWindow() {
             env: {
                 ...process.env,
                 GUI_APP: '1'
+            },
+            stdio: ['pipe', 'pipe', 'pipe'],
+            detached: false
+        });
+
+        // Buffered process output to the renderer
+        daemonProcess.stdout.on('data', (data) => {
+            stdoutBuffer += data.toString();
+            if (stdoutBuffer.length >= BUFFER_SIZE) {
+                terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+                stdoutBuffer = '';
             }
         });
 
-        // Send process output to the renderer
-        daemonProcess.stdout.on('data', (data) => {
-            terminalWindow.webContents.send('terminal-output', data.toString());
-        });
-
         daemonProcess.stderr.on('data', (data) => {
-            terminalWindow.webContents.send('terminal-output', data.toString());
+            stderrBuffer += data.toString();
+            if (stderrBuffer.length >= BUFFER_SIZE) {
+                terminalWindow.webContents.send('terminal-output', stderrBuffer);
+                stderrBuffer = '';
+            }
         });
 
         daemonProcess.on('error', (error) => {
             terminalWindow.webContents.send('terminal-output', `Error: ${error.message}\n`);
         });
-    });
 
-    terminalWindow.webContents.on('did-finish-load', () => {
+        // Set up periodic buffer flushing
+        flushInterval = setInterval(() => {
+            if (stdoutBuffer) {
+                terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+                stdoutBuffer = '';
+            }
+            if (stderrBuffer) {
+                terminalWindow.webContents.send('terminal-output', stderrBuffer);
+                stderrBuffer = '';
+            }
+        }, 100); // Flush every 100ms
+
+        // Inject custom titlebar
         const popupTitlebarJS = titlebarCustomJS.replace(
             'titleElement.textContent = document.title;',
             `titleElement.textContent = ${JSON.stringify(terminalWindow.title)};`
@@ -396,45 +448,40 @@ function createWindows() {
 // Add this function to set up window-specific shortcuts
 function setupWindowShortcuts(window) {
     // Keep track of registered shortcuts for this window
-    const registeredShortcuts = [];
+    const shortcuts = [];
     
     // When window is focused, set up its shortcuts
     window.on('focus', () => {
-        // First unregister any existing shortcuts to avoid conflicts
-        globalShortcut.unregisterAll();
-        
-        // For Windows/Linux: Alt+F4 closes current window instead of app
-        registeredShortcuts.push(globalShortcut.register('Alt+F4', () => {
-            const focusedWindow = BrowserWindow.getFocusedWindow();
-            if (focusedWindow) {
-                focusedWindow.close();
-                return true; // Prevent default behavior
-            }
-            // For main window, let the default Alt+F4 behavior happen
-            return false;
-        }));
-        
-        // For macOS: Cmd+Q closes current window if it's not main
-        registeredShortcuts.push(globalShortcut.register('Command+Q', () => {
-            const focusedWindow = BrowserWindow.getFocusedWindow();
-            if (focusedWindow) {
-                focusedWindow.close();
-                return true; // Prevent default quit
-            }
-            // Let the default Cmd+Q behavior happen for main window
-            return false;
-        }));
-    });
-    
-    // When window loses focus, unregister shortcuts
-    window.on('blur', () => {
-        // Unregister all shortcuts when window loses focus
-        globalShortcut.unregisterAll();
+        // Only register if not already registered
+        if (shortcuts.length === 0) {
+            // For Windows/Linux: Alt+F4 closes current window instead of app
+            shortcuts.push(globalShortcut.register('Alt+F4', () => {
+                const focusedWindow = BrowserWindow.getFocusedWindow();
+                if (focusedWindow) {
+                    focusedWindow.close();
+                    return true; // Prevent default behavior
+                }
+                // For main window, let the default Alt+F4 behavior happen
+                return false;
+            }));
+            
+            // For macOS: Cmd+Q closes current window if it's not main
+            shortcuts.push(globalShortcut.register('Command+Q', () => {
+                const focusedWindow = BrowserWindow.getFocusedWindow();
+                if (focusedWindow) {
+                    focusedWindow.close();
+                    return true; // Prevent default quit
+                }
+                // Let the default Cmd+Q behavior happen for main window
+                return false;
+            }));
+        }
     });
     
     // Clean up when window is closed
     window.on('closed', () => {
-        globalShortcut.unregisterAll();
+        shortcuts.forEach(shortcut => globalShortcut.unregister(shortcut));
+        shortcuts.length = 0; // Clear the array
     });
 }
 
@@ -452,7 +499,10 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         },
         ...options
     });
@@ -577,6 +627,22 @@ function cleanupRDPProcess(webContents, port) {
 // Then modify the before-quit handler to use the cleanup function directly
 app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
+    
+    // Clean up flush interval
+    if (flushInterval) {
+        clearInterval(flushInterval);
+        flushInterval = null;
+    }
+    
+    // Flush any remaining buffers
+    if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+        stdoutBuffer = '';
+    }
+    if (stderrBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.webContents.send('terminal-output', stderrBuffer);
+        stderrBuffer = '';
+    }
     
     // Close all windows except terminal
     const windows = BrowserWindow.getAllWindows();
@@ -705,7 +771,10 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         }
     });
 
@@ -867,7 +936,10 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         }
     });
 
