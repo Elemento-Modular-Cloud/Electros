@@ -183,21 +183,21 @@ function getDaemonCommand() {
     let daemons_cmd = '';
     
     if (platform === 'mac') {
-        daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
+        daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemonsFAIL");
     } else if (platform === 'linux') {
         if (arch === 'arm64') {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_arm`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_arm`);
         } else {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_x86`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_x86`);
         }
     } else if (platform === 'win') {
         if (arch === 'x64' || arch === 'x86') {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x86.exe`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x86.exe`);
             if (!fs.existsSync(daemons_cmd)) {
-                daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x64.exe`);
+                daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x64.exe`);
             }
         } else {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_arm64.exe`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_arm64.exe`);
         }
     }
 
