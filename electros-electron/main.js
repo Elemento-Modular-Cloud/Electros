@@ -207,7 +207,7 @@ function getDaemonCommand() {
     let daemons_cmd = '';
     
     if (platform === 'mac') {
-        daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemonsFAIL");
+        daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
     } else if (platform === 'linux') {
         if (arch === 'arm64') {
             daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_arm`);
@@ -455,7 +455,7 @@ function setupWindowShortcuts(window) {
         // Only register if not already registered
         if (shortcuts.length === 0) {
             // For Windows/Linux: Alt+F4 closes current window instead of app
-            shortcuts.push(globalShortcut.register('Alt+F4', () => {
+            const altF4Registered = globalShortcut.register('Alt+F4', () => {
                 const focusedWindow = BrowserWindow.getFocusedWindow();
                 if (focusedWindow) {
                     focusedWindow.close();
@@ -463,10 +463,13 @@ function setupWindowShortcuts(window) {
                 }
                 // For main window, let the default Alt+F4 behavior happen
                 return false;
-            }));
+            });
+            if (altF4Registered) {
+                shortcuts.push('Alt+F4');
+            }
             
             // For macOS: Cmd+Q closes current window if it's not main
-            shortcuts.push(globalShortcut.register('Command+Q', () => {
+            const cmdQRegistered = globalShortcut.register('Command+Q', () => {
                 const focusedWindow = BrowserWindow.getFocusedWindow();
                 if (focusedWindow) {
                     focusedWindow.close();
@@ -474,7 +477,10 @@ function setupWindowShortcuts(window) {
                 }
                 // Let the default Cmd+Q behavior happen for main window
                 return false;
-            }));
+            });
+            if (cmdQRegistered) {
+                shortcuts.push('Command+Q');
+            }
         }
     });
     
