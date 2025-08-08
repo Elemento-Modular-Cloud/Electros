@@ -135,6 +135,7 @@ jobs:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           if [ ${{ matrix.os }} == "mac" ]; then
             # Create keychain
