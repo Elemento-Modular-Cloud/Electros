@@ -16,6 +16,12 @@ let terminalWindow = null;
 let daemonProcess = null;
 let tray = null;
 
+// Add buffering variables for daemon output
+let stdoutBuffer = '';
+let stderrBuffer = '';
+const BUFFER_SIZE = 1024; // 1KB chunks
+let flushInterval = null;
+
 let platform = os.platform();
 
 const commonWindowOptions = {
@@ -32,17 +38,37 @@ const defaultWindowOptions = {
     alwaysOnTop: false
 }
 
+// Pre-load CSS files to avoid synchronous file reading during startup
+let themesCSS = null;
+let formControlsCSS = null;
+let titlebarCSS = null;
+let titlebarJS = null;
+
+function preloadCSSFiles() {
+    try {
+        themesCSS = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8');
+        formControlsCSS = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8');
+        titlebarCSS = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8');
+        titlebarJS = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8');
+    } catch (error) {
+        console.error('Error preloading CSS files:', error);
+    }
+}
+
+// Pre-load files before creating windows
+preloadCSSFiles();
+
 const themesLoaderJS = `
     // Create and load CSS inline
     var theme = document.createElement('style');
-    theme.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8'))};
+    theme.textContent = ${JSON.stringify(themesCSS || '')};
     document.head.appendChild(theme);
 `
 
 const formStyleLoaderJS = `
     // Create and load CSS inline
     var formstyle = document.createElement('style');
-    formstyle.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8'))};
+    formstyle.textContent = ${JSON.stringify(formControlsCSS || '')};
     document.head.appendChild(formstyle);
 `
 
@@ -53,7 +79,7 @@ const titlebarCustomJS = `
     ${formStyleLoaderJS}
 
     var style = document.createElement('style');
-    style.textContent = ${JSON.stringify(fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8'))};
+    style.textContent = ${JSON.stringify(titlebarCSS || '')};
     document.head.appendChild(style);
 
     console.log('Titlebar CSS loaded');
@@ -75,11 +101,11 @@ const titlebarCustomJS = `
     console.log('Titlebar inserted into body');
     
     // Load and execute titlebar.js content
-    ${fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8')}
+    ${titlebarJS || ''}
 
     console.log('Titlebar.js loaded');  
     
-    initializeTitlebar();
+    initializeTitlebar(options = { minimizeOnly: false });
 
     console.log('Titlebar initialized');
 
@@ -141,17 +167,15 @@ const menuTemplate = [
 ]
 
 const activePorts = new Set();
+let nextPort = 49152;
 
 function getAvailablePort() {
-    const MIN_PORT = 49152;
-    const MAX_PORT = 65535;
-    let port;
-    do {
-        port = Math.floor(Math.random() * (MAX_PORT - MIN_PORT) + MIN_PORT);
-    } while (activePorts.has(port));
-    
-    activePorts.add(port);
-    return port;
+    while (activePorts.has(nextPort)) {
+        nextPort++;
+        if (nextPort > 65535) nextPort = 49152;
+    }
+    activePorts.add(nextPort);
+    return nextPort++;
 }
 
 function releasePort(port) {
@@ -176,28 +200,28 @@ function getDaemonCommand() {
     }
 
     // Use process.resourcesPath in production, fallback to __dirname in development
-    const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+    const baseDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
     const deamons_path = path.join(baseDir, 'electros-daemons', platform, arch);
     console.log(`The deamons path is: ${deamons_path}`);
     
-    let daemons_cmd = "";
+    let daemons_cmd = '';
     
     if (platform === 'mac') {
         daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
     } else if (platform === 'linux') {
         if (arch === 'arm64') {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_arm`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_arm`);
         } else {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_linux_x86`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_x86`);
         }
     } else if (platform === 'win') {
         if (arch === 'x64' || arch === 'x86') {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x86.exe`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x86.exe`);
             if (!fs.existsSync(daemons_cmd)) {
-                daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_x64.exe`);
+                daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x64.exe`);
             }
         } else {
-            daemons_cmd = path.join(deamons_path, `Elemento_Daemons_win_arm64.exe`);
+            daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_arm64.exe`);
         }
     }
 
@@ -241,7 +265,10 @@ function createMainWindow() {
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         }
     });
 
@@ -275,16 +302,21 @@ function createTerminalWindow() {
         height: 600,
         ...commonWindowOptions,
         show: false,
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false,
+            webSecurity: false
         },
-        backgroundColor: '#000000', // Add dark background
+        backgroundColor: '#000000',
         title: 'Electros Daemons'
     });
 
-    terminalWindow.loadFile('terminal.html');
+    terminalWindow.loadFile('terminal/terminal.html');
 
     // Wait for the terminal window to be ready
     terminalWindow.webContents.on('did-finish-load', () => {
@@ -294,21 +326,54 @@ function createTerminalWindow() {
             env: {
                 ...process.env,
                 GUI_APP: '1'
+            },
+            stdio: ['pipe', 'pipe', 'pipe'],
+            detached: false
+        });
+
+        // Buffered process output to the renderer
+        daemonProcess.stdout.on('data', (data) => {
+            stdoutBuffer += data.toString();
+            if (stdoutBuffer.length >= BUFFER_SIZE) {
+                terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+                stdoutBuffer = '';
             }
         });
 
-        // Send process output to the renderer
-        daemonProcess.stdout.on('data', (data) => {
-            terminalWindow.webContents.send('terminal-output', data.toString());
-        });
-
         daemonProcess.stderr.on('data', (data) => {
-            terminalWindow.webContents.send('terminal-output', data.toString());
+            stderrBuffer += data.toString();
+            if (stderrBuffer.length >= BUFFER_SIZE) {
+                terminalWindow.webContents.send('terminal-output', stderrBuffer);
+                stderrBuffer = '';
+            }
         });
 
         daemonProcess.on('error', (error) => {
             terminalWindow.webContents.send('terminal-output', `Error: ${error.message}\n`);
         });
+
+        // Set up periodic buffer flushing
+        flushInterval = setInterval(() => {
+            if (stdoutBuffer) {
+                terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+                stdoutBuffer = '';
+            }
+            if (stderrBuffer) {
+                terminalWindow.webContents.send('terminal-output', stderrBuffer);
+                stderrBuffer = '';
+            }
+        }, 100); // Flush every 100ms
+
+        // Inject custom titlebar
+        const popupTitlebarJS = titlebarCustomJS.replace(
+            'titleElement.textContent = document.title;',
+            `titleElement.textContent = ${JSON.stringify(terminalWindow.title)};`
+        ).replace(
+            'initializeTitlebar(options = { minimizeOnly: false });',
+            'initializeTitlebar(options = { minimizeOnly: true });'
+        );
+        
+        terminalWindow.webContents.executeJavaScript(popupTitlebarJS);
     });
 
     // Create tray icon if it doesn't exist
@@ -351,6 +416,15 @@ function createTerminalWindow() {
         event.preventDefault(); // Prevent window from closing
         terminalWindow.hide(); // Hide instead of close
     });
+
+    // Add IPC handlers for window controls
+    ipcMain.on('minimize-window', () => {
+        terminalWindow.minimize();
+    });
+
+    ipcMain.on('hide-window', () => {
+        terminalWindow.hide();
+    });
 }
 
 function createWindows() {
@@ -374,45 +448,46 @@ function createWindows() {
 // Add this function to set up window-specific shortcuts
 function setupWindowShortcuts(window) {
     // Keep track of registered shortcuts for this window
-    const registeredShortcuts = [];
+    const shortcuts = [];
     
     // When window is focused, set up its shortcuts
     window.on('focus', () => {
-        // First unregister any existing shortcuts to avoid conflicts
-        globalShortcut.unregisterAll();
-        
-        // For Windows/Linux: Alt+F4 closes current window instead of app
-        registeredShortcuts.push(globalShortcut.register('Alt+F4', () => {
-            const focusedWindow = BrowserWindow.getFocusedWindow();
-            if (focusedWindow) {
-                focusedWindow.close();
-                return true; // Prevent default behavior
+        // Only register if not already registered
+        if (shortcuts.length === 0) {
+            // For Windows/Linux: Alt+F4 closes current window instead of app
+            const altF4Registered = globalShortcut.register('Alt+F4', () => {
+                const focusedWindow = BrowserWindow.getFocusedWindow();
+                if (focusedWindow) {
+                    focusedWindow.close();
+                    return true; // Prevent default behavior
+                }
+                // For main window, let the default Alt+F4 behavior happen
+                return false;
+            });
+            if (altF4Registered) {
+                shortcuts.push('Alt+F4');
             }
-            // For main window, let the default Alt+F4 behavior happen
-            return false;
-        }));
-        
-        // For macOS: Cmd+Q closes current window if it's not main
-        registeredShortcuts.push(globalShortcut.register('Command+Q', () => {
-            const focusedWindow = BrowserWindow.getFocusedWindow();
-            if (focusedWindow) {
-                focusedWindow.close();
-                return true; // Prevent default quit
+            
+            // For macOS: Cmd+Q closes current window if it's not main
+            const cmdQRegistered = globalShortcut.register('Command+Q', () => {
+                const focusedWindow = BrowserWindow.getFocusedWindow();
+                if (focusedWindow) {
+                    focusedWindow.close();
+                    return true; // Prevent default quit
+                }
+                // Let the default Cmd+Q behavior happen for main window
+                return false;
+            });
+            if (cmdQRegistered) {
+                shortcuts.push('Command+Q');
             }
-            // Let the default Cmd+Q behavior happen for main window
-            return false;
-        }));
-    });
-    
-    // When window loses focus, unregister shortcuts
-    window.on('blur', () => {
-        // Unregister all shortcuts when window loses focus
-        globalShortcut.unregisterAll();
+        }
     });
     
     // Clean up when window is closed
     window.on('closed', () => {
-        globalShortcut.unregisterAll();
+        shortcuts.forEach(shortcut => globalShortcut.unregister(shortcut));
+        shortcuts.length = 0; // Clear the array
     });
 }
 
@@ -430,7 +505,10 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         },
         ...options
     });
@@ -485,13 +563,101 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
     }
 });
 
-// Add cleanup handler when app is quitting
+// First, let's define our cleanup function separately so we can reuse it
+function cleanupRDPProcess(webContents, port) {
+    // Release the port
+    if (port) {
+        releasePort(parseInt(port));
+    }
+    
+    // Kill the mstsc process if it exists
+    if (webContents.mstscProcess) {
+        try {
+            const proc = webContents.mstscProcess;
+            
+            if (platform === 'mac' || platform === 'linux') {
+                // On Unix systems, kill the entire process group
+                try {
+                    process.kill(-proc.pid, 'SIGTERM');
+                    setTimeout(() => {
+                        try {
+                            process.kill(-proc.pid, 'SIGKILL');
+                        } catch (e) {
+                            // Process already dead, ignore
+                        }
+                    }, 1000);
+                } catch (err) {
+                    if (err.code !== 'ESRCH') {
+                        console.error('Error killing mstsc process group:', err);
+                    }
+                }
+            } else if (platform === 'win') {
+                // On Windows, use taskkill to force kill the process tree
+                try {
+                    spawn('taskkill', ['/pid', proc.pid.toString(), '/T', '/F']);
+                } catch (err) {
+                    console.error('Error killing mstsc process on Windows:', err);
+                }
+            }
+            
+            // Also try to kill the process directly
+            try {
+                if (!proc.killed) {
+                    proc.kill('SIGTERM');
+                    setTimeout(() => {
+                        try {
+                            if (!proc.killed) {
+                                proc.kill('SIGKILL');
+                            }
+                        } catch (e) {
+                            // Process already dead, ignore
+                        }
+                    }, 1000);
+                }
+            } catch (err) {
+                if (err.code !== 'ESRCH') {
+                    console.error('Error killing mstsc process directly:', err);
+                }
+            }
+        } finally {
+            // Clear the process reference
+            webContents.mstscProcess = null;
+            if (webContents.mstscPort) {
+                releasePort(parseInt(webContents.mstscPort));
+                webContents.mstscPort = null;
+            }
+        }
+    }
+}
+
+// Then modify the before-quit handler to use the cleanup function directly
 app.on('before-quit', () => {
-    console.log('Quitting app, killing daemon process');
+    console.log('Quitting app, killing processes');
+    
+    // Clean up flush interval
+    if (flushInterval) {
+        clearInterval(flushInterval);
+        flushInterval = null;
+    }
+    
+    // Flush any remaining buffers
+    if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+        stdoutBuffer = '';
+    }
+    if (stderrBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.webContents.send('terminal-output', stderrBuffer);
+        stderrBuffer = '';
+    }
     
     // Close all windows except terminal
     const windows = BrowserWindow.getAllWindows();
     windows.forEach(window => {
+        // Clean up any mstsc processes
+        if (window.webContents.mstscProcess) {
+            cleanupRDPProcess(window.webContents);
+        }
+        
         if (window !== terminalWindow && !window.isDestroyed()) {
             window.destroy();
         }
@@ -611,7 +777,10 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         }
     });
 
@@ -657,7 +826,7 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
         throw error;
     }
 
-    // Add this after creating the RDP window
+    // Modify the RDP window close handler
     rdpWindow.on('close', async (event) => {
         try {
             // Prevent the window from closing immediately
@@ -666,6 +835,11 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
             // Send the close event to the renderer
             if (!rdpWindow.isDestroyed()) {
                 rdpWindow.webContents.send('window-close');
+            }
+            
+            // Clean up the RDP process directly
+            if (rdpWindow.webContents.mstscProcess) {
+                cleanupRDPProcess(rdpWindow.webContents);
             }
             
             // Wait a moment for cleanup
@@ -702,10 +876,25 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
             '--ws_port', ws_port
         ];
 
-        const mstscProcess = spawn('electros/remotes/rdp/mstsc-rs', args);
+        // Use process.resourcesPath in production, fallback to __dirname in development
+        const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+        const mstscPath = path.join(
+            baseDir,
+            app.isPackaged ? 'app.asar.unpacked' : '',
+            'electros', 'remotes', 'rdp', 'mstsc-rs'
+        );
+
+        // Set detached option for proper process group handling on Unix systems
+        const spawnOptions = {
+            detached: platform === 'mac' || platform === 'linux',
+            env: process.env
+        };
+
+        const mstscProcess = spawn(mstscPath, args, spawnOptions);
 
         // Store process reference and port
         event.sender.mstscProcess = mstscProcess;
+        event.sender.mstscPort = ws_port;
 
         mstscProcess.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
@@ -718,7 +907,10 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
         mstscProcess.on('close', (code) => {
             console.log(`mstsc-rs process exited with code ${code}`);
             // Release the port when the process closes
-            releasePort(parseInt(ws_port));
+            if (event.sender.mstscPort) {
+                releasePort(parseInt(event.sender.mstscPort));
+                event.sender.mstscPort = null;
+            }
             // Check if the window still exists before sending the message
             if (!event.sender.isDestroyed()) {
                 event.sender.send('rdp-process-closed');
@@ -735,10 +927,9 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
     }
 });
 
+// Keep only one IPC handler for cleanup-rdp-process
 ipcMain.handle('cleanup-rdp-process', (event, port) => {
-    if (port) {
-        releasePort(parseInt(port));
-    }
+    cleanupRDPProcess(event.sender, port);
 });
 
 ipcMain.handle('open-ssh', async (event, connectionDetails) => {
@@ -751,19 +942,30 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8
+            zoomFactor: 0.8,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
         }
     });
 
+    var ssh_port = undefined;
+
     try {
         // Get an available port for the SSH server
-        const ssh_port = getAvailablePort().toString();
+        ssh_port = getAvailablePort().toString();
 
         console.log("connectionDetails: ", connectionDetails)
+        const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+        const sshPath = path.join(
+            baseDir,
+            app.isPackaged ? 'app.asar.unpacked' : '',
+            'electros', 'remotes', 'ssh', 'ssh.js'
+        );
 
         // Start the SSH server process
-        const sshServer = require('./electros/remotes/ssh/ssh.js');
-        await sshServer.runSSHServer(ssh_port, connectionDetails.ip, connectionDetails.username, connectionDetails.password);
+        const sshServer = require(sshPath);
+        await sshServer.runSSHServer(ssh_port, baseDir);
 
         // Store port reference
         event.sender.ssh_port = ssh_port;

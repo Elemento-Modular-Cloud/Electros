@@ -1,4 +1,5 @@
 :root {
+    --titlebar-height: 34px;
     --mac-button-outer-size: 16px;
     --mac-button-glow-size: calc(var(--mac-button-outer-size) - 4px);
     --mac-button-icon-size: calc(var(--mac-button-glow-size) * 0.65 );
@@ -8,7 +9,7 @@
 
 .electros-titlebar {
     -webkit-app-region: drag;
-    height: 43px;
+    height: var(--titlebar-height);
     width: 100%;
     z-index: 100000;
     /* background: purple; */
@@ -19,11 +20,12 @@
 }
 .electros-titlebar * {
     font-family: var(--font-primary);
+    font-weight: 900;
 }
 
 .electros-titlebar-title {
-    font-size: 17px;
-    line-height: 43px;
+    font-size: calc(var(--titlebar-height) * 0.5);
+    line-height: var(--titlebar-height);
     width: 100%;
     text-align: center;
     font-weight: 500;
@@ -54,7 +56,7 @@
     border: none;
     /* cursor: pointer; */
     border-radius: 50%;
-    margin: calc((43px - 16px) / 2) 5px;
+    margin: calc((var(--titlebar-height) - var(--mac-button-outer-size)) / 2) 5px;
     padding: 0;
     position: relative;
 }
