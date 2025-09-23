@@ -2,9 +2,9 @@ name: Build Electron App
 
 on:
   push:
-    branches: [ main, master ]  # Trigger on push to main/master
+    branches: [ main, master, develop ]  # Trigger on push to main/master
   pull_request:
-    branches: [ main, master ]  # Trigger on PRs to main/master
+    branches: [ main, master, develop ]  # Trigger on PRs to main/master
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
