@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, Tray, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Tray, Notification, nativeTheme } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -158,6 +158,37 @@ const menuTemplate = [
     {
         label: 'Developer',
         submenu:[
+            {
+                label: 'Terminate Daemons',
+                click: async () => {
+                    console.log("manual daemon termination triggered");
+                    try {
+                        if (daemonProcess === null) {
+                            killDaemons(true);
+                        }
+
+                        if(Notification.isSupported()) {
+                            new Notification({
+                                title: "Daemons Terminated",
+                                body: "Electros Client Daemons successfully terminated.",
+                                silent: true,
+                                icon: './electros.iconset/icon_256x256.png',
+                                urgency: 'low'
+                            }).show();
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        if(Notification.isSupported()) {
+                            new Notification({
+                                title: "Failed to Terminate Daemons",
+                                body: "Electros Client Daemons were not terminated.",
+                                silent: true,
+                                urgency: 'low'
+                            }).show();
+                        }
+                    }
+                }
+            },
             {label: 'Reload', role: 'reload'},
             {label: 'Toggle DevTools', role: 'toggleDevTools'},
             {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
@@ -630,40 +661,7 @@ function cleanupRDPProcess(webContents, port) {
     }
 }
 
-// Then modify the before-quit handler to use the cleanup function directly
-app.on('before-quit', () => {
-    console.log('Quitting app, killing processes');
-    
-    // Clean up flush interval
-    if (flushInterval) {
-        clearInterval(flushInterval);
-        flushInterval = null;
-    }
-    
-    // Flush any remaining buffers
-    if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
-        terminalWindow.webContents.send('terminal-output', stdoutBuffer);
-        stdoutBuffer = '';
-    }
-    if (stderrBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
-        terminalWindow.webContents.send('terminal-output', stderrBuffer);
-        stderrBuffer = '';
-    }
-    
-    // Close all windows except terminal
-    const windows = BrowserWindow.getAllWindows();
-    windows.forEach(window => {
-        // Clean up any mstsc processes
-        if (window.webContents.mstscProcess) {
-            cleanupRDPProcess(window.webContents);
-        }
-        
-        if (window !== terminalWindow && !window.isDestroyed()) {
-            window.destroy();
-        }
-    });
-
-    // Kill daemon process
+function killDaemons(rethrowExceptions = false) {
     if (daemonProcess) {
         if (platform === 'mac') {
             try {
@@ -677,6 +675,8 @@ app.on('before-quit', () => {
                 } else {
                     console.error('Error killing daemon process on macOS:', err);
                 }
+
+                if(rethrowExceptions) throw err;
             }
         } else if (platform === 'linux' && daemonProcess.pid) {
             try {
@@ -688,9 +688,11 @@ app.on('before-quit', () => {
                 } else {
                     console.error('Error killing daemon process group:', err);
                 }
+
+                if(rethrowExceptions) throw err;
             }
         }
-        
+
         try {
             if (!daemonProcess.killed) {
                 daemonProcess.kill();
@@ -701,8 +703,47 @@ app.on('before-quit', () => {
             } else {
                 console.error('Error killing daemon process:', err);
             }
+
+            if(rethrowExceptions) throw err;
         }
     }
+}
+
+// Then modify the before-quit handler to use the cleanup function directly
+app.on('before-quit', () => {
+    console.log('Quitting app, killing processes');
+
+    // Clean up flush interval
+    if (flushInterval) {
+        clearInterval(flushInterval);
+        flushInterval = null;
+    }
+
+    // Flush any remaining buffers
+    if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+        stdoutBuffer = '';
+    }
+    if (stderrBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+        terminalWindow.webContents.send('terminal-output', stderrBuffer);
+        stderrBuffer = '';
+    }
+
+    // Close all windows except terminal
+    const windows = BrowserWindow.getAllWindows();
+    windows.forEach(window => {
+        // Clean up any mstsc processes
+        if (window.webContents.mstscProcess) {
+            cleanupRDPProcess(window.webContents);
+        }
+
+        if (window !== terminalWindow && !window.isDestroyed()) {
+            window.destroy();
+        }
+    });
+
+    // Kill daemon process
+    killDaemons();
 
     // Finally destroy the terminal window
     if (terminalWindow && !terminalWindow.isDestroyed()) {
@@ -1020,4 +1061,12 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         }
         throw error;
     }
+});
+
+app.on('renderer-process-crashed', (event, webContents, killed) => {
+  console.error('Renderer crashed:', killed);
+});
+
+app.on('child-process-gone', (event, details) => {
+  console.error('Child process gone:', details);
 });
