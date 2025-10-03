@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, Tray, Notification, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Tray, Notification, nativeTheme , shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -902,6 +902,14 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
     return rdpWindow.id;
 });
 
+ipcMain.handle('os-prefers-dark-theme', (event) => {
+    return nativeTheme?.shouldUseDarkColors ?? false;
+})
+
+ipcMain.handle('os-prefers-reduced-transparency', (event) => {
+    return nativeTheme?.prefersReducedTransparency  ?? false;
+})
+
 // Add these IPC handlers
 ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height }) => {
     try {
@@ -972,6 +980,12 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
 ipcMain.handle('cleanup-rdp-process', (event, port) => {
     cleanupRDPProcess(event.sender, port);
 });
+
+ipcMain.handle('open-browser', async (event, {
+        url
+    }) => {
+    await shell.openExternal(url);
+})
 
 ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     const sshWindow = new BrowserWindow({

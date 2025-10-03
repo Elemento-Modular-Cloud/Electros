@@ -88,7 +88,8 @@
             "icon": "electros.iconset",
             "target": [
                 "AppImage",
-                "deb"
+                "deb",
+                "rpm"
             ],
             "maintainer": "Gabriele Fronzé <gabriele.fronze@elemento.cloud>",
             "category": "Utility"
@@ -117,7 +118,7 @@
         ]
     },
     "devDependencies": {
-        "electron": "^29.1.0",
+        "electron": "^35.7.5",
         "electron-builder": "^25.1.8"
     },
     "overrides": {

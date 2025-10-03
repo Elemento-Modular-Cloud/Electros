@@ -15,7 +15,10 @@ contextBridge.exposeInMainWorld('electron', {
             'open-rdp',
             'launch-rdp-process',
             'cleanup-rdp-process',
-            'check-port'
+            'check-port',
+            'os-prefers-dark-theme',
+            'os-prefers-reduced-transparency',
+            'open-browser'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
