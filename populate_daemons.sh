@@ -24,6 +24,26 @@ get_latest_release() {
     echo "$version"
 }
 
+get_latest_release_beta() {
+    local repo="Elemento-Modular-Cloud/elemento-monorepo-client"
+    local api_url="https://api.github.com/repos/${repo}/releases"
+    
+    [ -z "$GITHUB_TOKEN" ] && { echo "Error: GITHUB_TOKEN environment variable is not set" >&2; exit 1; }
+    
+    echo "Fetching beta releases from ${repo}..." >&2
+    
+    # Fetch all releases and filter for those with "beta" in the tag name, then get the first (latest) one
+    local version=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$api_url" | \
+        jq -r '.[] | select(.tag_name | test("beta"; "i")) | .tag_name' | \
+        head -1 | \
+        sed 's/^v//')
+    
+    [ -z "$version" ] || [ "$version" = "null" ] && { echo "Error: Could not find any beta release" >&2; exit 1; }
+
+    echo "Found latest beta version: $version" >&2
+    echo "$version"
+}
+
 # Function to get asset information for a specific version
 get_release_assets() {
     local version="$1"
@@ -97,6 +117,7 @@ main() {
         case $1 in
             --platform) selected_platforms+=("$2"); shift ;;
             --arch) selected_archs+=("$2"); shift ;;
+            --develop) use_beta=true ;;
         esac
         shift
     done
@@ -117,8 +138,14 @@ main() {
 
     check_requirements
     
-    # Get latest version
-    local version=$(get_latest_release)
+    # Get latest version - use beta if --develop flag is set
+    local version
+    if [ "$use_beta" = true ]; then
+        echo "Using beta releases due to --develop flag"
+        version=$(get_latest_release_beta)
+    else
+        version=$(get_latest_release)
+    fi
     echo "Processing version: $version"
     
     # Get all assets for this version
