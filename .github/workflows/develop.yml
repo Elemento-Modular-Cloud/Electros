@@ -1,10 +1,10 @@
-name: Build Electron App
+name: Build Electron App Develop
 
 on:
   push:
-    branches: [ main ]  # Trigger on push to main/master
+    branches: [ develop ]  # Trigger on push to main/master
   pull_request:
-    branches: [ main ]  # Trigger on PRs to main/master
+    branches: [ develop ]  # Trigger on PRs to main/master
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -125,7 +125,7 @@ jobs:
         run: |
           export CI_TOKEN=${{ secrets.CI_TOKEN }}
           chmod +x ./populate_daemons.sh
-          ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
+          ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --develop
         shell: bash
       
       - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
