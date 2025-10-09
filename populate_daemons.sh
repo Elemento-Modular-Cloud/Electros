@@ -31,16 +31,73 @@ get_latest_release_beta() {
     [ -z "$GITHUB_TOKEN" ] && { echo "Error: GITHUB_TOKEN environment variable is not set" >&2; exit 1; }
     
     echo "Fetching beta releases from ${repo}..." >&2
+    echo "Using API URL: $api_url" >&2
     
-    # Fetch all releases and filter for those with "beta" in the tag name, then get the first (latest) one
-    local version=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$api_url" | \
-        jq -r '.[] | select(.tag_name | test("beta"; "i")) | .tag_name' | \
-        head -1 | \
-        sed 's/^v//')
+    # Use curl without truncation and save complete response
+    echo "Making curl request..." >&2
+    local temp_file=$(mktemp)
+    local http_code
     
-    [ -z "$version" ] || [ "$version" = "null" ] && { echo "Error: Could not find any beta release" >&2; exit 1; }
+    # Download complete response to temporary file
+    http_code=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" "$api_url" -o "$temp_file")
+    
+    echo "HTTP Status Code: $http_code" >&2
+    echo "Response saved to: $temp_file" >&2
+    echo "Response size: $(wc -c < "$temp_file") bytes" >&2
+    
+    if [ "$http_code" != "200" ]; then
+        echo "Error response:" >&2
+        cat "$temp_file" >&2
+        case "$http_code" in
+            "404")
+                echo "Repository not found or no access." >&2
+                ;;
+            "401")
+                echo "Unauthorized. Token may be invalid or expired." >&2
+                ;;
+            "403")
+                echo "Forbidden. Token may lack required permissions." >&2
+                ;;
+        esac
+        rm "$temp_file"
+        exit 1
+    fi
+    
+    # Test if the JSON is valid
+    if ! jq empty < "$temp_file" 2>/dev/null; then
+        echo "Error: Invalid JSON response" >&2
+        echo "First 1000 characters of response:" >&2
+        head -c 1000 "$temp_file" >&2
+        echo -e "\n\nLast 500 characters of response:" >&2
+        tail -c 500 "$temp_file" >&2
+        
+        # Check for control characters using a macOS-compatible method
+        if cat "$temp_file" | tr -d '[:print:]\n\t' | [ -s /dev/stdin ]; then
+            echo "Found non-printable characters in response" >&2
+        fi
+        
+        rm "$temp_file"
+        exit 1
+    fi
+    
+    echo "JSON is valid, processing..." >&2
+    
+    # Find beta releases
+    local version=$(jq -r '.[] | select(.tag_name | test("beta"; "i")) | .tag_name' < "$temp_file" | head -1 | sed 's/^v//')
+    
+    if [ -z "$version" ] || [ "$version" = "null" ]; then
+        echo "Available releases (first 5):" >&2
+        jq -r '.[0:5] | .[] | .tag_name' < "$temp_file" >&2
+        echo "Error: Could not find any beta release" >&2
+        rm "$temp_file"
+        exit 1
+    fi
 
     echo "Found latest beta version: $version" >&2
+    
+    # Clean up
+    rm "$temp_file"
+    
     echo "$version"
 }
 
