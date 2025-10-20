@@ -83,11 +83,11 @@ get_latest_release_beta() {
     echo "JSON is valid, processing..." >&2
     
     # Find beta releases
-    local version=$(jq -r '.[] | select(.tag_name | test("beta"; "i")) | .tag_name' < "$temp_file" | head -1 | sed 's/^v//')
+    local version=$(jq -r '.[] | select(.tag_name | test("beta|nightly"; "i")) | .tag_name' < "$temp_file" | head -1 | sed 's/^v//')
     
     if [ -z "$version" ] || [ "$version" = "null" ]; then
-        echo "Available releases (first 5):" >&2
-        jq -r '.[0:5] | .[] | .tag_name' < "$temp_file" >&2
+        echo "Available releases (first 25):" >&2
+        jq -r '.[0:25] | .[] | .tag_name' < "$temp_file" >&2
         echo "Error: Could not find any beta release" >&2
         rm "$temp_file"
         exit 1
