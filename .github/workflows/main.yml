@@ -131,6 +131,7 @@ jobs:
       - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
         if: runner.os != 'Windows'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -156,6 +157,7 @@ jobs:
           chmod +x ./autobuild.sh
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
+
 
       - name: Upload un-notarized & un-stapled DMG artifact
         uses: actions/upload-artifact@v4
