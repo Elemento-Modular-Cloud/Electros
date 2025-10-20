@@ -105,15 +105,31 @@ get_latest_release_beta() {
 get_release_assets() {
     local version="$1"
     local repo="Elemento-Modular-Cloud/elemento-monorepo-client"
-    local api_url="https://api.github.com/repos/${repo}/releases/tags/v${version}"
     
-    echo "Fetching assets for version ${version}..." >&2
+    # Handle different tag formats - nightly releases don't have 'v' prefix
+    local tag_name
+    if [[ "$version" == nightly-* ]]; then
+        tag_name="$version"
+    else
+        tag_name="v${version}"
+    fi
+    
+    local api_url="https://api.github.com/repos/${repo}/releases/tags/${tag_name}"
+    
+    echo "Fetching assets for version ${version} (tag: ${tag_name})..." >&2
     
     local release_data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$api_url")
     [ $? -ne 0 ] && { echo "Error: Failed to fetch release data" >&2; exit 1; }
     
-    # Return array of asset_id|filename|url
-    echo "$release_data" | jq -r '.assets[] | "\(.id)|\(.name)|\(.browser_download_url)"'
+    # Check if we got a valid response
+    if echo "$release_data" | jq -e '.assets' >/dev/null 2>&1; then
+        # Return array of asset_id|filename|url
+        echo "$release_data" | jq -r '.assets[] | "\(.id)|\(.name)|\(.browser_download_url)"'
+    else
+        echo "Error: No assets found for tag ${tag_name}" >&2
+        echo "API response: $release_data" >&2
+        exit 1
+    fi
 }
 
 # Function to download a single asset
