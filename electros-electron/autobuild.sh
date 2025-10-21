@@ -14,11 +14,11 @@ done
 
 cd "${script_dir}/.."
 
-if [ ${#platforms[@]} -gt 0 ] || [ ${#user_archs[@]} -gt 0 ]; then
-    ./populate_daemons.sh --platform "${platforms[@]}" --arch "${user_archs[@]}"
-else
-    ./populate_daemons.sh
-fi
+# if [ ${#platforms[@]} -gt 0 ] || [ ${#user_archs[@]} -gt 0 ]; then
+#     ./populate_daemons.sh --platform "${platforms[@]}" --arch "${user_archs[@]}"
+# else
+#     ./populate_daemons.sh
+# fi
 
 cd "${script_dir}"
 

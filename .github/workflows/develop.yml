@@ -263,6 +263,24 @@ jobs:
           name: ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
           path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/${{ matrix.os }}-${{ matrix.arch }}-notarize.log electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
 
+      - name: Upload win exe artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'win'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe
+
+      - name: Upload linux artifacts
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'linux'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}-artifacts
+          path: |
+            electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage
+            electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.deb
+            electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.rpm
+
+
       - name: Generate checksums
         run: |
           cd electros-electron/build
