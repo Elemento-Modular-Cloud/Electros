@@ -383,10 +383,10 @@ function createTerminalWindow() {
         const popupTitlebarJS = titlebarCustomJS.replace(
             'titleElement.textContent = document.title;',
             `titleElement.textContent = ${JSON.stringify(terminalWindow.title)};`
-        ).replace(
-            'initializeTitlebar(options = { minimizeOnly: false });',
-            'initializeTitlebar(options = { minimizeOnly: true });'
-        );
+        ) //.replace(
+//            'initializeTitlebar(options = { minimizeOnly: false });',
+//            'initializeTitlebar(options = { minimizeOnly: true });'
+//        );
 
         terminalWindow.webContents.executeJavaScript(popupTitlebarJS);
     });
@@ -470,18 +470,18 @@ function setupWindowShortcuts(window) {
         // Only register if not already registered
         if (shortcuts.length === 0) {
             // For Windows/Linux: Alt+F4 closes current window instead of app
-            const altF4Registered = globalShortcut.register('Alt+F4', () => {
-                const focusedWindow = BrowserWindow.getFocusedWindow();
-                if (focusedWindow) {
-                    focusedWindow.close();
-                    return true; // Prevent default behavior
-                }
-                // For main window, let the default Alt+F4 behavior happen
-                return false;
-            });
-            if (altF4Registered) {
-                shortcuts.push('Alt+F4');
-            }
+//            const altF4Registered = globalShortcut.register('Alt+F4', () => {
+//                const focusedWindow = BrowserWindow.getFocusedWindow();
+//                if (focusedWindow) {
+//                    focusedWindow.close();
+//                    return true; // Prevent default behavior
+//                }
+//                // For main window, let the default Alt+F4 behavior happen
+//                return false;
+//            });
+//            if (altF4Registered) {
+//                shortcuts.push('Alt+F4');
+//            }
 
             // For macOS: Cmd+Q closes current window if it's not main
             // const cmdQRegistered = globalShortcut.register('Command+Q', () => {

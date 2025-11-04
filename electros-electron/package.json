@@ -1,6 +1,6 @@
 {
-    "name": "electros",
-    "version": "2.0.0",
+    "name": "Electros",
+    "version": "3.0.4",
     "description": "Electros Desktop Application",
     "main": "main.js",
     "homepage": "https://elemento.cloud",
@@ -9,8 +9,8 @@
         "url": "https://github.com/Elemento-Modular-Cloud/ElectrosGUI.git"
     },
     "author": {
-        "name": "Gabriele Fronzé",
-        "email": "gabriele.fronze@elemento.cloud"
+        "name": "Elemento Cloud Srl",
+        "email": "hello@elemento.cloud"
     },
     "scripts": {
         "start": "electron . --trace-warnings --v=1 --js-flags=\"--max-old-space-size=4096\"",
@@ -91,14 +91,14 @@
                 "deb",
                 "rpm"
             ],
-            "maintainer": "Gabriele Fronzé <gabriele.fronze@elemento.cloud>",
+            "maintainer": "Elemento Cloud Srl <hello@elemento.cloud>",
             "category": "Utility"
         },
         "compression": "maximum",
         "asar": true,
         "removePackageScripts": true,
         "removePackageKeywords": true,
-        "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+        "artifactName": "${productName}-${version}_${os}-${arch}.${ext}",
         "protocols": [
             {
                 "name": "Electros",
@@ -140,3 +140,4 @@
         "@xterm/addon-fit": "latest"
     }
 }
+
