@@ -1,6 +1,6 @@
 {
     "name": "Electros",
-    "version": "3.0.0",
+    "version": "3.0.4",
     "description": "Electros Desktop Application",
     "main": "main.js",
     "homepage": "https://elemento.cloud",
@@ -13,7 +13,6 @@
         "email": "hello@elemento.cloud"
     },
     "scripts": {
-        "prebuild": "node scripts/minify.js",
         "start": "electron . --trace-warnings --v=1 --js-flags=\"--max-old-space-size=4096\"",
         "build": "electron-builder",
         "pack": "electron-builder --dir"
