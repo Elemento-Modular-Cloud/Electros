@@ -17,7 +17,7 @@ get_latest_release() {
     
     echo "Fetching latest release info from ${repo}..." >&2
     
-    local version=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$api_url" | jq -r '.tag_name' | sed 's/^v//')
+    local version="v$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$api_url" | jq -r '.tag_name' | sed 's/^v//')"
     [ -z "$version" ] || [ "$version" = "null" ] && { echo "Error: Could not determine version number" >&2; exit 1; }
 
     echo "Found latest version: $version" >&2
@@ -26,7 +26,7 @@ get_latest_release() {
 
 get_latest_release_beta() {
     local repo="Elemento-Modular-Cloud/elemento-monorepo-client"
-    local api_url="https://api.github.com/repos/${repo}/releases"
+    local api_url="https://api.github.com/repos/${repo}/tags"
     
     [ -z "$GITHUB_TOKEN" ] && { echo "Error: GITHUB_TOKEN environment variable is not set" >&2; exit 1; }
     
@@ -42,7 +42,7 @@ get_latest_release_beta() {
     http_code=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" "$api_url" -o "$temp_file")
     
     echo "HTTP Status Code: $http_code" >&2
-    echo "Response saved to: $temp_file" >&2
+    echo "Response in $temp_file" >&2
     echo "Response size: $(wc -c < "$temp_file") bytes" >&2
     
     if [ "$http_code" != "200" ]; then
@@ -83,11 +83,11 @@ get_latest_release_beta() {
     echo "JSON is valid, processing..." >&2
     
     # Find beta releases
-    local version=$(jq -r '.[] | select(.tag_name | test("beta|nightly"; "i")) | .tag_name' < "$temp_file" | head -1 | sed 's/^v//')
+    local version=$(jq -r '.[] | select(.name | test("beta"; "i")) | .name' < "$temp_file" | head -1 | sed 's/^v//')
     
     if [ -z "$version" ] || [ "$version" = "null" ]; then
         echo "Available releases (first 25):" >&2
-        jq -r '.[0:25] | .[] | .tag_name' < "$temp_file" >&2
+        jq -r '.[0:25] | .[] | .name' < "$temp_file" >&2
         echo "Error: Could not find any beta release" >&2
         rm "$temp_file"
         exit 1
@@ -105,13 +105,16 @@ get_latest_release_beta() {
 get_release_assets() {
     local version="$1"
     local repo="Elemento-Modular-Cloud/elemento-monorepo-client"
-    local api_url="https://api.github.com/repos/${repo}/releases/tags/v${version}"
+    local api_url="https://api.github.com/repos/${repo}/releases/tags/${version}"
     
-    echo "Fetching assets for version ${version}..." >&2
+    echo "Fetching assets for version: ${version}..." >&2
+    echo "Fetching from: $api_url">&2
     
     local release_data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$api_url")
     [ $? -ne 0 ] && { echo "Error: Failed to fetch release data" >&2; exit 1; }
+
     
+    echo "Release data: $release_data" >&2
     # Return array of asset_id|filename|url
     echo "$release_data" | jq -r '.assets[] | "\(.id)|\(.name)|\(.browser_download_url)"'
 }
@@ -218,7 +221,6 @@ main() {
         # Create target directory and download
         IFS='|' read -r platform arch <<< "$platform_info"
         local target_dir="${output_dir}/${platform}/${arch}"
-
 
         if [[ ! " ${selected_platforms[@]} " =~ " ${platform} " ]]; then
             continue
