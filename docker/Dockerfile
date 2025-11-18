@@ -12,6 +12,8 @@ COPY docker/startup.sh /opt/app/startup.sh
 RUN chmod +x /opt/daemons/*
 RUN chmod +x /opt/app/startup.sh
 
+RUN mkdir -p /var/log/elemento
+
 RUN ls -lah /usr/share/nginx/html/
 
 EXPOSE 80
