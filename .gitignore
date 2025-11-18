@@ -4,3 +4,4 @@ electros-nwjs/nwjs-sdk-*
 .DS_Store
 electros-electron/venv
 .env
+logs/
