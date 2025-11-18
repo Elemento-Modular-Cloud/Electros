@@ -1,0 +1,25 @@
+FROM nginx:trixie
+
+# gather daemons
+# copy app code
+# daemons must run in background - ./daemons
+# entrypoint must run the electros app on port 80
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY electros-daemons/linux/x64/* /opt/daemons/
+COPY elemento-gui-new/ /usr/share/nginx/html/
+COPY docker/startup.sh /opt/app/startup.sh
+
+RUN chmod +x /opt/daemons/*
+RUN chmod +x /opt/app/startup.sh
+
+RUN ls -lah /usr/share/nginx/html/
+
+EXPOSE 80
+
+ENTRYPOINT [ "/opt/app/startup.sh" ]
+
+
+
+
+
+
