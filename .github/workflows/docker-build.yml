@@ -1,6 +1,8 @@
 name: Build and Push Electros docker image
 
 on:
+    push:
+      branches: [ dev-docker-instance ]
     workflow_dispatch:
 
 permissions:
