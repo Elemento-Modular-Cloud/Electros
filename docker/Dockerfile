@@ -8,6 +8,7 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY electros-daemons/linux/x64/* /opt/daemons/
 COPY elemento-gui-new/ /usr/share/nginx/html/
 COPY elemento-gui-new/electros/configs/atomosFlags.json /usr/share/nginx/html/electros/configs/flags.json
+COPY elemento-gui-new/electros/electrosOnAtomos.html /usr/share/nginx/html/electros/electros.html
 COPY docker/startup.sh /opt/app/startup.sh
 
 RUN chmod +x /opt/daemons/*
