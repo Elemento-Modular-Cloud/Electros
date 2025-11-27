@@ -988,28 +988,24 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         }
     });
 
-    var ssh_port = undefined;
+    let ssh_port = undefined;
 
     try {
-        // Get an available port for the SSH server
         ssh_port = getAvailablePort().toString();
 
-        console.log("connectionDetails: ", connectionDetails)
         const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
         const sshPath = path.join(
             baseDir,
             app.isPackaged ? 'app.asar.unpacked' : '',
-            'electros', 'remotes', 'ssh', 'ssh.js'
+            'electros', 'remotes', 'ssh', 'ssh.cjs'
         );
 
         // Start the SSH server process
         const sshServer = require(sshPath);
         await sshServer.runSSHServer(ssh_port, baseDir);
 
-        // Store port reference
         event.sender.ssh_port = ssh_port;
 
-        // Inject custom titlebar after the page loads
         sshWindow.webContents.on('did-finish-load', () => {
             const sshTitlebarJS = titlebarCustomJS.replace(
                 'titleElement.textContent = document.title;',
@@ -1051,7 +1047,6 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         await sshWindow.loadURL(`http://localhost:${ssh_port}/?host=${encodeURIComponent(connectionDetails.ip)}&username=${encodeURIComponent(connectionDetails.username)}&password=${encodeURIComponent(connectionDetails.password)}`);
 
         return sshWindow.id;
-
     } catch (error) {
         console.error('Error setting up SSH window:', error);
         if (ssh_port) {
