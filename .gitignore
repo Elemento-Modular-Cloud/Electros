@@ -3,3 +3,5 @@ electros-daemons
 electros-nwjs/nwjs-sdk-*
 .DS_Store
 electros-electron/venv
+.env
+env/
