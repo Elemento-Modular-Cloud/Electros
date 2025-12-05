@@ -7,6 +7,11 @@ assignees:
   - "c4lopsitta"
 type: bug
 body:
+  - type: markdown
+    attributes:
+      value: |
+        "Attach, if possible, the Electros Bug Report Log with the button below the following text area.<br>To generate it, just press `Ctrl`+`Shift`+`B` (or `Cmd`+`Shift`+`B` on MacOS)
+
   - type: textarea
     id: description
     attributes:
