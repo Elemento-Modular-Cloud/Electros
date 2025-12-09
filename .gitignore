@@ -5,3 +5,4 @@ electros-nwjs/nwjs-sdk-*
 electros-electron/venv
 .env
 logs/
+env/
