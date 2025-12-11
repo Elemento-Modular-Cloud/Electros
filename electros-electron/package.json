@@ -1,6 +1,6 @@
 {
     "name": "electros",
-    "version": "3.1.5_beta_2",
+    "version": "3.1.5",
     "description": "Electros Desktop Application",
     "main": "main.js",
     "homepage": "https://elemento.cloud",
