@@ -18,6 +18,11 @@ export class Daemons {
     static DataUpdateCriticalHook = null;
 
     static Launch(platform, __dirname) {
+        if (app.commandLine.hasSwitch("no-daemons")) {
+            console.log("Daemons have been disabled by `--no-daemons`");
+            return;
+        }
+
         const execPath = Daemons._GetCommand(platform, __dirname);
 
         Daemons._Process = spawn(
@@ -27,9 +32,6 @@ export class Daemons {
                 detached: false,
             }
         );
-
-        console.trace(`Daemons process has been launched with PID`);
-        console.dir(Daemons._Process);
 
         Daemons._Process.stdout.on("data", (data) => {
             this.stdoutBuffer += data.toString();

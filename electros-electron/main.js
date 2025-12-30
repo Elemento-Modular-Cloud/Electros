@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, Notification, nativeTheme , shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, nativeTheme , shell } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const net = require('net');

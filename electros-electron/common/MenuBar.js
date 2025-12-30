@@ -1,4 +1,4 @@
-import { Daemons } from "./Daemons";
+import { Daemons } from "./Daemons.js";
 
 export function BuildMenuTemplate(
     terminalWindow
