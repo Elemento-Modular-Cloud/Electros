@@ -343,20 +343,20 @@ app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
 
     // Clean up flush interval
-    if (flushInterval) {
-        clearInterval(flushInterval);
-        flushInterval = null;
-    }
-
-    // Flush any remaining buffers
-    if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
-        terminalWindow.webContents.send('terminal-output', stdoutBuffer);
-        stdoutBuffer = '';
-    }
-    if (stderrBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
-        terminalWindow.webContents.send('terminal-output', stderrBuffer);
-        stderrBuffer = '';
-    }
+    // // if (flushInterval) {
+    // //     clearInterval(flushInterval);
+    // //     flushInterval = null;
+    // // }
+    //
+    // // Flush any remaining buffers
+    // if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+    //     terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+    //     stdoutBuffer = '';
+    // }
+    // if (stderrBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
+    //     terminalWindow.webContents.send('terminal-output', stderrBuffer);
+    //     stderrBuffer = '';
+    // }
 
     // Close all windows except terminal
     const windows = BrowserWindow.getAllWindows();
