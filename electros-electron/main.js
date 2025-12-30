@@ -10,6 +10,12 @@ const { globalShortcut } = require('electron');
 // Import handlers from separate files. They are apparently unused since called by name in the preload.js
 const configHandlers = require('./js/config-ipc');
 const titlebarHandlers = require('./js/titlebar-ipc');
+const { Loaders } = require("./common/Loaders");
+const { WindowOptions } = require("./common/WindowOptions");
+const { BuildMenuTemplate } = require("./common/MenuBar");
+const PortHandler = require("./common/PortHandler");
+const { Platform } = require("./common/Platform");
+
 
 let mainWindow = null;
 let terminalWindow = null;
@@ -22,215 +28,28 @@ let stderrBuffer = '';
 const BUFFER_SIZE = 1024; // 1KB chunks
 let flushInterval = null;
 
-let platform = os.platform();
+const PreloadedContent = new Loaders(__dirname);
+const platform = new Platform();
 
-const commonWindowOptions = {
-    frame: false,
-    transparent: false,
-    titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: -100, y: -100 },
-    alwaysOnTop: false
-}
-
-const defaultWindowOptions = {
-    frame: true,
-    transparent: false,
-    alwaysOnTop: false
-}
-
-// Pre-load CSS files to avoid synchronous file reading during startup
-let themesCSS = null;
-let formControlsCSS = null;
-let titlebarCSS = null;
-let titlebarJS = null;
-
-function preloadCSSFiles() {
-    try {
-        themesCSS = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8');
-        formControlsCSS = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8');
-        titlebarCSS = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8');
-        titlebarJS = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8');
-    } catch (error) {
-        console.error('Error preloading CSS files:', error);
-    }
-}
-
-// Pre-load files before creating windows
-preloadCSSFiles();
-
-const themesLoaderJS = `
-    // Create and load CSS inline
-    var theme = document.createElement('style');
-    theme.textContent = ${JSON.stringify(themesCSS || '')};
-    document.head.appendChild(theme);
-`
-
-const formStyleLoaderJS = `
-    // Create and load CSS inline
-    var formstyle = document.createElement('style');
-    formstyle.textContent = ${JSON.stringify(formControlsCSS || '')};
-    document.head.appendChild(formstyle);
-`
-
-const titlebarCustomJS = `
-    ${themesLoaderJS}
-    ${formStyleLoaderJS}
-
-    var style = document.createElement('style');
-    style.textContent = ${JSON.stringify(titlebarCSS || '')};
-    document.head.appendChild(style);
-
-    // Create titlebar div and title element
-    var titlebar = document.createElement('div');
-    titlebar.className = 'electros-titlebar';
-    
-    var titleElement = document.createElement('div');
-    titleElement.className = 'electros-titlebar-title';
-    titleElement.textContent = document.title;
-
-    document.body.insertBefore(titlebar, document.body.firstChild);
-    
-    // Load and execute titlebar.js content
-    ${titlebarJS || ''}
-    
-    initializeTitlebar(options = { minimizeOnly: false });
-
-    titlebar.appendChild(titleElement);
-`;
-
-const menuTemplate = [
-    {
-        label: 'Electros',
-        submenu:[
-            {role: 'quit'}
-        ]
-    },
-    {
-        label: 'Edit',
-        submenu: [
-            {role: 'undo'},
-            {role: 'redo'},
-            {type: 'separator'},
-            {role: 'cut'},
-            {role: 'copy'},
-            {role: 'paste'},
-            {role: 'delete'},
-            {type: 'separator'},
-            {role: 'selectAll'}
-        ]
-    },
-    {
-        label: 'View',
-        submenu: [
-            {
-                label: 'Toggle Terminal',
-                accelerator: 'CmdOrCtrl+T',
-                click: () => {
-                    if (terminalWindow) {
-                        terminalWindow.isVisible() ? terminalWindow.hide() : terminalWindow.show();
-                    }
-                }
-            },
-            {type: 'separator'},
-            {role: 'resetZoom', zoomFactor: 0.8},
-            {role: 'zoomIn'},
-            {role: 'zoomOut'},
-            {type: 'separator'},
-            {role: 'togglefullscreen'}
-        ]
-    },
-    {
-        label: 'Developer',
-        submenu:[
-            {
-                label: 'Terminate Daemons',
-                click: async () => {
-                    console.log("manual daemon termination triggered");
-                    try {
-                        if (daemonProcess === null) {
-                            killDaemons(true);
-                        }
-
-                        if(Notification.isSupported()) {
-                            new Notification({
-                                title: "Daemons Terminated",
-                                body: "Electros Client Daemons successfully terminated.",
-                                silent: true,
-                                icon: './electros.iconset/icon_256x256.png',
-                                urgency: 'low'
-                            }).show();
-                        }
-                    } catch (e) {
-                        console.error(e);
-                        if(Notification.isSupported()) {
-                            new Notification({
-                                title: "Failed to Terminate Daemons",
-                                body: "Electros Client Daemons were not terminated.",
-                                silent: true,
-                                urgency: 'low'
-                            }).show();
-                        }
-                    }
-                }
-            },
-            {label: 'Reload', role: 'reload'},
-            {label: 'Toggle DevTools', role: 'toggleDevTools'},
-            {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
-            {label: 'Toggle Zoom', role: 'toggleZoom'},
-        ]
-    }
-]
-
-const activePorts = new Set();
-let nextPort = 49152;
-
-function getAvailablePort() {
-    while (activePorts.has(nextPort)) {
-        nextPort++;
-        if (nextPort > 65535) nextPort = 49152;
-    }
-    activePorts.add(nextPort);
-    return nextPort++;
-}
-
-function releasePort(port) {
-    activePorts.delete(port);
-}
 
 function getDaemonCommand() {
-    console.log(`The platform is: ${platform}`);
-    var arch = os.arch();
-    console.log(`The CPU architecture is: ${arch}`);
-
-    if (platform === 'darwin') {
-        platform = 'mac';
-    } else if (platform === 'linux') {
-        platform = 'linux';
-    } else if (platform.includes('win')) {
-        platform = 'win';
-    }
-
-    if (arch.toLowerCase() === 'x86' || arch.toLowerCase() === 'x64') {
-        arch = 'x64';
-    }
-
     // Use process.resourcesPath in production, fallback to __dirname in development
     const baseDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
-    const deamons_path = path.join(baseDir, 'electros-daemons', platform, arch);
+    const deamons_path = path.join(baseDir, 'electros-daemons', platform.os, platform.arch);
     console.log(`The deamons path is: ${deamons_path}`);
 
     let daemons_cmd = '';
 
-    if (platform === 'mac') {
+    if (platform.os === 'mac') {
         daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
-    } else if (platform === 'linux') {
-        if (arch === 'arm64') {
+    } else if (platform.os === 'linux') {
+        if (platform.arch === 'arm64') {
             daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_arm`);
         } else {
             daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_x86`);
         }
-    } else if (platform === 'win') {
-        if (arch === 'x64' || arch === 'x86') {
+    } else if (platform.os === 'win') {
+        if (platform.arch === 'x64' || platform.arch === 'x86') {
             daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x86.exe`);
             if (!fs.existsSync(daemons_cmd)) {
                 daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x64.exe`);
@@ -251,20 +70,20 @@ function createTrayIcon() {
     const isLight = nativeTheme.shouldUseDarkColors;
     console.log(`The theme is light: ${isLight}`);
 
-    if (platform === 'mac') {
+    if (platform.os === 'mac') {
         const templateIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black_32x32@2x.png');
         const icon = nativeImage.createFromPath(templateIcon);
         icon.setTemplateImage(true);
         return icon;
     }
 
-    if (platform === 'win') {
+    if (platform.os === 'win') {
         const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.ico');
         const icon = nativeImage.createFromPath(iconName);
         return icon;
     }
 
-    if (platform === 'linux') {
+    if (platform.os === 'linux') {
         const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.png');
         const icon = nativeImage.createFromPath(iconName);
         return icon;
@@ -275,7 +94,7 @@ function createMainWindow() {
     const win = new BrowserWindow({
         width: 1800,
         height: 1200,
-        ...commonWindowOptions,
+        ...WindowOptions.Common,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
@@ -287,7 +106,7 @@ function createMainWindow() {
         }
     });
 
-    if (platform === 'mac') {
+    if (platform.os === 'mac') {
         win.setWindowButtonVisibility(false);
     }
 
@@ -297,11 +116,11 @@ function createMainWindow() {
     win.webContents.on('did-finish-load', () => {
         try {
             // Ensure titlebarCustomJS is a string and properly escaped
-            const safeJS = typeof titlebarCustomJS === 'string'
-                ? titlebarCustomJS
-                : JSON.stringify(titlebarCustomJS);
+            const safeJS = typeof PreloadedContent.Js.Titlebar === 'string'
+                ?  PreloadedContent.Js.Titlebar
+                : JSON.stringify(PreloadedContent.Js.Titlebar);
 
-            win.webContents.executeJavaScript(safeJS).catch(err => {});
+            win.webContents.executeJavaScript(safeJS).catch(err => { throw err; });
         } catch (error) {
             console.error('Error injecting titlebar:', error);
         }
@@ -315,7 +134,7 @@ function createTerminalWindow() {
     terminalWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        ...commonWindowOptions,
+        ...WindowOptions.Common,
         show: false,
         frame: false,
         webPreferences: {
@@ -380,7 +199,7 @@ function createTerminalWindow() {
         }, 100); // Flush every 100ms
 
         // Inject custom titlebar
-        const popupTitlebarJS = titlebarCustomJS.replace(
+        const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
             'titleElement.textContent = document.title;',
             `titleElement.textContent = ${JSON.stringify(terminalWindow.title)};`
         ) //.replace(
@@ -547,7 +366,7 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         // Inject custom titlebar CSS and HTML before loading the URL
         if (!options.defaultTitlebar) {
             popup.webContents.on('did-finish-load', () => {
-                const popupTitlebarJS = titlebarCustomJS.replace(
+                const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
                     'titleElement.textContent = document.title;',
                     `titleElement.textContent = ${JSON.stringify(options.title)};`
                 );
@@ -582,7 +401,7 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
 function cleanupRDPProcess(webContents, port) {
     // Release the port
     if (port) {
-        releasePort(parseInt(port));
+        PortHandler.ReleasePort(parseInt(port));
     }
 
     // Kill the mstsc process if it exists
@@ -590,7 +409,7 @@ function cleanupRDPProcess(webContents, port) {
         try {
             const proc = webContents.mstscProcess;
 
-            if (platform === 'mac' || platform === 'linux') {
+            if (platform.os === 'mac' || platform.os === 'linux') {
                 // On Unix systems, kill the entire process group
                 try {
                     process.kill(-proc.pid, 'SIGTERM');
@@ -606,7 +425,7 @@ function cleanupRDPProcess(webContents, port) {
                         console.error('Error killing mstsc process group:', err);
                     }
                 }
-            } else if (platform === 'win') {
+            } else if (platform.os === 'win') {
                 // On Windows, use taskkill to force kill the process tree
                 try {
                     spawn('taskkill', ['/pid', proc.pid.toString(), '/T', '/F']);
@@ -638,7 +457,7 @@ function cleanupRDPProcess(webContents, port) {
             // Clear the process reference
             webContents.mstscProcess = null;
             if (webContents.mstscPort) {
-                releasePort(parseInt(webContents.mstscPort));
+                PortHandler.ReleasePort(parseInt(webContents.mstscPort));
                 webContents.mstscPort = null;
             }
         }
@@ -647,7 +466,7 @@ function cleanupRDPProcess(webContents, port) {
 
 function killDaemons(rethrowExceptions = false) {
     if (daemonProcess) {
-        if (platform === 'mac') {
+        if (platform.os === 'mac') {
             try {
                 if (daemonProcess.pid) {
                     process.kill(daemonProcess.pid, 'SIGTERM');
@@ -662,7 +481,7 @@ function killDaemons(rethrowExceptions = false) {
 
                 if(rethrowExceptions) throw err;
             }
-        } else if (platform === 'linux' && daemonProcess.pid) {
+        } else if (platform.os === 'linux' && daemonProcess.pid) {
             try {
                 process.kill(daemonProcess.pid, 0);
                 process.kill(-daemonProcess.pid);
@@ -763,7 +582,9 @@ ipcMain.handle('check-port', async (event, { ip, port }) => {
 });
 
 app.whenReady().then(() => {
-    const menu = Menu.buildFromTemplate(menuTemplate);
+    const menu = Menu.buildFromTemplate(
+        BuildMenuTemplate(terminalWindow, () => daemonProcess, () => { killDaemons() })
+    );
     Menu.setApplicationMenu(menu);
     createWindows();
 });
@@ -796,7 +617,7 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
     const rdpWindow = new BrowserWindow({
         width: 1024,
         height: 768,
-        ...commonWindowOptions,
+        ...WindowOptions.Common,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
@@ -831,7 +652,7 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
 
     // Inject custom titlebar after the page loads
     rdpWindow.webContents.on('did-finish-load', () => {
-        const rdpTitlebarJS = titlebarCustomJS.replace(
+        const rdpTitlebarJS = PreloadedContent.Js.Titlebar.replace(
             'titleElement.textContent = document.title;',
             `titleElement.textContent = "RDP connection to ${connectionDetails.vmName}";`
         );
@@ -897,7 +718,7 @@ ipcMain.handle('os-prefers-reduced-transparency', (event) => {
 // Add these IPC handlers
 ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height }) => {
     try {
-        const ws_port = getAvailablePort().toString();
+        const ws_port = PortHandler.GetAvailablePort().toString();
 
         const args = [
             '--target', credentials.ip,
@@ -919,7 +740,7 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
 
         // Set detached option for proper process group handling on Unix systems
         const spawnOptions = {
-            detached: platform === 'mac' || platform === 'linux',
+            detached: platform.os === 'mac' || platform.os === 'linux',
             env: process.env
         };
 
@@ -941,7 +762,7 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
             console.log(`mstsc-rs process exited with code ${code}`);
             // Release the port when the process closes
             if (event.sender.mstscPort) {
-                releasePort(parseInt(event.sender.mstscPort));
+                PortHandler.ReleasePort(parseInt(event.sender.mstscPort));
                 event.sender.mstscPort = null;
             }
             // Check if the window still exists before sending the message
@@ -954,7 +775,7 @@ ipcMain.handle('launch-rdp-process', async (event, { credentials, width, height 
     } catch (error) {
         console.error('Error launching RDP process:', error);
         if (ws_port) {
-            releasePort(parseInt(ws_port));
+            PortHandler.ReleasePort(parseInt(ws_port));
         }
         return { success: false, error: error.message };
     }
@@ -975,7 +796,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     const sshWindow = new BrowserWindow({
         width: 1024,
         height: 768,
-        ...commonWindowOptions,
+        ...WindowOptions.Common,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
@@ -991,7 +812,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     let ssh_port = undefined;
 
     try {
-        ssh_port = getAvailablePort().toString();
+        ssh_port = PortHandler.GetAvailablePort().toString();
 
         const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
         const sshPath = path.join(
@@ -1007,7 +828,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         event.sender.ssh_port = ssh_port;
 
         sshWindow.webContents.on('did-finish-load', () => {
-            const sshTitlebarJS = titlebarCustomJS.replace(
+            const sshTitlebarJS = PreloadedContent.Js.Titlebar.replace(
                 'titleElement.textContent = document.title;',
                 `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
             );
@@ -1027,7 +848,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
                 }
 
                 // Release the port
-                releasePort(parseInt(ssh_port));
+                PortHandler.ReleasePort(parseInt(ssh_port));
 
                 // Wait a moment for cleanup
                 await new Promise(resolve => setTimeout(resolve, 100));
@@ -1050,7 +871,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     } catch (error) {
         console.error('Error setting up SSH window:', error);
         if (ssh_port) {
-            releasePort(parseInt(ssh_port));
+            PortHandler.ReleasePort(parseInt(ssh_port));
         }
         throw error;
     }
