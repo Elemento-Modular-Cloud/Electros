@@ -1,9 +1,6 @@
-const { app, BrowserWindow, ipcMain, Menu, Tray, Notification, nativeTheme , shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Notification, nativeTheme , shell } = require('electron');
 const path = require('path');
-const fs = require('fs');
-const os = require('os');
 const { spawn } = require('child_process');
-const nativeImage = require('electron').nativeImage;
 const net = require('net');
 const { globalShortcut } = require('electron');
 
@@ -13,82 +10,19 @@ const titlebarHandlers = require('./js/titlebar-ipc');
 const { Loaders } = require("./common/Loaders");
 const { WindowOptions } = require("./common/WindowOptions");
 const { BuildMenuTemplate } = require("./common/MenuBar");
-const PortHandler = require("./common/PortHandler");
+const { PortHandler } = require("./common/PortHandler");
 const { Platform } = require("./common/Platform");
+const {TrayIcon} = require("./common/TrayIcon");
+const {Daemons} = require("./common/Daemons");
 
 
 let mainWindow = null;
 let terminalWindow = null;
-let daemonProcess = null;
-let tray = null;
-
-// Add buffering variables for daemon output
-let stdoutBuffer = '';
-let stderrBuffer = '';
-const BUFFER_SIZE = 1024; // 1KB chunks
-let flushInterval = null;
 
 const PreloadedContent = new Loaders(__dirname);
 const platform = new Platform();
+let Tray = null;
 
-
-function getDaemonCommand() {
-    // Use process.resourcesPath in production, fallback to __dirname in development
-    const baseDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
-    const deamons_path = path.join(baseDir, 'electros-daemons', platform.os, platform.arch);
-    console.log(`The deamons path is: ${deamons_path}`);
-
-    let daemons_cmd = '';
-
-    if (platform.os === 'mac') {
-        daemons_cmd = path.join(deamons_path, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
-    } else if (platform.os === 'linux') {
-        if (platform.arch === 'arm64') {
-            daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_arm`);
-        } else {
-            daemons_cmd = path.join(deamons_path, `elemento_daemons_linux_x86`);
-        }
-    } else if (platform.os === 'win') {
-        if (platform.arch === 'x64' || platform.arch === 'x86') {
-            daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x86.exe`);
-            if (!fs.existsSync(daemons_cmd)) {
-                daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_x64.exe`);
-            }
-        } else {
-            daemons_cmd = path.join(deamons_path, `elemento_daemons_windows_arm64.exe`);
-        }
-    }
-
-    console.log(`The daemons command is: ${daemons_cmd}`);
-    return daemons_cmd;
-}
-
-const daemons_cmd = getDaemonCommand();
-
-// Add this function to create different tray icons
-function createTrayIcon() {
-    const isLight = nativeTheme.shouldUseDarkColors;
-    console.log(`The theme is light: ${isLight}`);
-
-    if (platform.os === 'mac') {
-        const templateIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black_32x32@2x.png');
-        const icon = nativeImage.createFromPath(templateIcon);
-        icon.setTemplateImage(true);
-        return icon;
-    }
-
-    if (platform.os === 'win') {
-        const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.ico');
-        const icon = nativeImage.createFromPath(iconName);
-        return icon;
-    }
-
-    if (platform.os === 'linux') {
-        const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.png');
-        const icon = nativeImage.createFromPath(iconName);
-        return icon;
-    }
-}
 
 function createMainWindow() {
     const win = new BrowserWindow({
@@ -99,10 +33,11 @@ function createMainWindow() {
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
-            zoomFactor: 0.8,
+            zoomFactor: 1.0,
             backgroundThrottling: false,
             enableRemoteModule: false,
-            experimentalFeatures: false
+            experimentalFeatures: false,
+            devTools: !app.isPackaged,
         }
     });
 
@@ -154,49 +89,19 @@ function createTerminalWindow() {
 
     // Wait for the terminal window to be ready
     terminalWindow.webContents.on('did-finish-load', () => {
+        Daemons.Launch(platform, __dirname);
 
-        // Start the daemon process with the actual daemon command
-        daemonProcess = spawn(daemons_cmd, [], {
-            env: {
-                ...process.env,
-                GUI_APP: '1'
-            },
-            stdio: ['pipe', 'pipe', 'pipe'],
-            detached: false
-        });
-
-        // Buffered process output to the renderer
-        daemonProcess.stdout.on('data', (data) => {
-            stdoutBuffer += data.toString();
-            if (stdoutBuffer.length >= BUFFER_SIZE) {
-                terminalWindow.webContents.send('terminal-output', stdoutBuffer);
-                stdoutBuffer = '';
-            }
-        });
-
-        daemonProcess.stderr.on('data', (data) => {
-            stderrBuffer += data.toString();
-            if (stderrBuffer.length >= BUFFER_SIZE) {
-                terminalWindow.webContents.send('terminal-output', stderrBuffer);
-                stderrBuffer = '';
-            }
-        });
-
-        daemonProcess.on('error', (error) => {
-            terminalWindow.webContents.send('terminal-output', `Error: ${error.message}\n`);
-        });
-
-        // Set up periodic buffer flushing
-        flushInterval = setInterval(() => {
-            if (stdoutBuffer) {
-                terminalWindow.webContents.send('terminal-output', stdoutBuffer);
-                stdoutBuffer = '';
-            }
-            if (stderrBuffer) {
-                terminalWindow.webContents.send('terminal-output', stderrBuffer);
-                stderrBuffer = '';
-            }
-        }, 100); // Flush every 100ms
+        // // Set up periodic buffer flushing
+        // flushInterval = setInterval(() => {
+        //     if (stdoutBuffer) {
+        //         terminalWindow.webContents.send('terminal-output', stdoutBuffer);
+        //         stdoutBuffer = '';
+        //     }
+        //     if (stderrBuffer) {
+        //         terminalWindow.webContents.send('terminal-output', stderrBuffer);
+        //         stderrBuffer = '';
+        //     }
+        // }, 100); // Flush every 100ms
 
         // Inject custom titlebar
         const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
@@ -210,39 +115,8 @@ function createTerminalWindow() {
         terminalWindow.webContents.executeJavaScript(popupTitlebarJS);
     });
 
-    // Create tray icon if it doesn't exist
-    if (!tray) {
-        tray = new Tray(createTrayIcon());
-
-        // Update icon when system theme changes
-        nativeTheme.on('updated', () => {
-            tray.setImage(createTrayIcon());
-        });
-
-        const contextMenu = Menu.buildFromTemplate([
-            {
-                label: 'Show Terminal',
-                click: () => {
-                    terminalWindow.show();
-                }
-            },
-            {
-                label: 'Hide Terminal',
-                click: () => {
-                    terminalWindow.hide();
-                }
-            },
-            { type: 'separator' },
-            {
-                label: 'Quit',
-                click: () => {
-                    app.quit();
-                }
-            }
-        ]);
-
-        tray.setToolTip('Electros Daemons');
-        tray.setContextMenu(contextMenu);
+    if (Tray === null) {
+        Tray = new TrayIcon(terminalWindow, platform, __dirname);
     }
 
     // Handle window close button
@@ -464,54 +338,6 @@ function cleanupRDPProcess(webContents, port) {
     }
 }
 
-function killDaemons(rethrowExceptions = false) {
-    if (daemonProcess) {
-        if (platform.os === 'mac') {
-            try {
-                if (daemonProcess.pid) {
-                    process.kill(daemonProcess.pid, 'SIGTERM');
-                    process.kill(-daemonProcess.pid); // Kill process group
-                }
-            } catch (err) {
-                if (err.code === 'ESRCH') {
-                    console.log('Daemon process or group already terminated');
-                } else {
-                    console.error('Error killing daemon process on macOS:', err);
-                }
-
-                if(rethrowExceptions) throw err;
-            }
-        } else if (platform.os === 'linux' && daemonProcess.pid) {
-            try {
-                process.kill(daemonProcess.pid, 0);
-                process.kill(-daemonProcess.pid);
-            } catch (err) {
-                if (err.code === 'ESRCH') {
-                    console.log('Daemon process group already terminated');
-                } else {
-                    console.error('Error killing daemon process group:', err);
-                }
-
-                if(rethrowExceptions) throw err;
-            }
-        }
-
-        try {
-            if (!daemonProcess.killed) {
-                daemonProcess.kill();
-            }
-        } catch (err) {
-            if (err.code === 'ESRCH') {
-                console.log('Daemon process already terminated');
-            } else {
-                console.error('Error killing daemon process:', err);
-            }
-
-            if(rethrowExceptions) throw err;
-        }
-    }
-}
-
 // Then modify the before-quit handler to use the cleanup function directly
 app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
@@ -546,7 +372,7 @@ app.on('before-quit', () => {
     });
 
     // Kill daemon process
-    killDaemons();
+    Daemons.Terminate();
 
     // Finally destroy the terminal window
     if (terminalWindow && !terminalWindow.isDestroyed()) {
@@ -583,7 +409,7 @@ ipcMain.handle('check-port', async (event, { ip, port }) => {
 
 app.whenReady().then(() => {
     const menu = Menu.buildFromTemplate(
-        BuildMenuTemplate(terminalWindow, () => daemonProcess, () => { killDaemons() })
+        BuildMenuTemplate(terminalWindow),
     );
     Menu.setApplicationMenu(menu);
     createWindows();

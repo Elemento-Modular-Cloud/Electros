@@ -1,5 +1,7 @@
+import { Daemons } from "./Daemons";
+
 export function BuildMenuTemplate(
-    terminalWindow, getDaemonProcess, killDaemons
+    terminalWindow
 ) {
     return [
         {
@@ -49,11 +51,7 @@ export function BuildMenuTemplate(
                     label: 'Terminate Daemons',
                     click: async () => {
                         console.log("manual daemon termination triggered");
-                        try {
-                            if (getDaemonProcess() === null) {
-                                killDaemons(true);
-                            }
-
+                        if(Daemons.Terminate()) {
                             if(Notification.isSupported()) {
                                 new Notification({
                                     title: "Daemons Terminated",
@@ -63,8 +61,7 @@ export function BuildMenuTemplate(
                                     urgency: 'low'
                                 }).show();
                             }
-                        } catch (e) {
-                            console.error(e);
+                        } else {
                             if(Notification.isSupported()) {
                                 new Notification({
                                     title: "Failed to Terminate Daemons",
