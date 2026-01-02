@@ -191,6 +191,203 @@ ipcMain.handle('import-background', async (event) => {
     }
 });
 
+// Download and save an image from URL to backgrounds folder
+ipcMain.handle('save-background-from-url', async (event, imageUrl, filename) => {
+    const https = require('https');
+    const http = require('http');
+    const { URL } = require('url');
+    
+    try {
+        const originalUrl = imageUrl;
+        
+        // For Wikimedia URLs, try to get the full resolution image instead of thumbnail
+        if (imageUrl.includes('upload.wikimedia.org') && imageUrl.includes('/thumb/')) {
+            // Convert thumbnail URL to full resolution
+            // Example: .../thumb/a/a0/File.jpg/1920px-File.jpg -> .../a/a0/File.jpg
+            // Pattern: /commons/thumb/[hash]/[hash]/[filename]/[size]px-[filename]
+            try {
+                const urlObj = new URL(imageUrl);
+                const pathParts = urlObj.pathname.split('/').filter(p => p);
+                
+                // Find 'thumb' in the path
+                const thumbIndex = pathParts.indexOf('thumb');
+                if (thumbIndex !== -1 && pathParts.length > thumbIndex + 3) {
+                    // Remove 'thumb' and the last segment (size-prefixed filename)
+                    pathParts.splice(thumbIndex, 1); // Remove 'thumb'
+                    pathParts.pop(); // Remove the last segment (e.g., "1920px-File.jpg")
+                    
+                    // Reconstruct URL
+                    urlObj.pathname = '/' + pathParts.join('/');
+                    imageUrl = urlObj.toString();
+                }
+            } catch (e) {
+                console.warn('Failed to convert Wikimedia URL, using original:', e);
+                // Keep original URL if conversion fails
+            }
+        }
+        
+        // Generate filename if not provided
+        if (!filename) {
+            const urlParts = imageUrl.split('/');
+            filename = urlParts[urlParts.length - 1].split('?')[0];
+            // Remove size prefix like "1920px-"
+            filename = filename.replace(/^\d+px-/, '');
+        }
+        
+        // Ensure unique filename
+        let destPath = path.join(BACKGROUNDS_DIR, filename);
+        let counter = 1;
+        const ext = path.extname(filename);
+        const baseName = path.basename(filename, ext);
+        
+        while (fs.existsSync(destPath)) {
+            destPath = path.join(BACKGROUNDS_DIR, `${baseName}_${counter}${ext}`);
+            counter++;
+        }
+        
+        // Download the image with proper headers
+        const urlObj = new URL(imageUrl);
+        const protocol = urlObj.protocol === 'https:' ? https : http;
+        
+        // Wikimedia-compliant User-Agent per https://w.wiki/4wJS
+        const userAgent = 'Electros/1.0 (https://elemento.cloud/electros.html; hello@elemento.cloud)';
+        
+        const options = {
+            hostname: urlObj.hostname,
+            path: urlObj.pathname + urlObj.search,
+            method: 'GET',
+            headers: {
+                'User-Agent': userAgent,
+                'From': 'hello@elemento.cloud'
+            }
+        };
+        
+        return new Promise((resolve, reject) => {
+            const file = fs.createWriteStream(destPath);
+            
+            const makeRequest = (url, isRedirect = false) => {
+                const urlToUse = isRedirect ? new URL(url) : urlObj;
+                const opts = {
+                    hostname: urlToUse.hostname,
+                    path: urlToUse.pathname + urlToUse.search,
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': userAgent,
+                        'From': 'hello@elemento.cloud'
+                    }
+                };
+                
+                const req = protocol.request(opts, (response) => {
+                    // Handle redirects
+                    if (response.statusCode === 301 || response.statusCode === 302 || response.statusCode === 307 || response.statusCode === 308) {
+                        file.close();
+                        fs.unlinkSync(destPath);
+                        const redirectUrl = response.headers.location;
+                        if (redirectUrl) {
+                            // Handle relative redirects
+                            const absoluteUrl = redirectUrl.startsWith('http') 
+                                ? redirectUrl 
+                                : `${urlToUse.protocol}//${urlToUse.hostname}${redirectUrl}`;
+                            makeRequest(absoluteUrl, true);
+                        } else {
+                            reject({ success: false, error: 'Redirect without location header' });
+                        }
+                        return;
+                    }
+                    
+                    // Check if response is actually an image
+                    const contentType = response.headers['content-type'];
+                    if (contentType && !contentType.startsWith('image/')) {
+                        file.close();
+                        fs.unlinkSync(destPath);
+                        
+                        // If we tried to convert to full res and got HTML, fall back to original thumbnail URL
+                        if (originalUrl !== imageUrl && contentType.includes('text/html')) {
+                            console.log('Full resolution URL returned HTML, falling back to thumbnail URL');
+                            // Retry with original thumbnail URL
+                            const originalUrlObj = new URL(originalUrl);
+                            const originalOpts = {
+                                hostname: originalUrlObj.hostname,
+                                path: originalUrlObj.pathname + originalUrlObj.search,
+                                method: 'GET',
+                                headers: {
+                                    'User-Agent': userAgent,
+                                    'From': 'contacto@elemento.cloud'
+                                }
+                            };
+                            
+                            const originalReq = protocol.request(originalOpts, (originalResponse) => {
+                                if (originalResponse.statusCode >= 200 && originalResponse.statusCode < 300) {
+                                    originalResponse.pipe(file);
+                                    file.on('finish', () => {
+                                        file.close();
+                                        resolve({
+                                            success: true,
+                                            file: {
+                                                name: path.basename(destPath),
+                                                path: destPath,
+                                                fileUrl: `file://${destPath}`
+                                            }
+                                        });
+                                    });
+                                } else {
+                                    reject({ success: false, error: `Failed to download: ${originalResponse.statusCode}` });
+                                }
+                            });
+                            
+                            originalReq.on('error', (err) => {
+                                if (fs.existsSync(destPath)) {
+                                    file.close();
+                                    fs.unlinkSync(destPath);
+                                }
+                                reject({ success: false, error: err.message });
+                            });
+                            
+                            originalReq.end();
+                            return;
+                        }
+                        
+                        // Log the URL for debugging
+                        console.error('Failed to download image. URL:', urlToUse.href);
+                        console.error('Content-Type:', contentType);
+                        console.error('Status Code:', response.statusCode);
+                        reject({ success: false, error: `Expected image, got ${contentType}. URL may be incorrect.` });
+                        return;
+                    }
+                    
+                    response.pipe(file);
+                    file.on('finish', () => {
+                        file.close();
+                        resolve({
+                            success: true,
+                            file: {
+                                name: path.basename(destPath),
+                                path: destPath,
+                                fileUrl: `file://${destPath}`
+                            }
+                        });
+                    });
+                });
+                
+                req.on('error', (err) => {
+                    if (fs.existsSync(destPath)) {
+                        file.close();
+                        fs.unlinkSync(destPath);
+                    }
+                    reject({ success: false, error: err.message });
+                });
+                
+                req.end();
+            };
+            
+            makeRequest(imageUrl);
+        });
+    } catch (error) {
+        console.error('Error saving background from URL:', error);
+        return { success: false, error: error.message };
+    }
+});
+
 // Delete a background image
 ipcMain.handle('delete-background', async (event, imagePath) => {
     try {
@@ -213,5 +410,5 @@ ipcMain.handle('delete-background', async (event, imagePath) => {
 });
 
 module.exports = {
-    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'list-backgrounds', 'get-background-data', 'import-background', 'delete-background']
+    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'list-backgrounds', 'get-background-data', 'import-background', 'save-background-from-url', 'delete-background']
 };

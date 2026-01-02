@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('electron', {
             'list-backgrounds',
             'get-background-data',
             'import-background',
+            'save-background-from-url',
             'delete-background',
             'minimize-window', 
             'open-ssh',
