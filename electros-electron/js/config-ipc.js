@@ -45,8 +45,19 @@ ipcMain.handle('write-config', async (event, config) => {
         config = config.config;
     }
     try {
-        const json = JSON.stringify(config, null, 4);
-        console.error('Writing config:', json);
+        // Read existing config first and merge to preserve fields not in the update
+        let existingConfig = {};
+        if (fs.existsSync(CONFIG_PATH)) {
+            try {
+                existingConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+            } catch (e) {
+                console.warn('Could not parse existing config, starting fresh');
+            }
+        }
+        
+        const mergedConfig = { ...existingConfig, ...config };
+        const json = JSON.stringify(mergedConfig, null, 4);
+        console.log('Writing config:', json);
         fs.writeFileSync(CONFIG_PATH, json);
         return true;
     } catch (error) {
