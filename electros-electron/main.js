@@ -12,8 +12,8 @@ const { WindowOptions } = require("./common/WindowOptions");
 const { BuildMenuTemplate } = require("./common/MenuBar");
 const { PortHandler } = require("./common/PortHandler");
 const { Platform } = require("./common/Platform");
-const {TrayIcon} = require("./common/TrayIcon");
-const {Daemons} = require("./common/Daemons");
+const { TrayIcon } = require("./common/TrayIcon");
+const { Daemons } = require("./common/Daemons");
 
 
 let mainWindow = null;
@@ -75,7 +75,7 @@ function createTerminalWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            zoomFactor: 0.8,
+            zoomFactor: 1,
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false,
@@ -103,16 +103,7 @@ function createTerminalWindow() {
         //     }
         // }, 100); // Flush every 100ms
 
-        // Inject custom titlebar
-        const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
-            'titleElement.textContent = document.title;',
-            `titleElement.textContent = ${JSON.stringify(terminalWindow.title)};`
-        ) //.replace(
-//            'initializeTitlebar(options = { minimizeOnly: false });',
-//            'initializeTitlebar(options = { minimizeOnly: true });'
-//        );
-
-        terminalWindow.webContents.executeJavaScript(popupTitlebarJS);
+        terminalWindow.webContents.executeJavaScript(PreloadedContent.Js.Titlebar);
     });
 
     if (Tray === null) {
@@ -213,7 +204,7 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8,
+            zoomFactor: 1,
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false
@@ -371,10 +362,8 @@ app.on('before-quit', () => {
         }
     });
 
-    // Kill daemon process
     Daemons.Terminate();
 
-    // Finally destroy the terminal window
     if (terminalWindow && !terminalWindow.isDestroyed()) {
         terminalWindow.destroy();
     }
@@ -449,7 +438,7 @@ ipcMain.handle('open-rdp', async (event, connectionDetails) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8,
+            zoomFactor: 1,
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false
@@ -628,7 +617,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8,
+            zoomFactor: 1,
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false

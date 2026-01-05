@@ -9,10 +9,10 @@ export class TrayIcon {
 
     /**
      *
-     * @param terminalWindow
+     * @param {BrowserWindow} terminalWindow
      * @param {Platform} platform
-     * @param __dirname
-     * @return {Electron.NativeImage}
+     * @param {string} __dirname
+     * @return {TrayIcon}
      */
     constructor(terminalWindow, platform, __dirname) {
         this._tray = new Tray(this._getIcon(platform, __dirname));
