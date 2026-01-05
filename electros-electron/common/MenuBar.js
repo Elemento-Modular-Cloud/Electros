@@ -1,13 +1,19 @@
 import { Daemons } from "./Daemons.js";
+import { Terminal } from "../windows/Terminal.js";
+import {app, Notification} from "electron";
 
-export function BuildMenuTemplate(
-    terminalWindow
-) {
-    return [
+
+export function BuildMenuTemplate() {
+    const baseMenu = [
         {
             label: 'Electros',
             submenu:[
-                {role: 'quit'}
+                {role: 'quit'},
+                {
+                    label: 'Toggle Terminal',
+                    accelerator: 'CmdOrCtrl+T',
+                    click: () => { Terminal.ToggleVisibility(); }
+                }
             ]
         },
         {
@@ -27,24 +33,17 @@ export function BuildMenuTemplate(
         {
             label: 'View',
             submenu: [
-                {
-                    label: 'Toggle Terminal',
-                    accelerator: 'CmdOrCtrl+T',
-                    click: () => {
-                        if (terminalWindow) {
-                            terminalWindow.isVisible() ? terminalWindow.hide() : terminalWindow.show();
-                        }
-                    }
-                },
-                {type: 'separator'},
-                {role: 'resetZoom', zoomFactor: 0.8},
+                {role: 'resetZoom', zoomFactor: 1},
                 {role: 'zoomIn'},
                 {role: 'zoomOut'},
                 {type: 'separator'},
                 {role: 'togglefullscreen'}
             ]
-        },
-        {
+        }
+    ];
+
+    if (!app.isPackaged) {
+        baseMenu.push({
             label: 'Developer',
             submenu:[
                 {
@@ -78,7 +77,9 @@ export function BuildMenuTemplate(
                 {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
                 {label: 'Toggle Zoom', role: 'toggleZoom'},
             ]
-        }
-    ]
+        })
+    }
+
+    return baseMenu;
 }
 
