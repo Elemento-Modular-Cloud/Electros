@@ -1,5 +1,6 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import path from "path";
+import {WindowOptions} from "../common/WindowOptions.js";
 
 
 
@@ -9,13 +10,13 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     const sshWindow = new BrowserWindow({
         width: 1024,
         height: 768,
-        ...commonWindowOptions,
+        ...WindowOptions.Common,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
             webSecurity: false,
-            zoomFactor: 0.8,
+            zoomFactor: 1,
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false

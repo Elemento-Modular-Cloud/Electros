@@ -17,4 +17,16 @@ export class Platform {
             this.arch = 'x64';
         }
     }
+
+    isWin() {
+        return this.os === 'win';
+    }
+
+    isMac() {
+        return this.os === 'mac';
+    }
+
+    isLinux() {
+        return this.os === 'linux';
+    }
 }
