@@ -192,7 +192,7 @@ ipcMain.handle('import-background', async (event) => {
 });
 
 // Download and save an image from URL to backgrounds folder
-ipcMain.handle('save-background-from-url', async (event, imageUrl, filename) => {
+ipcMain.handle('save-background-from-url', async (event, imageUrl, filename, subfolder = null) => {
     const https = require('https');
     const http = require('http');
     const { URL } = require('url');
@@ -234,15 +234,50 @@ ipcMain.handle('save-background-from-url', async (event, imageUrl, filename) => 
             filename = filename.replace(/^\d+px-/, '');
         }
         
-        // Ensure unique filename
-        let destPath = path.join(BACKGROUNDS_DIR, filename);
-        let counter = 1;
-        const ext = path.extname(filename);
-        const baseName = path.basename(filename, ext);
+        // Determine destination directory
+        let destDir = BACKGROUNDS_DIR;
+        if (subfolder) {
+            destDir = path.join(BACKGROUNDS_DIR, subfolder);
+            // Ensure subfolder exists
+            if (!fs.existsSync(destDir)) {
+                fs.mkdirSync(destDir, { recursive: true });
+            }
+        }
         
-        while (fs.existsSync(destPath)) {
-            destPath = path.join(BACKGROUNDS_DIR, `${baseName}_${counter}${ext}`);
-            counter++;
+        // For POTD files in cache subfolder, check if we should override existing files
+        let destPath = path.join(destDir, filename);
+        if (subfolder === 'cache' && filename.startsWith('potd-')) {
+            // Extract provider from filename (e.g., "potd-wikimedia-2026-01-15.jpg" -> "wikimedia")
+            const providerMatch = filename.match(/^potd-([^-]+)-/);
+            if (providerMatch) {
+                const provider = providerMatch[1];
+                // Find and delete any existing POTD files from the same provider
+                try {
+                    const files = fs.readdirSync(destDir);
+                    for (const file of files) {
+                        if (file.startsWith(`potd-${provider}-`) && file !== filename) {
+                            const oldFilePath = path.join(destDir, file);
+                            if (fs.existsSync(oldFilePath)) {
+                                fs.unlinkSync(oldFilePath);
+                                console.log(`Deleted old POTD cache file: ${file}`);
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Error cleaning up old POTD files:', err);
+                }
+            }
+            // If the exact file exists, we'll overwrite it
+        } else {
+            // For non-POTD files, ensure unique filename
+            let counter = 1;
+            const ext = path.extname(filename);
+            const baseName = path.basename(filename, ext);
+            
+            while (fs.existsSync(destPath)) {
+                destPath = path.join(destDir, `${baseName}_${counter}${ext}`);
+                counter++;
+            }
         }
         
         // Download the image with proper headers
