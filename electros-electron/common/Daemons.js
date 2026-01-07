@@ -74,15 +74,15 @@ export class Daemons {
 
         let daemonsCmd = '';
 
-        if (platform.os === 'mac') {
+        if (platform.isMac()) {
             daemonsCmd = path.join(daemonsPath, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
-        } else if (platform.os === 'linux') {
+        } else if (platform.isLinux()) {
             if (platform.arch === 'arm64') {
                 daemonsCmd = path.join(daemonsPath, `elemento_daemons_linux_arm`);
             } else {
                 daemonsCmd = path.join(daemonsPath, `elemento_daemons_linux_x86`);
             }
-        } else if (platform.os === 'win') {
+        } else if (platform.isWin()) {
             if (platform.arch === 'x64' || platform.arch === 'x86') {
                 daemonsCmd = path.join(daemonsPath, `elemento_daemons_windows_x86.exe`);
                 if (!fs.existsSync(daemonsCmd)) {

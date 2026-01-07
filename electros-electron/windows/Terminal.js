@@ -1,21 +1,29 @@
 import {BrowserWindow, ipcMain} from "electron";
 import {WindowOptions} from "../common/WindowOptions.js";
+import {TrayIcon} from "../common/TrayIcon.js";
+
 
 export class Terminal {
     static _Window = null;
+    static _Tray = null;
+    static _DaemonsProc = null;
 
-    static CreateWindow(PreloadedContent, platform) {
+    static CreateWindow(PreloadedContent, platform, __dirname) {
+        if (this._Window) {
+            return;
+        }
+
         Terminal._Window = new BrowserWindow({
             width: 800,
             height: 600,
             ...WindowOptions.Common,
-            show: true,
-            hiddenInMissionControl: (platform.os === "mac") ? true : undefined,
+            show: false,
+            hiddenInMissionControl: (platform.isMac()) ? true : undefined,
             frame: false,
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
-                zoomFactor: 0.8,
+                zoomFactor: 1,
                 backgroundThrottling: false,
                 enableRemoteModule: false,
                 experimentalFeatures: false,
@@ -36,11 +44,14 @@ export class Terminal {
 //            'initializeTitlebar(options = { minimizeOnly: true });'
 //        );
 
-            Terminal._Window.webContents.executeJavaScript(popupTitlebarJS);
+            // Terminal._Window.webContents.executeJavaScript(popupTitlebarJS);
         });
 
-        Terminal._Window.on('close', (e) => {
+        Terminal._Tray = new TrayIcon(Terminal._Window, platform, __dirname);
 
+        Terminal._Window.on('close', (e) => {
+            e.preventDefault();
+            this._Window.hide();
         });
 
         ipcMain.on("minimize-window", () => {
@@ -50,5 +61,35 @@ export class Terminal {
         ipcMain.on("hide-window", () => {
             Terminal._Window.hide();
         });
+    }
+
+    static ToggleVisibility(to = undefined) {
+        if (Terminal._Window === null) { return; }
+
+        let isVisible = to;
+        if (to === undefined) {
+            isVisible = Terminal._Window.isVisible();
+        }
+
+        if (isVisible) {
+            Terminal._Window.show();
+        } else {
+            Terminal._Window.hide();
+        }
+    }
+
+    static DestroyWindow() {
+        if (Terminal._Window === null) { return; }
+
+        /** @type {BrowserWindow} */
+        const x = Terminal._Window;
+
+        Terminal._Window.close();
+
+        setTimeout(() => {
+            if (!Terminal._Window.isDestroyed()) {
+                Terminal._Window.destroy();
+            }
+        }, 500);
     }
 }

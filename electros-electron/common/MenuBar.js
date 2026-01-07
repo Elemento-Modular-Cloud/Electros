@@ -9,6 +9,7 @@ export function BuildMenuTemplate() {
             label: 'Electros',
             submenu:[
                 {role: 'quit'},
+                {label: 'Reload', role: 'reload'},
                 {
                     label: 'Toggle Terminal',
                     accelerator: 'CmdOrCtrl+T',
@@ -56,7 +57,6 @@ export function BuildMenuTemplate() {
                                     title: "Daemons Terminated",
                                     body: "Electros Client Daemons successfully terminated.",
                                     silent: true,
-                                    icon: './electros.iconset/icon_256x256.png',
                                     urgency: 'low'
                                 }).show();
                             }
@@ -72,7 +72,6 @@ export function BuildMenuTemplate() {
                         }
                     }
                 },
-                {label: 'Reload', role: 'reload'},
                 {label: 'Toggle DevTools', role: 'toggleDevTools'},
                 {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
                 {label: 'Toggle Zoom', role: 'toggleZoom'},

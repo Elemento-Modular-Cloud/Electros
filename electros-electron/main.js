@@ -12,9 +12,9 @@ const { WindowOptions } = require("./common/WindowOptions");
 const { BuildMenuTemplate } = require("./common/MenuBar");
 const { PortHandler } = require("./common/PortHandler");
 const { Platform } = require("./common/Platform");
-const { TrayIcon } = require("./common/TrayIcon");
 const { Daemons } = require("./common/Daemons");
-const { RdpWindow } = require("./remotes/rdp.js");
+const { Terminal } = require("./windows/Terminal");
+const { RdpWindow } = require("./windows/Rdp.js");
 
 
 let mainWindow = null;
@@ -22,7 +22,6 @@ let terminalWindow = null;
 
 const PreloadedContent = new Loaders(__dirname);
 const platform = new Platform();
-let Tray = null;
 const Rdp = new RdpWindow(PreloadedContent, platform, __dirname);
 
 
@@ -66,7 +65,6 @@ function createMainWindow() {
     return win;
 }
 
-// Replace the daemon spawn code with this
 function createTerminalWindow() {
     terminalWindow = new BrowserWindow({
         width: 800,
@@ -107,30 +105,11 @@ function createTerminalWindow() {
 
         terminalWindow.webContents.executeJavaScript(PreloadedContent.Js.Titlebar);
     });
-
-    if (Tray === null) {
-        Tray = new TrayIcon(terminalWindow, platform, __dirname);
-    }
-
-    // Handle window close button
-    terminalWindow.on('close', (event) => {
-        event.preventDefault(); // Prevent window from closing
-        terminalWindow.hide(); // Hide instead of close
-    });
-
-    // Add IPC handlers for window controls
-    ipcMain.on('minimize-window', () => {
-        terminalWindow.minimize();
-    });
-
-    ipcMain.on('hide-window', () => {
-        terminalWindow.hide();
-    });
 }
 
 function createWindows() {
     try {
-        createTerminalWindow();
+        Terminal.CreateWindow(PreloadedContent, platform, __dirname);
         mainWindow = createMainWindow();
 
         mainWindow.on('closed', () => {
@@ -298,11 +277,8 @@ app.on('before-quit', () => {
         }
     });
 
+    Terminal.DestroyWindow();
     Daemons.Terminate();
-
-    if (terminalWindow && !terminalWindow.isDestroyed()) {
-        terminalWindow.destroy();
-    }
 });
 
 // Add this IPC handler before app.whenReady()
@@ -334,7 +310,7 @@ ipcMain.handle('check-port', async (event, { ip, port }) => {
 
 app.whenReady().then(() => {
     const menu = Menu.buildFromTemplate(
-        BuildMenuTemplate(terminalWindow),
+        BuildMenuTemplate(),
     );
     Menu.setApplicationMenu(menu);
     createWindows();
@@ -366,18 +342,16 @@ app.on('activate', () => {
 
 ipcMain.handle('os-prefers-dark-theme', (event) => {
     return nativeTheme?.shouldUseDarkColors ?? false;
-})
+});
 
 ipcMain.handle('os-prefers-reduced-transparency', (event) => {
     return nativeTheme?.prefersReducedTransparency  ?? false;
-})
+});
 
-
-ipcMain.handle('open-browser', async (event, {
-    url
-}) => {
+ipcMain.handle('open-browser', async (event, { url }) => {
     await shell.openExternal(url);
-})
+});
+
 
 ipcMain.handle('open-ssh', async (event, connectionDetails) => {
     const sshWindow = new BrowserWindow({
