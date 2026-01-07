@@ -58,16 +58,34 @@ ipcMain.handle('write-config', async (event, config) => {
         let existingConfig = {};
         if (fs.existsSync(CONFIG_PATH)) {
             try {
-                existingConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+                const fileContent = fs.readFileSync(CONFIG_PATH, 'utf8');
+                const parsed = JSON.parse(fileContent);
+                // Handle both flat config and nested {config: {...}} structure
+                existingConfig = parsed.config || parsed;
             } catch (e) {
                 console.warn('Could not parse existing config, starting fresh');
             }
         }
         
+        // Merge configs - new config values override existing ones
         const mergedConfig = { ...existingConfig, ...config };
+        
+        // CRITICAL: Always use templates from the new config if it's provided
+        // This ensures templates are saved even if they're an empty array
+        if ('templates' in config) {
+            mergedConfig.templates = Array.isArray(config.templates) ? config.templates : [];
+            console.log('Templates in incoming config:', config.templates);
+            console.log('Templates being saved:', mergedConfig.templates);
+        } else {
+            // If templates not in new config, preserve existing templates
+            console.log('No templates in incoming config, preserving existing:', existingConfig.templates);
+        }
+        
         const json = JSON.stringify(mergedConfig, null, 4);
-        console.log('Writing config:', json);
-        fs.writeFileSync(CONFIG_PATH, json);
+        console.log('Writing config to', CONFIG_PATH);
+        console.log('Full config being written (first 1000 chars):', json.substring(0, 1000) + (json.length > 1000 ? '...' : ''));
+        console.log('Templates in final mergedConfig:', JSON.stringify(mergedConfig.templates, null, 2));
+        fs.writeFileSync(CONFIG_PATH, json, 'utf8');
         return true;
     } catch (error) {
         console.error('Error writing config:', error);
