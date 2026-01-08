@@ -36,7 +36,7 @@
     height: 100%;
     -webkit-app-region: no-drag;
     position: absolute;
-    top: 0;
+    top: 0.15rem !important;
     display: flex;
     padding-left: 8px;
 }
