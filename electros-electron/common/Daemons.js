@@ -93,6 +93,8 @@ export class Daemons {
             }
         }
 
+        console.log(`Daemon ${daemonsCmd}`);
+
         return daemonsCmd;
     }
 }
