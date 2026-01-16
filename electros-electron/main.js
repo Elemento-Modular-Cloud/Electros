@@ -15,6 +15,7 @@ const { Platform } = require("./common/Platform");
 const { Daemons } = require("./common/Daemons");
 const { Terminal } = require("./windows/Terminal");
 const { RdpWindow } = require("./windows/Rdp.js");
+const {DaemonsNotEnabledError} = require("./common/Daemons.js");
 
 
 let mainWindow = null;
@@ -326,9 +327,9 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'mac') {
-        app.quit();
-    }
+    // if (process.platform !== 'mac') {
+    app.quit();
+    // }
 });
 
 app.on('activate', () => {

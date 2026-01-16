@@ -1,7 +1,7 @@
-import { app } from "electron";
+import {app} from "electron";
 import path from "path";
 import fs from "fs";
-import { spawn } from "child_process";
+import {spawn} from "child_process";
 
 
 export class DaemonsNotEnabledError extends Error {}
@@ -28,6 +28,8 @@ export class Daemons {
 
         const execPath = Daemons._GetCommand(platform, __dirname);
 
+        console.trace(`Daemons path is ${execPath}`)
+
         Daemons._Process = spawn(
             execPath, [], {
                 env: { ...process.env, GUI_APP: '1' },
@@ -36,7 +38,13 @@ export class Daemons {
             }
         );
 
+        console.trace(`Process is:`);
+        console.dir(Daemons._Process);
+
+
         Daemons._Process.stdout.on("data", (data) => {
+            console.log(`DAEMONS LOG: ${data.toString()}`)
+
             this.stdoutBuffer += data.toString();
 
             if (this.stdoutBuffer.length > Daemons.BUFFER_SIZE) {
@@ -46,6 +54,8 @@ export class Daemons {
         });
 
         Daemons._Process.stderr.on("data", (data) => {
+            console.error(`DAEMONS LOG: ${data.toString()}`)
+
             this.stderrBuffer += data.toString();
 
             if (this.stderrBuffer.length > Daemons.BUFFER_SIZE) {
@@ -71,10 +81,13 @@ export class Daemons {
         return r;
     }
 
-    static _GetCommand(platform, __dirname) {
+    static _GetPath(platform, __dirname) {
         const baseDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
-        const daemonsPath = path.join(baseDir, 'electros-daemons', platform.os, platform.arch);
+        return path.join(baseDir, 'electros-daemons', platform.os, platform.arch);
+    }
 
+    static _GetCommand(platform, __dirname) {
+        const daemonsPath = Daemons._GetPath(platform, __dirname);
         let daemonsCmd = '';
 
         if (platform.isMac()) {
