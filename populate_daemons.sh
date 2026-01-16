@@ -122,7 +122,7 @@ get_release_assets() {
 # Function to download a single asset
 download_asset() {
     local asset_id="$1"
-    local filename="$2"
+    local filename="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
     local target_dir="$3"
     local repo="Elemento-Modular-Cloud/elemento-monorepo-client"
     
