@@ -129,6 +129,27 @@ function setupWindowShortcuts(window) {
     // Keep track of registered shortcuts for this window
     const shortcuts = [];
 
+    if (shortcuts.length === 0) {
+        let quitShortcut = false;
+
+        window.on('focus', () => {
+           if (platform.isMac()) {
+           } else {
+               if (!quitShortcut) {
+                   globalShortcut.register('Alt+F4', () => {
+                       Daemons.Terminate();
+                       app.quit();
+                   });
+                   quitShortcut = true;
+               }
+           }
+        });
+
+        window.on('blur', () => {
+            globalShortcut.unregister('Alt+F4');
+        })
+    }
+
     // When window is focused, set up its shortcuts
     window.on('focus', () => {
         // Only register if not already registered

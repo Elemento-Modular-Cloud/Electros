@@ -6,7 +6,6 @@ import {TrayIcon} from "../common/TrayIcon.js";
 export class Terminal {
     static _Window = null;
     static _Tray = null;
-    static _DaemonsProc = null;
 
     static CreateWindow(PreloadedContent, platform, __dirname) {
         if (this._Window) {
