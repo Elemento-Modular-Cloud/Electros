@@ -313,6 +313,15 @@ app.whenReady().then(() => {
         BuildMenuTemplate(),
     );
     Menu.setApplicationMenu(menu);
+
+    try {
+        Daemons.Launch(platform, __dirname);
+    } catch (e) {
+        if (!(e instanceof DaemonsNotEnabledError)) {
+            console.error(e);
+        }
+    }
+
     createWindows();
 });
 

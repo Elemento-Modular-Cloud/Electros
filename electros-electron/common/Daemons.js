@@ -4,6 +4,9 @@ import fs from "fs";
 import { spawn } from "child_process";
 
 
+export class DaemonsNotEnabledError extends Error {}
+
+
 export class Daemons {
     static _Process = null;
     static _Ports = {};
@@ -20,7 +23,7 @@ export class Daemons {
     static Launch(platform, __dirname) {
         if (app.commandLine.hasSwitch("no-daemons")) {
             console.log("Daemons have been disabled by `--no-daemons`");
-            return;
+            throw new DaemonsNotEnabledError();
         }
 
         const execPath = Daemons._GetCommand(platform, __dirname);
@@ -92,8 +95,6 @@ export class Daemons {
                 daemonsCmd = path.join(daemonsPath, `elemento_daemons_windows_arm64.exe`);
             }
         }
-
-        console.log(`Daemon ${daemonsCmd}`);
 
         return daemonsCmd;
     }
