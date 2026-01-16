@@ -1,20 +1,20 @@
-const { app, BrowserWindow, ipcMain, Menu, nativeTheme , shell } = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell} = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
+const {spawn} = require('child_process');
 const net = require('net');
-const { globalShortcut } = require('electron');
+const {globalShortcut} = require('electron');
 
 // Import handlers from separate files. They are apparently unused since called by name in the preload.js
 const configHandlers = require('./js/config-ipc');
 const titlebarHandlers = require('./js/titlebar-ipc');
-const { Loaders } = require("./common/Loaders");
-const { WindowOptions } = require("./common/WindowOptions");
-const { BuildMenuTemplate } = require("./common/MenuBar");
-const { PortHandler } = require("./common/PortHandler");
-const { Platform } = require("./common/Platform");
-const { Daemons } = require("./common/Daemons");
-const { Terminal } = require("./windows/Terminal");
-const { RdpWindow } = require("./windows/Rdp.js");
+const {Loaders} = require("./common/Loaders");
+const {WindowOptions} = require("./common/WindowOptions");
+const {BuildMenuTemplate} = require("./common/MenuBar");
+const {PortHandler} = require("./common/PortHandler");
+const {Platform} = require("./common/Platform");
+const {Daemons} = require("./common/Daemons");
+const {Terminal} = require("./windows/Terminal");
+const {RdpWindow} = require("./windows/Rdp.js");
 const {DaemonsNotEnabledError} = require("./common/Daemons.js");
 
 
@@ -54,10 +54,12 @@ function createMainWindow() {
         try {
             // Ensure titlebarCustomJS is a string and properly escaped
             const safeJS = typeof PreloadedContent.Js.Titlebar === 'string'
-                ?  PreloadedContent.Js.Titlebar
+                ? PreloadedContent.Js.Titlebar
                 : JSON.stringify(PreloadedContent.Js.Titlebar);
 
-            win.webContents.executeJavaScript(safeJS).catch(err => { throw err; });
+            win.webContents.executeJavaScript(safeJS).catch(err => {
+                throw err;
+            });
         } catch (error) {
             console.error('Error injecting titlebar:', error);
         }
@@ -118,76 +120,35 @@ function createWindows() {
         });
 
         // Register a local shortcut for the main window
-        setupWindowShortcuts(mainWindow);
+        setupWindowShortcuts();
     } catch (error) {
         console.error('Error creating windows:', error);
     }
 }
 
 // Add this function to set up window-specific shortcuts
-function setupWindowShortcuts(window) {
-    // Keep track of registered shortcuts for this window
-    const shortcuts = [];
+function setupWindowShortcuts() {
+    let quitShortcut = false;
 
-    if (shortcuts.length === 0) {
-        let quitShortcut = false;
-
-        window.on('focus', () => {
-           if (platform.isMac()) {
-           } else {
-               if (!quitShortcut) {
-                   globalShortcut.register('Alt+F4', () => {
-                       Daemons.Terminate();
-                       app.quit();
-                   });
-                   quitShortcut = true;
-               }
-           }
-        });
-
-        window.on('blur', () => {
-            globalShortcut.unregister('Alt+F4');
-        })
-    }
-
-    // When window is focused, set up its shortcuts
     window.on('focus', () => {
-        // Only register if not already registered
-        if (shortcuts.length === 0) {
-            // For Windows/Linux: Alt+F4 closes current window instead of app
-//            const altF4Registered = globalShortcut.register('Alt+F4', () => {
-//                const focusedWindow = BrowserWindow.getFocusedWindow();
-//                if (focusedWindow) {
-//                    focusedWindow.close();
-//                    return true; // Prevent default behavior
-//                }
-//                // For main window, let the default Alt+F4 behavior happen
-//                return false;
-//            });
-//            if (altF4Registered) {
-//                shortcuts.push('Alt+F4');
-//            }
-
-            // For macOS: Cmd+Q closes current window if it's not main
-            // const cmdQRegistered = globalShortcut.register('Command+Q', () => {
-            //     const focusedWindow = BrowserWindow.getFocusedWindow();
-            //     if (focusedWindow) {
-            //         focusedWindow.close();
-            //         return true; // Prevent default quit
-            //     }
-            //     // Let the default Cmd+Q behavior happen for main window
-            //     return false;
-            // });
-            // if (cmdQRegistered) {
-            //     shortcuts.push('Command+Q');
-            // }
+        if (platform.isMac()) {
+        } else {
+            if (!quitShortcut) {
+                globalShortcut.register('Alt+F4', () => {
+                    Daemons.Terminate(platform);
+                    app.quit();
+                });
+                quitShortcut = true;
+            }
         }
     });
 
-    // Clean up when window is closed
+    window.on('blur', () => {
+        globalShortcut.unregister('Alt+F4');
+    });
+
     window.on('closed', () => {
-        shortcuts.forEach(shortcut => globalShortcut.unregister(shortcut));
-        shortcuts.length = 0; // Clear the array
+        globalShortcut.unregister('Alt+F4');
     });
 }
 
@@ -212,9 +173,6 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         },
         ...options
     });
-
-    // Set up window-specific shortcuts for this popup
-    setupWindowShortcuts(popup);
 
     if (options.title) {
         popup.setTitle(options.title);
@@ -269,10 +227,10 @@ app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
 
     // Clean up flush interval
-    // // if (flushInterval) {
-    // //     clearInterval(flushInterval);
-    // //     flushInterval = null;
-    // // }
+    // if (flushInterval) {
+    //     clearInterval(flushInterval);
+    //     flushInterval = null;
+    // }
     //
     // // Flush any remaining buffers
     // if (stdoutBuffer && terminalWindow && !terminalWindow.isDestroyed()) {
@@ -285,24 +243,29 @@ app.on('before-quit', () => {
     // }
 
     // Close all windows except terminal
-    const windows = BrowserWindow.getAllWindows();
-    windows.forEach(window => {
-        // Clean up any mstsc processes
-        if (window.webContents.mstscProcess) {
-            Rdp.handleCloseRdpProcess(window.webContents);
-        }
+    try {
+        const windows = BrowserWindow.getAllWindows();
+        windows.forEach(window => {
+            // Clean up any mstsc processes
+            if (window.webContents.mstscProcess) {
+                Rdp.handleCloseRdpProcess(window.webContents);
+            }
 
-        if (window !== terminalWindow && !window.isDestroyed()) {
-            window.destroy();
-        }
-    });
+            if (window !== terminalWindow && !window.isDestroyed()) {
+                window.destroy();
+            }
+        });
 
-    Terminal.DestroyWindow();
-    Daemons.Terminate();
+        Terminal.DestroyWindow();
+    } catch (error) {
+        console.error(error);
+    }
+
+    Daemons.Terminate(platform);
 });
 
 // Add this IPC handler before app.whenReady()
-ipcMain.handle('check-port', async (event, { ip, port }) => {
+ipcMain.handle('check-port', async (event, {ip, port}) => {
     return new Promise((resolve) => {
         const socket = new net.Socket();
 
@@ -372,10 +335,10 @@ ipcMain.handle('os-prefers-dark-theme', (event) => {
 });
 
 ipcMain.handle('os-prefers-reduced-transparency', (event) => {
-    return nativeTheme?.prefersReducedTransparency  ?? false;
+    return nativeTheme?.prefersReducedTransparency ?? false;
 });
 
-ipcMain.handle('open-browser', async (event, { url }) => {
+ipcMain.handle('open-browser', async (event, {url}) => {
     await shell.openExternal(url);
 });
 
@@ -422,9 +385,6 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
             );
             sshWindow.webContents.executeJavaScript(sshTitlebarJS);
         });
-
-        // Set up window-specific shortcuts
-        setupWindowShortcuts(sshWindow);
 
         // Add connection cleanup on window close
         sshWindow.on('close', async (event) => {

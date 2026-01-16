@@ -63,9 +63,9 @@ export class Daemons {
         });
     }
 
-    static Terminate() {
+    static Terminate(platform = null) {
         let r = true;
-        if (Daemons._Process) {
+        if (Daemons._Process !== null) {
             if (!Daemons._Process.killed) {
                 r = Daemons._Process.kill();
             }
