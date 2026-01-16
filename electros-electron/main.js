@@ -114,9 +114,7 @@ function createWindows() {
         mainWindow = createMainWindow();
 
         mainWindow.on('closed', () => {
-            if (terminalWindow) {
-                terminalWindow.hide();
-            }
+            app.quit();
         });
 
         // Register a local shortcut for the main window
@@ -327,9 +325,7 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-    // if (process.platform !== 'mac') {
     app.quit();
-    // }
 });
 
 app.on('activate', () => {

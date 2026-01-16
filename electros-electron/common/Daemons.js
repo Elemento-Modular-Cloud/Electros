@@ -28,8 +28,6 @@ export class Daemons {
 
         const execPath = Daemons._GetCommand(platform, __dirname);
 
-        console.trace(`Daemons path is ${execPath}`)
-
         Daemons._Process = spawn(
             execPath, [], {
                 env: { ...process.env, GUI_APP: '1' },
@@ -37,10 +35,6 @@ export class Daemons {
                 detached: false,
             }
         );
-
-        console.trace(`Process is:`);
-        console.dir(Daemons._Process);
-
 
         Daemons._Process.stdout.on("data", (data) => {
             console.log(`DAEMONS LOG: ${data.toString()}`)
