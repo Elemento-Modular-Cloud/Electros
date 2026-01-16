@@ -766,6 +766,17 @@ app.whenReady().then(() => {
     const menu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(menu);
     createWindows();
+    
+    // Convert existing background images to WebP on startup (async, non-blocking)
+    configHandlers.convertExistingBackgrounds().then(result => {
+        if (result.success) {
+            console.log(`Background conversion complete: ${result.converted} converted, ${result.failed} failed, ${result.skipped} skipped`);
+        } else {
+            console.error('Background conversion failed:', result.error);
+        }
+    }).catch(error => {
+        console.error('Error during background conversion:', error);
+    });
 });
 
 app.on('window-all-closed', () => {

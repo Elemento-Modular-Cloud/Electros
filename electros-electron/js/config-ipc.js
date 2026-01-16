@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { ipcMain, dialog } = require('electron');
+const sharp = require('sharp');
 
 // File paths
 const CONFIG_DIR = path.join(os.homedir(), '.elemento');
@@ -20,6 +21,45 @@ if (!fs.existsSync(CONFIG_DIR)) {
 // Ensure backgrounds directory exists
 if (!fs.existsSync(BACKGROUNDS_DIR)) {
     fs.mkdirSync(BACKGROUNDS_DIR, { recursive: true });
+}
+
+// Convert image to WebP format
+async function convertToWebP(sourcePath, quality = 80) {
+    try {
+        // Skip if already WebP
+        const ext = path.extname(sourcePath).toLowerCase();
+        if (ext === '.webp') {
+            return sourcePath;
+        }
+        
+        // Check if file exists
+        if (!fs.existsSync(sourcePath)) {
+            console.warn(`Cannot convert to WebP: file does not exist: ${sourcePath}`);
+            return null;
+        }
+        
+        // Generate WebP filename
+        const dir = path.dirname(sourcePath);
+        const baseName = path.basename(sourcePath, ext);
+        const webpPath = path.join(dir, `${baseName}.webp`);
+        
+        // Check if WebP version already exists
+        if (fs.existsSync(webpPath)) {
+            console.log(`WebP version already exists: ${webpPath}`);
+            return webpPath;
+        }
+        
+        // Convert to WebP
+        await sharp(sourcePath)
+            .webp({ quality: quality })
+            .toFile(webpPath);
+        
+        console.log(`Converted to WebP: ${sourcePath} -> ${webpPath}`);
+        return webpPath;
+    } catch (error) {
+        console.error(`Error converting to WebP: ${sourcePath}`, error);
+        return null;
+    }
 }
 
 // IPC Handlers
@@ -117,7 +157,35 @@ ipcMain.handle('list-backgrounds', async () => {
             return SUPPORTED_IMAGE_EXTENSIONS.includes(ext);
         });
         
-        return imageFiles.map(file => {
+        // Map to prioritize WebP versions - key is base name, value is filename
+        const fileMap = new Map();
+        
+        // First pass: collect all non-WebP files
+        imageFiles.forEach(file => {
+            const ext = path.extname(file).toLowerCase();
+            if (ext !== '.webp') {
+                const baseName = path.basename(file, ext);
+                // Check if WebP version exists
+                const webpPath = path.join(BACKGROUNDS_DIR, `${baseName}.webp`);
+                if (!fs.existsSync(webpPath)) {
+                    // No WebP version, use original
+                    fileMap.set(baseName, file);
+                }
+                // If WebP exists, we'll add it in the second pass
+            }
+        });
+        
+        // Second pass: add WebP files (they take priority)
+        imageFiles.forEach(file => {
+            const ext = path.extname(file).toLowerCase();
+            if (ext === '.webp') {
+                const baseName = path.basename(file, ext);
+                // WebP always takes priority
+                fileMap.set(baseName, file);
+            }
+        });
+        
+        return Array.from(fileMap.values()).map(file => {
             const filePath = path.join(BACKGROUNDS_DIR, file);
             return {
                 name: file,
@@ -195,12 +263,19 @@ ipcMain.handle('import-background', async (event) => {
         // Copy the file to backgrounds directory
         fs.copyFileSync(sourcePath, destPath);
         
+        // Convert to WebP (async, non-blocking)
+        const webpPath = await convertToWebP(destPath);
+        
+        // Use WebP path if conversion succeeded, otherwise use original
+        const finalPath = webpPath || destPath;
+        const finalFileName = path.basename(finalPath);
+        
         return {
             success: true,
             file: {
-                name: fileName,
-                path: destPath,
-                fileUrl: `file://${destPath}`
+                name: finalFileName,
+                path: finalPath,
+                fileUrl: `file://${finalPath}`
             }
         };
     } catch (error) {
@@ -372,14 +447,21 @@ ipcMain.handle('save-background-from-url', async (event, imageUrl, filename, sub
                             const originalReq = protocol.request(originalOpts, (originalResponse) => {
                                 if (originalResponse.statusCode >= 200 && originalResponse.statusCode < 300) {
                                     originalResponse.pipe(file);
-                                    file.on('finish', () => {
+                                    file.on('finish', async () => {
                                         file.close();
+                                        
+                                        // Convert to WebP (async, non-blocking)
+                                        const webpPath = await convertToWebP(destPath);
+                                        
+                                        // Use WebP path if conversion succeeded, otherwise use original
+                                        const finalPath = webpPath || destPath;
+                                        
                                         resolve({
                                             success: true,
                                             file: {
-                                                name: path.basename(destPath),
-                                                path: destPath,
-                                                fileUrl: `file://${destPath}`
+                                                name: path.basename(finalPath),
+                                                path: finalPath,
+                                                fileUrl: `file://${finalPath}`
                                             }
                                         });
                                     });
@@ -409,14 +491,21 @@ ipcMain.handle('save-background-from-url', async (event, imageUrl, filename, sub
                     }
                     
                     response.pipe(file);
-                    file.on('finish', () => {
+                    file.on('finish', async () => {
                         file.close();
+                        
+                        // Convert to WebP (async, non-blocking)
+                        const webpPath = await convertToWebP(destPath);
+                        
+                        // Use WebP path if conversion succeeded, otherwise use original
+                        const finalPath = webpPath || destPath;
+                        
                         resolve({
                             success: true,
                             file: {
-                                name: path.basename(destPath),
-                                path: destPath,
-                                fileUrl: `file://${destPath}`
+                                name: path.basename(finalPath),
+                                path: finalPath,
+                                fileUrl: `file://${finalPath}`
                             }
                         });
                     });
@@ -441,6 +530,75 @@ ipcMain.handle('save-background-from-url', async (event, imageUrl, filename, sub
     }
 });
 
+// Convert existing background images to WebP (exported for direct use)
+async function convertExistingBackgrounds() {
+    try {
+        if (!fs.existsSync(BACKGROUNDS_DIR)) {
+            return { success: true, converted: 0, failed: 0, skipped: 0 };
+        }
+        
+        let converted = 0;
+        let failed = 0;
+        let skipped = 0;
+        
+        // Recursive function to process directories
+        const processDirectory = async (dir) => {
+            const files = fs.readdirSync(dir);
+            
+            for (const file of files) {
+                const filePath = path.join(dir, file);
+                const stats = fs.statSync(filePath);
+                
+                if (stats.isDirectory()) {
+                    // Recursively process subdirectories
+                    await processDirectory(filePath);
+                } else {
+                    const ext = path.extname(file).toLowerCase();
+                    
+                    // Skip if not a supported image format or already WebP
+                    if (!SUPPORTED_IMAGE_EXTENSIONS.includes(ext) || ext === '.webp') {
+                        skipped++;
+                        continue;
+                    }
+                    
+                    // Check if WebP version already exists
+                    const baseName = path.basename(file, ext);
+                    const webpPath = path.join(dir, `${baseName}.webp`);
+                    if (fs.existsSync(webpPath)) {
+                        skipped++;
+                        continue;
+                    }
+                    
+                    // Convert to WebP
+                    const result = await convertToWebP(filePath);
+                    if (result) {
+                        converted++;
+                    } else {
+                        failed++;
+                    }
+                }
+            }
+        };
+        
+        await processDirectory(BACKGROUNDS_DIR);
+        
+        return {
+            success: true,
+            converted: converted,
+            failed: failed,
+            skipped: skipped
+        };
+    } catch (error) {
+        console.error('Error converting existing backgrounds:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// IPC handler for convert-existing-backgrounds
+ipcMain.handle('convert-existing-backgrounds', async (event) => {
+    return await convertExistingBackgrounds();
+});
+
 // Delete a background image
 ipcMain.handle('delete-background', async (event, imagePath) => {
     try {
@@ -463,5 +621,6 @@ ipcMain.handle('delete-background', async (event, imagePath) => {
 });
 
 module.exports = {
-    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'list-backgrounds', 'get-background-data', 'import-background', 'save-background-from-url', 'delete-background']
+    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'list-backgrounds', 'get-background-data', 'import-background', 'save-background-from-url', 'delete-background', 'convert-existing-backgrounds'],
+    convertExistingBackgrounds: convertExistingBackgrounds
 };
