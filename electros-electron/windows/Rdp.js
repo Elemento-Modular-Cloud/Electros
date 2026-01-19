@@ -210,6 +210,8 @@ export class RdpWindow {
                 experimentalFeatures: false
             }
         });
+
+        this._window.webContents.setVisualZoomLevelLimits(1, 1);
     }
 
     _setupWindowEvents(connectionDetails) {

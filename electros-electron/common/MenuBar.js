@@ -34,9 +34,35 @@ export function BuildMenuTemplate() {
         {
             label: 'View',
             submenu: [
-                {role: 'resetZoom', zoomFactor: 1},
-                {role: 'zoomIn'},
-                {role: 'zoomOut'},
+                {
+                    label: 'Actual Size',
+                    accelerator: 'CmdOrCtrl+0',
+                    click: (menuItem, browserWindow) => {
+                        if (browserWindow) {
+                            browserWindow.webContents.setZoomFactor(1);
+                        }
+                    }
+                },
+                {
+                    label: 'Zoom In',
+                    accelerator: 'CmdOrCtrl+=',
+                    click: (menuItem, browserWindow) => {
+                        if (browserWindow) {
+                            const currentZoom = browserWindow.webContents.getZoomFactor();
+                            browserWindow.webContents.setZoomFactor(currentZoom + 0.1);
+                        }
+                    }
+                },
+                {
+                    label: 'Zoom Out',
+                    accelerator: 'CmdOrCtrl+-',
+                    click: (menuItem, browserWindow) => {
+                        if (browserWindow) {
+                            const currentZoom = browserWindow.webContents.getZoomFactor();
+                            browserWindow.webContents.setZoomFactor(Math.max(0.1, currentZoom - 0.1));
+                        }
+                    }
+                },
                 {type: 'separator'},
                 {role: 'togglefullscreen'}
             ]
@@ -74,7 +100,6 @@ export function BuildMenuTemplate() {
                 },
                 {label: 'Toggle DevTools', role: 'toggleDevTools'},
                 {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
-                {label: 'Toggle Zoom', role: 'toggleZoom'},
             ]
         })
     }

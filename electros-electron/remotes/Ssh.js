@@ -30,6 +30,8 @@ class SshWindow {
                 experimentalFeatures: false
             }
         });
+
+        sshWindow.webContents.setVisualZoomLevelLimits(1, 1);
     }
 
     _setupSsh() {
@@ -66,6 +68,8 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
             experimentalFeatures: false
         }
     });
+
+    sshWindow.webContents.setVisualZoomLevelLimits(1, 1);
 
     let ssh_port = undefined;
 

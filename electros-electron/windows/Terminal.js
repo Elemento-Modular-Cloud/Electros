@@ -32,6 +32,8 @@ export class Terminal {
             title: "Electros Daemons"
         });
 
+        Terminal._Window.webContents.setVisualZoomLevelLimits(1, 1);
+
         Terminal._Window.loadFile("terminal/terminal.html");
 
         Terminal._Window.webContents.on("did-finish-load", () => {

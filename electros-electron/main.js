@@ -1,4 +1,6 @@
 const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell} = require('electron');
+
+app.commandLine.appendSwitch('disable-zoom-level-persistence');
 const path = require('path');
 const {spawn} = require('child_process');
 const net = require('net');
@@ -65,6 +67,8 @@ function createMainWindow() {
         }
     });
 
+    win.webContents.setVisualZoomLevelLimits(1, 1);
+
     return win;
 }
 
@@ -87,6 +91,8 @@ function createTerminalWindow() {
         backgroundColor: '#000000',
         title: 'Electros Daemons'
     });
+
+    terminalWindow.webContents.setVisualZoomLevelLimits(1, 1);
 
     terminalWindow.loadFile('terminal/terminal.html');
 
@@ -173,6 +179,8 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         },
         ...options
     });
+
+    popup.webContents.setVisualZoomLevelLimits(1, 1);
 
     if (options.title) {
         popup.setTitle(options.title);
