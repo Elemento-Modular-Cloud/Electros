@@ -125,15 +125,14 @@ function createWindows() {
             app.quit();
         });
 
-        // Register a local shortcut for the main window
-        setupWindowShortcuts();
+        setupWindowShortcuts(mainWindow);
     } catch (error) {
         console.error('Error creating windows:', error);
     }
 }
 
 // Add this function to set up window-specific shortcuts
-function setupWindowShortcuts() {
+function setupWindowShortcuts(window) {
     let quitShortcut = false;
 
     window.on('focus', () => {

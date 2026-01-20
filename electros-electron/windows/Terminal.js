@@ -36,18 +36,6 @@ export class Terminal {
 
         Terminal._Window.loadFile("terminal/terminal.html");
 
-        Terminal._Window.webContents.on("did-finish-load", () => {
-            const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
-                'titleElement.textContent = document.title;',
-                `titleElement.textContent = ${JSON.stringify(Terminal._Window.title)};`
-            ) //.replace(
-//            'initializeTitlebar(options = { minimizeOnly: false });',
-//            'initializeTitlebar(options = { minimizeOnly: true });'
-//        );
-
-            // Terminal._Window.webContents.executeJavaScript(popupTitlebarJS);
-        });
-
         Terminal._Tray = new TrayIcon(platform, __dirname);
 
         Terminal._Window.on('close', (e) => {
@@ -71,8 +59,6 @@ export class Terminal {
         if (to === undefined) {
             isVisible = Terminal._Window.isVisible();
         }
-
-        console.trace(`Terminal Window has ${isVisible} visibility`);
 
         if (isVisible) {
             Terminal._Window.hide();
