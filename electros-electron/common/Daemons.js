@@ -16,8 +16,6 @@ export class Daemons {
     static BUFFER_SIZE = 1024;
     static flushInterval = null;
 
-    static DataUpdateStdoutHook = null;
-    static DataUpdateStderrHook = null;
     static DataUpdateCriticalHook = null;
 
     static Launch(platform, __dirname) {
@@ -37,25 +35,13 @@ export class Daemons {
         );
 
         Daemons._Process.stdout.on("data", (data) => {
-            console.log(`DAEMONS LOG: ${data.toString()}`)
-
             this.stdoutBuffer += data.toString();
-
-            if (this.stdoutBuffer.length > Daemons.BUFFER_SIZE) {
-                if (Daemons.DataUpdateStdoutHook) { Daemons.DataUpdateStdoutHook(data); }
-                Daemons.stdoutBuffer = "";
-            }
+            Terminal.Write(data);
         });
 
         Daemons._Process.stderr.on("data", (data) => {
-            console.error(`DAEMONS LOG: ${data.toString()}`)
-
             this.stderrBuffer += data.toString();
-
-            if (this.stderrBuffer.length > Daemons.BUFFER_SIZE) {
-                if (Daemons.DataUpdateStderrHook) { Daemons.DataUpdateStderrHook(data); }
-                Daemons.stderrBuffer = "";
-            }
+            Terminal.Write(data);
         });
 
         Daemons._Process.on("error", (data) => {

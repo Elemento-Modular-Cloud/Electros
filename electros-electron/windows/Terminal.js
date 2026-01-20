@@ -54,6 +54,12 @@ export class Terminal {
         });
     }
 
+    static Write(data) {
+        if (Terminal._Window && !Terminal._Window.isDestroyed()) {
+            Terminal._Window.webContents.send("terminal-output", data)
+        }
+    }
+
     static ToggleVisibility(to = undefined) {
         if (Terminal._Window === null) { return; }
 
