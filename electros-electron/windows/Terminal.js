@@ -48,7 +48,7 @@ export class Terminal {
             // Terminal._Window.webContents.executeJavaScript(popupTitlebarJS);
         });
 
-        Terminal._Tray = new TrayIcon(Terminal._Window, platform, __dirname);
+        Terminal._Tray = new TrayIcon(platform, __dirname);
 
         Terminal._Window.on('close', (e) => {
             e.preventDefault();
@@ -72,11 +72,19 @@ export class Terminal {
             isVisible = Terminal._Window.isVisible();
         }
 
+        console.trace(`Terminal Window has ${isVisible} visibility`);
+
         if (isVisible) {
-            Terminal._Window.show();
-        } else {
             Terminal._Window.hide();
+        } else {
+            Terminal._Window.show();
         }
+    }
+
+    static GetVisibility() {
+        if (Terminal._Window === null) { return false; }
+
+        return Terminal._Window.isVisible();
     }
 
     static DestroyWindow() {

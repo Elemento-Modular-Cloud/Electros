@@ -11,7 +11,7 @@ export function BuildMenuTemplate() {
                 {role: 'quit'},
                 {label: 'Reload', role: 'reload'},
                 {
-                    label: 'Toggle Terminal',
+                    label: 'Open Terminal',
                     accelerator: 'CmdOrCtrl+T',
                     click: () => { Terminal.ToggleVisibility(); }
                 }
