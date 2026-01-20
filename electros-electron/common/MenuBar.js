@@ -8,13 +8,15 @@ export function BuildMenuTemplate() {
         {
             label: 'Electros',
             submenu:[
-                {role: 'quit'},
                 {label: 'Reload', role: 'reload'},
                 {
                     label: 'Open Terminal',
                     accelerator: 'CmdOrCtrl+T',
                     click: () => { Terminal.ToggleVisibility(); }
-                }
+                },
+                {type: "separator"},
+                {role: "close"},
+                {role: 'quit'},
             ]
         },
         {

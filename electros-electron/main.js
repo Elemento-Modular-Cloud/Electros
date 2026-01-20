@@ -54,7 +54,6 @@ function createMainWindow() {
     // Inject custom titlebar after the page loads
     win.webContents.on('did-finish-load', () => {
         try {
-            // Ensure titlebarCustomJS is a string and properly escaped
             const safeJS = typeof PreloadedContent.Js.Titlebar === 'string'
                 ? PreloadedContent.Js.Titlebar
                 : JSON.stringify(PreloadedContent.Js.Titlebar);
@@ -73,30 +72,6 @@ function createMainWindow() {
 }
 
 function createTerminalWindow() {
-    terminalWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        ...WindowOptions.Common,
-        show: false,
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            zoomFactor: 1,
-            backgroundThrottling: false,
-            enableRemoteModule: false,
-            experimentalFeatures: false,
-            webSecurity: false
-        },
-        backgroundColor: '#000000',
-        title: 'Electros Daemons'
-    });
-
-    terminalWindow.webContents.setVisualZoomLevelLimits(1, 1);
-
-    terminalWindow.loadFile('terminal/terminal.html');
-
-    // Wait for the terminal window to be ready
     terminalWindow.webContents.on('did-finish-load', () => {
         Daemons.Launch(platform, __dirname);
 

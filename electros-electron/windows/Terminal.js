@@ -4,6 +4,7 @@ import {TrayIcon} from "../common/TrayIcon.js";
 
 
 export class Terminal {
+    static _isQuitting = false;
     static _Window = null;
     static _Tray = null;
 
@@ -17,7 +18,6 @@ export class Terminal {
             height: 600,
             ...WindowOptions.Common,
             show: false,
-            hiddenInMissionControl: (platform.isMac()) ? true : undefined,
             frame: false,
             webPreferences: {
                 nodeIntegration: true,
@@ -39,8 +39,10 @@ export class Terminal {
         Terminal._Tray = new TrayIcon(platform, __dirname);
 
         Terminal._Window.on('close', (e) => {
-            e.preventDefault();
-            this._Window.hide();
+            if (!Terminal._isQuitting) {
+                e.preventDefault();
+                Terminal._Window.hide();
+            }
         });
 
         ipcMain.on("minimize-window", () => {
@@ -55,15 +57,18 @@ export class Terminal {
     static ToggleVisibility(to = undefined) {
         if (Terminal._Window === null) { return; }
 
-        let isVisible = to;
-        if (to === undefined) {
-            isVisible = Terminal._Window.isVisible();
-        }
-
-        if (isVisible) {
-            Terminal._Window.hide();
+        if (to !== undefined) {
+            if (to) {
+                Terminal._Window.show();
+            } else {
+                Terminal._Window.hide();
+            }
         } else {
-            Terminal._Window.show();
+            if (Terminal._Window.isVisible()) {
+                Terminal._Window.hide();
+            } else {
+                Terminal._Window.show();
+            }
         }
     }
 
@@ -76,13 +81,11 @@ export class Terminal {
     static DestroyWindow() {
         if (Terminal._Window === null) { return; }
 
-        /** @type {BrowserWindow} */
-        const x = Terminal._Window;
-
+        Terminal._isQuitting = true;
         Terminal._Window.close();
 
         setTimeout(() => {
-            if (!Terminal._Window.isDestroyed()) {
+            if (Terminal._Window && !Terminal._Window.isDestroyed()) {
                 Terminal._Window.destroy();
             }
         }, 500);
