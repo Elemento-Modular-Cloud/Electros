@@ -60,7 +60,7 @@
                     ]
                 }
             ],
-            "requestedExecutionLevel": "requireAdministrator"
+            "requestedExecutionLevel": "asInvoker"
         },
         "mac": {
             "icon": "electros.iconset/electros.icns",
