@@ -2,7 +2,7 @@ import {app} from "electron";
 import path from "path";
 import fs from "fs";
 import {spawn} from "child_process";
-import {Terminal} from "../Windows/Terminal.js";
+import {Terminal} from "../windows/Terminal.js";
 
 
 export class DaemonsNotEnabledError extends Error {}
