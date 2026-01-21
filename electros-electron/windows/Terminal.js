@@ -7,6 +7,7 @@ export class Terminal {
     static _isQuitting = false;
     static _Window = null;
     static _Tray = null;
+    static _Buffer = [];
 
     static CreateWindow(PreloadedContent, platform, __dirname) {
         if (this._Window) {
@@ -30,6 +31,15 @@ export class Terminal {
             },
             backgroundColor: "#000000",
             title: "Electros Daemons"
+        });
+
+        Terminal._Window.webContents.on('did-finish-load', () => {
+            if (Terminal._Buffer.length > 0) {
+                Terminal._Buffer.forEach(data => {
+                    Terminal._Window.webContents.send("terminal-output", data);
+                });
+                Terminal._Buffer = [];
+            }
         });
 
         Terminal._Window.webContents.setVisualZoomLevelLimits(1, 1);
@@ -57,6 +67,8 @@ export class Terminal {
     static Write(data) {
         if (Terminal._Window && !Terminal._Window.isDestroyed()) {
             Terminal._Window.webContents.send("terminal-output", data)
+        } else {
+            Terminal._Buffer.push(data);
         }
     }
 

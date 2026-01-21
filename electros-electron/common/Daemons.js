@@ -22,7 +22,13 @@ export class Daemons {
     static Launch(platform, __dirname) {
         if (app.commandLine.hasSwitch("no-daemons")) {
             console.log("Daemons have been disabled by `--no-daemons`");
+            Terminal.Write("Elemento Client Daemons have been disabled by `--no-daemons`.");
             throw new DaemonsNotEnabledError();
+        }
+
+        if (!app.isPackaged) {
+            Terminal.Write("Electros is not packaged. Daemons might have to be manually started.")
+            console.log("Electros is not packaged. Daemons might have to be manually started.")
         }
 
         const execPath = Daemons._GetCommand(platform, __dirname);
@@ -36,12 +42,12 @@ export class Daemons {
         );
 
         Daemons._Process.stdout.on("data", (data) => {
-            this.stdoutBuffer += data.toString();
+            // this.stdoutBuffer += data.toString();
             Terminal.Write(data);
         });
 
         Daemons._Process.stderr.on("data", (data) => {
-            this.stderrBuffer += data.toString();
+            // this.stderrBuffer += data.toString();
             Terminal.Write(data);
         });
 
@@ -50,7 +56,7 @@ export class Daemons {
         });
     }
 
-    static Terminate(platform = null) {
+    static Terminate() {
         let r = true;
         if (Daemons._Process !== null) {
             if (!Daemons._Process.killed) {

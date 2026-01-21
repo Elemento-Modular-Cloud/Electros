@@ -41,7 +41,7 @@ function createMainWindow() {
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false,
-            devTools: !app.isPackaged,
+            devTools: !app.isPackaged && app.commandLine.hasSwitch("allow-debug"),
         }
     });
 
@@ -115,7 +115,7 @@ function setupWindowShortcuts(window) {
         } else {
             if (!quitShortcut) {
                 globalShortcut.register('Alt+F4', () => {
-                    Daemons.Terminate(platform);
+                    Daemons.Terminate();
                     app.quit();
                 });
                 quitShortcut = true;
@@ -243,7 +243,7 @@ app.on('before-quit', () => {
         console.error(error);
     }
 
-    Daemons.Terminate(platform);
+    Daemons.Terminate();
 });
 
 // Add this IPC handler before app.whenReady()
