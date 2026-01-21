@@ -41,7 +41,7 @@ function createMainWindow() {
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false,
-            devTools: !app.isPackaged && app.commandLine.hasSwitch("allow-debug"),
+            devTools: !app.isPackaged || app.commandLine.hasSwitch("allow-debug"),
         }
     });
 
