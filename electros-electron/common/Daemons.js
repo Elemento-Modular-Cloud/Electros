@@ -88,12 +88,12 @@ export class Daemons {
             }
         } else if (platform.isWin()) {
             if (platform.arch === 'x64' || platform.arch === 'x86') {
-                daemonsCmd = path.join(daemonsPath, `elemento_daemons_windows_x86.exe`);
+                daemonsCmd = path.join(daemonsPath, `elemento_daemons_win_x86.exe`);
                 if (!fs.existsSync(daemonsCmd)) {
-                    daemonsCmd = path.join(daemonsPath, `elemento_daemons_windows_x64.exe`);
+                    daemonsCmd = path.join(daemonsPath, `elemento_daemons_win_x64.exe`);
                 }
             } else {
-                daemonsCmd = path.join(daemonsPath, `elemento_daemons_windows_arm64.exe`);
+                daemonsCmd = path.join(daemonsPath, `elemento_daemons_win_arm64.exe`);
             }
         }
 
