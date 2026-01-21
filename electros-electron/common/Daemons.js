@@ -32,6 +32,7 @@ export class Daemons {
         }
 
         const execPath = Daemons._GetCommand(platform, __dirname);
+        console.trace(execPath);
 
         Daemons._Process = spawn(
             execPath, [], {
