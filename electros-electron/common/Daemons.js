@@ -1,7 +1,7 @@
 import {app} from "electron";
 import path from "path";
 import fs from "fs";
-import {spawn} from "child_process";
+import {spawn, execSync} from "child_process";
 import {Terminal} from "../windows/Terminal.js";
 
 
@@ -61,7 +61,15 @@ export class Daemons {
         let r = true;
         if (Daemons._Process !== null) {
             if (!Daemons._Process.killed) {
-                r = Daemons._Process.kill();
+                if (process.platform === 'win32') {
+                    try {
+                        execSync(`taskkill /pid ${Daemons._Process.pid} /T /F`);
+                    } catch (e) {
+                        console.error("Failed to kill process with taskkill:", e);
+                    }
+                } else {
+                    r = Daemons._Process.kill();
+                }
             }
             Daemons._Process = null;
         }
