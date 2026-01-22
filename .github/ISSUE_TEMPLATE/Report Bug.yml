@@ -1,0 +1,35 @@
+name: Bug Report
+description: Create a new bug report.
+title: "[Electros Bug]: "
+labels: ["bug"]
+projects: ["Elemento-Modular-Cloud/26"]
+assignees:
+  - "c4lopsitta"
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        "Attach, if possible, the Electros Bug Report Log with the button below the following text area.<br>To generate it, just press `Ctrl`+`Shift`+`B` (or `Cmd`+`Shift`+`B` on MacOS)
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe what you were doing when the bug happened and the issue you've encountered.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: On what platform did you encounter the bug?
+      options:
+        - MacOS (Intel)
+        - MacOS (Apple Silicon)
+        - Linux (AppImage)
+        - Debian and derivatives (.deb package)
+        - Windows
+        - AtomOS Electros Instance
+    validations:
+      required: true
