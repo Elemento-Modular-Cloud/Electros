@@ -1,5 +1,6 @@
 import { Tray, nativeImage, nativeTheme, Menu, app } from 'electron';
 import path from 'path';
+import {Terminal} from "../windows/Terminal.js";
 
 
 export class TrayIcon {
