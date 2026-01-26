@@ -18,6 +18,8 @@ const {Daemons} = require("./common/Daemons");
 const {Terminal} = require("./windows/Terminal");
 const {RdpWindow} = require("./windows/Rdp.js");
 const {DaemonsNotEnabledError} = require("./common/Daemons.js");
+const fs = require("fs");
+const {homedir} = require("node:os");
 
 
 let mainWindow = null;
@@ -322,6 +324,18 @@ ipcMain.handle('os-prefers-reduced-transparency', (event) => {
 
 ipcMain.handle('open-browser', async (event, {url}) => {
     await shell.openExternal(url);
+});
+
+ipcMain.handle('open-dot-config', async (event, {file = null}) => {
+    const CONFIG_DIR = path.join(homedir(), '.elemento');
+    let actualPath = CONFIG_DIR;
+
+    if (file) {
+        actualPath = path.join(CONFIG_DIR, ...(file.split("/")));
+    }
+
+    await shell.openPath(actualPath);
+
 });
 
 
