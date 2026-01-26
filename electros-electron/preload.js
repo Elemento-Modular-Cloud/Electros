@@ -18,7 +18,8 @@ contextBridge.exposeInMainWorld('electron', {
             'check-port',
             'os-prefers-dark-theme',
             'os-prefers-reduced-transparency',
-            'open-browser'
+            'open-browser',
+            'open-dot-config'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
