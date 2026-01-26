@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell, safeStorage} = require('electron');
 
 app.commandLine.appendSwitch('disable-zoom-level-persistence');
 const path = require('path');
@@ -430,3 +430,21 @@ app.on('child-process-gone', (event, details) => {
 });
 
 
+ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = false }) => {
+    const isAvailable = safeStorage.isEncryptionAvailable();
+    if (!isAvailable && refuseUnsafe) {
+        return false;
+    } else if (!isAvailable && !refuseUnsafe) {
+        console.warn("Value was not encrypted because the OS has no support for keychains.")
+        return value;
+    }
+
+    return safeStorage.encryptString(value)
+});
+
+ipcMain.handle("safestorage-decrypt", async (event, { value, defaultValue = null }) => {
+    const isAvailable = safeStorage.isEncryptionAvailable();
+    if (!isAvailable) { return false; }
+
+    return safeStorage.decryptString(value)
+});
