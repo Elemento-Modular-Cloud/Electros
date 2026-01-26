@@ -1,12 +1,12 @@
 {
-    "name": "Electros",
-    "version": "3.1.4",
+    "name": "electros",
+    "version": "3.1.5",
     "description": "Electros Desktop Application",
     "main": "main.js",
     "homepage": "https://elemento.cloud",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Elemento-Modular-Cloud/ElectrosGUI.git"
+        "url": "https://github.com/Elemento-Modular-Cloud/Electros.git"
     },
     "author": {
         "name": "Elemento Cloud Srl",
@@ -42,7 +42,7 @@
             "!**/{.env,.env.*,.venv,venv,*.venv}",
             "!**/node_modules/*/{CONTRIBUTING.md,HISTORY.md,History.md,AUTHORS,CONTRIBUTORS,CHANGES,CHANGELOG.md}",
             "!.github",
-            "!docs",
+            "!**/docs/*",
             "!**/node_modules/*/{benchmark,coverage,example,examples}/**/*",
             "!**/node_modules/**/*.{ts,map,md,txt,log,yml,yaml}"
         ],
@@ -60,7 +60,7 @@
                     ]
                 }
             ],
-            "requestedExecutionLevel": "requireAdministrator"
+            "requestedExecutionLevel": "asInvoker"
         },
         "mac": {
             "icon": "electros.iconset/electros.icns",

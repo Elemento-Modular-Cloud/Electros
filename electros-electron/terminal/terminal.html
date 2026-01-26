@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css" />
     <script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
@@ -15,12 +15,14 @@
             font-size: 12px; /* Smaller font size */
             padding-top: 43px; /* Add top padding */
             padding-left: 13px;
+            font-variant-ligatures: none;
         }
         .electros-titlebar-title {
             color: #ffa600 !important;
         }
     </style>
     <link rel="stylesheet" href="../titlebar/titlebar.css" />
+    <title>Electros Daemons</title>
 </head>
 <body>
     <div class="electros-titlebar"></div>
@@ -28,73 +30,82 @@
     <script>
         const { Terminal } = require('@xterm/xterm');
         const { ipcRenderer } = require('electron');
-        
-        // Initialize titlebar with minimize-only option
-        function initializeTitlebar() {
-            const titlebar = document.querySelector('.electros-titlebar');
-            const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
-                           navigator.userAgent.includes('Win') ? 'win' : 
-                           'linux';
+        const { Platform } = require('../common/Platform');
 
-            titlebar.classList.add(platform);
-            const buttonsAlignClass = platform === 'mac' ? 'electros-titlebar-buttons-align-left' : 'electros-titlebar-buttons-align-right';
-            
-            titlebar.innerHTML = `
-                    <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
-                        <button class='electros-titlebar-button' id='minimize-button'></button>
-                    </div>
-                `;
+        const CurrentPlatform = new Platform();
 
-            // Add title element
-            const titleElement = document.createElement('div');
-            titleElement.className = 'electros-titlebar-title';
-            titleElement.textContent = 'Electros Daemons';
-            titlebar.appendChild(titleElement);
-
-            // Add event listeners
-            document.getElementById('minimize-button').addEventListener('click', () => {
-                console.log('Minimize clicked');
-                ipcRenderer.send('minimize-window');
-            });
+        if (CurrentPlatform.isMac()) {
+            document.querySelector('.electros-titlebar').innerHTML = `
+            <div class='electros-titlebar-buttons electros-titlebar-buttons-align-left'>
+                <button class='electros-titlebar-button' id='close-button'></button>
+                <button class='electros-titlebar-button' id='minimize-button'></button>
+                <button class='electros-titlebar-button' id='maximize-button'></button>
+                <button class='electros-titlebar-button' id='fullscreen-button'></button>
+            </div>
+            `;
+            document.querySelector('.electros-titlebar').classList.add('mac');
+        } else {
+            document.querySelector('.electros-titlebar').innerHTML = `
+            <div class='electros-titlebar-buttons electros-titlebar-buttons-align-right'>
+                <button class='electros-titlebar-button' id='minimize-button'></button>
+                <button class='electros-titlebar-button' id='maximize-button'></button>
+                <button class='electros-titlebar-button' id='close-button'></button>
+            </div>
+            `;
+            if (CurrentPlatform.isLinux()) {
+                document.querySelector('.electros-titlebar').classList.add('linux');
+            } else {
+                document.querySelector('.electros-titlebar').classList.add('win');
+            }
         }
 
-        // Initialize the terminal
+        const buttonActions = {
+            'close-button': 'close-window',
+            'hide-button': 'hide-window',
+            'minimize-button': 'minimize-window',
+            'maximize-button': 'toggle-full-screen',
+            'fullscreen-button': 'maximize-window',
+        };
+
+        Object.entries(buttonActions).forEach(([buttonId, action]) => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', () => {
+                    ipcRenderer.invoke(action);
+                });
+            }
+        });
+
         const term = new Terminal({
-            fontSize: 12, // Smaller font size
+            fontSize: 12,
             lineHeight: 1.2,
-            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            fontFamily: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", monospace`,
+            fontWeight: 'normal',
             cursorBlink: true,
-            cols: Math.floor(window.innerWidth / 8), // Calculate columns to fill the space
-            rows: Math.floor(window.innerHeight / 16), // Calculate rows to fill the space
-            wraparoundMode: true, // Enable line wrapping
+            cols: Math.floor(window.innerWidth / 8),
+            rows: Math.floor(window.innerHeight / 16),
             convertEol: true,
+            disableStdin: true,
+            scrollback: 2000,
             theme: {
                 background: '#0a0e14',
-                foreground: '#ffa600' // Set terminal text color to green
+                foreground: '#ffa600'
             }
         });
         
         term.open(document.getElementById('terminal'));
 
-        // Add window resize handler
         window.addEventListener('resize', () => {
             const terminalElement = document.getElementById('terminal');
-            // Account for padding in calculations
             const availableWidth = window.innerWidth - 13; // Subtract left padding
             const availableHeight = window.innerHeight - 43; // Subtract top padding
             
-            // Calculate new dimensions
             const newCols = Math.floor(availableWidth / 8); // Assuming 8px per character width
             const newRows = Math.floor(availableHeight / 16); // Assuming 16px per character height
             
-            // Resize the terminal
             term.resize(newCols, newRows);
         });
 
-        // Initialize the titlebar
-        initializeTitlebar();
-
-        // Listen for output from the main process
         ipcRenderer.on('terminal-output', (event, data) => {
             term.write(data);
         });

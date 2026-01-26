@@ -1,0 +1,408 @@
+name: nightly.yml
+
+on:
+  schedule:
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+
+jobs:
+  remove-old-releases:
+    name: Remove old releases
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Delete old releases
+        uses: s00d/delete-older-releases@0.2.1
+        with:
+          repo: Elemento-Modular-Cloud/Electros
+          keep_latest: 3
+          delete_type: 'release'
+          delete_branch: ${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete old prereleases
+        uses: s00d/delete-older-releases@0.2.1
+        with:
+          repo: Elemento-Modular-Cloud/Electros
+          keep_latest: 1
+          delete_type: 'prerelease'
+          delete_branch: ${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sync-submodule:
+    name: Sync GUI Submoudle
+    runs-on: ubuntu-latest
+
+  create-release:
+    name: Create Release
+    needs: remove-old-releases
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    outputs:
+      tag_name: ${{ steps.get_tag_name.outputs.tag_name }}
+      tag_name_nodate: ${{ steps.get_tag_name.outputs.tag_name_nodate }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          submodules: recursive
+          ref: ${{ github.ref }}
+
+      - name: Get current date
+        id: date
+        run: |
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "time=$(date +'%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Get tag name
+        id: get_tag_name
+        run: |
+          VERSION=$(node -p "require('./electros-electron/package.json').version")
+          echo "tag_name=v${VERSION}-${{ steps.date.outputs.date }}-${{ steps.date.outputs.time }}-nightly-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "tag_name_nodate=${VERSION}-nightly" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        id: create_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.get_tag_name.outputs.tag_name }} \
+            --prerelease \
+            --title "ElectrosRelease ${{ steps.get_tag_name.outputs.tag_name }}" \
+            --generate-notes
+
+  build:
+    name: Build (${{ matrix.os }}-${{ matrix.arch }})
+    needs: create-release
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            os: mac
+            arch: x64
+          - platform: macos-latest
+            os: mac
+            arch: arm64
+          - platform: macos-latest
+            os: win
+            arch: x64
+          - platform: ubuntu-latest
+            os: linux
+            arch: x64
+          - platform: ubuntu-latest
+            os: linux
+            arch: arm64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          submodules: recursive
+          ref: ${{ github.ref }}
+
+      - name: Get tag name
+        id: get_tag_name
+        run: |
+          VERSION=$(node -p "require('./electros-electron/package.json').version")
+          echo "tag_name=v${VERSION}-${{ steps.date.outputs.date }}-${{ steps.date.outputs.time }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "tag_name_nodate=${VERSION}" >> $GITHUB_OUTPUT
+
+
+      - name: Setup step
+        if: runner.os != 'Windows'
+        run: |
+          export CI_TOKEN=${{ secrets.CI_TOKEN }}
+          cd ./electros-electron
+          chmod +x ./setup.sh
+          ./setup.sh
+        shell: bash
+
+      - name: Populate Daemons step
+        if: runner.os != 'Windows'
+        run: |
+          export CI_TOKEN=${{ secrets.CI_TOKEN }}
+          chmod +x ./populate_daemons.sh
+          ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --develop
+        shell: bash
+
+      - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
+        if: runner.os != 'Windows'
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if [ ${{ matrix.os }} == "mac" ]; then
+            # Create keychain
+            security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+            security set-keychain-settings -t 3600 -u build.keychain
+
+            # Import certificate
+            echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output certificate.p12
+            security import certificate.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+            rm -fr *.p12
+          fi
+
+          # Clean up
+          cd ./electros-electron
+          chmod +x ./autobuild.sh
+          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --version ${{ steps.get_tag_name.outputs.tag_name_nodate }}
+        shell: bash
+
+      - name: Upload un-notarized & un-stapled DMG artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'mac'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}-unsigned.dmg
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg
+
+      - name: Apple notarize step
+        if: runner.os != 'Windows' && matrix.os == 'mac'
+        env:
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_ID: app.elemento.cloud
+        run: |
+          # Load keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+
+          cd "electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}"
+          
+          # First, extract the .app from the unsigned DMG
+          echo "Extracting .app bundle from DMG..."
+          VOLUME_NAME=$(hdiutil attach "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
+          cp -R "$VOLUME_NAME/Electros.app" ./
+          hdiutil detach "$VOLUME_NAME"
+
+          # First get the signing identity from the keychain
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning build.keychain | grep -o '".*"' | head -1 | tr -d '"')
+          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --options=runtime --entitlements ../../../entitlements.plist Electros.app/Contents/Resources/app.asar.unpacked/node_modules/ssh2/lib/protocol/crypto/build/node_gyp_bins/python3 --force
+          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --options=runtime --entitlements ../../../entitlements.plist ./Electros.app --force
+          
+          # Now notarize the extracted .app bundle
+          echo "Notarizing .app bundle..."
+          ditto -c -k --keepParent "Electros.app" "Electros.zip"
+          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros.zip | tee app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          
+          # Wait for app notarization to complete and staple the app
+          while read -r line; do
+            if [[ $line =~ "id: "([^\ ]+) ]]; then
+              submission_id="${BASH_REMATCH[1]}"
+              echo "Waiting for app notarization to complete..."
+              xcrun notarytool wait "$submission_id" --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID
+              xcrun stapler staple "Electros.app"
+              break
+            fi
+          done < app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          
+          rm Electros.zip
+          
+          # Create new DMG with the notarized app while preserving electron-builder layout
+          echo "Creating new DMG with notarized app..."
+          mv "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" "./original.dmg"
+          
+          # Mount the original DMG
+          VOLUME_NAME=$(hdiutil attach -nobrowse "./original.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
+          
+          # Create a temporary read-write DMG
+          hdiutil convert "./original.dmg" -format UDRW -o "./temp.dmg"
+          hdiutil detach "$VOLUME_NAME"
+          
+          # Mount the temporary DMG
+          VOLUME_NAME=$(hdiutil attach -nobrowse "./temp.dmg" | tail -1 | awk '{$1=$2=""; print substr($0,3)}')
+          
+          # Replace the .app with the notarized version
+          rm -rf "$VOLUME_NAME/Electros.app"
+          cp -R "./Electros.app" "$VOLUME_NAME/"
+          
+          # Unmount the temporary DMG
+          hdiutil detach "$VOLUME_NAME"
+          
+          # Convert back to compressed read-only DMG
+          hdiutil convert "./temp.dmg" -format UDZO -o "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          
+          # Clean up temporary files
+          rm "./temp.dmg" "./original.dmg"
+
+          # Sign the DMG with the same identity used for the app
+          echo "Signing DMG..."
+          codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --options=runtime \
+            "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          
+          # Now notarize the new DMG
+          echo "Notarizing DMG..."
+          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          
+          # Wait for DMG notarization to complete and staple
+          while read -r line; do
+            if [[ $line =~ "id: "([^\ ]+) ]]; then
+              submission_id="${BASH_REMATCH[1]}"
+              echo "Waiting for DMG notarization to complete..."
+              xcrun notarytool wait "$submission_id" --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID
+              xcrun stapler staple "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+              break
+            fi
+          done < ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+
+      - name: Upload Apple notarize logs artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'mac'
+        with:
+          name: ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/${{ matrix.os }}-${{ matrix.arch }}-notarize.log electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+
+      - name: Upload Apple notarize
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'mac'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg
+
+      - name: Upload win exe artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'win'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe
+          path: electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe
+
+      - name: Upload linux artifacts
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'linux'
+        with:
+          name: Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}-artifacts
+          path: |
+            electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage
+            electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.deb
+            electros-electron/build/${{ matrix.os }}/${{ matrix.arch }}/Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.rpm
+
+
+      - name: Generate checksums
+        run: |
+          cd electros-electron/build
+
+          # Create the checksum file with absolute path
+          checksum_file="$(pwd)/checksums-${{ matrix.os }}-${{ matrix.arch }}.txt"
+
+          # Create a single checksums file
+          echo "# Electros ${{ needs.create-release.outputs.tag_name }} Checksums" > "$checksum_file"
+          echo "# Generated on $(date)" >> "$checksum_file"
+          echo "" >> "$checksum_file"
+          
+          # Function to generate checksums for a file
+          generate_checksums() {
+            local file=$1
+            if [ -f "$file" ]; then
+              echo "Generating checksums for $file"
+              echo "## $file" >> "$checksum_file"
+              if [[ "$RUNNER_OS" == "macOS" ]]; then
+                echo "MD5: $(md5 -r "$file" | cut -d' ' -f1)" >> "$checksum_file"
+                echo "SHA256: $(shasum -a 256 "$file" | cut -d' ' -f1)" >> "$checksum_file"
+              else
+                echo "MD5: $(md5sum "$file" | cut -d' ' -f1)" >> "$checksum_file"
+                echo "SHA256: $(sha256sum "$file" | cut -d' ' -f1)" >> "$checksum_file"
+              fi
+              echo "" >> "$checksum_file"
+            fi
+          }
+
+          cd "${{ matrix.os }}/${{ matrix.arch }}"
+          
+          if [ ${{ matrix.os }} == "mac" ]; then
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          
+            gh release upload ${{ needs.create-release.outputs.tag_name }} \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          elif [ ${{ matrix.os }} == "win" ]; then
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
+          
+            gh release upload ${{ needs.create-release.outputs.tag_name }} \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
+          elif [ ${{ matrix.os }} == "linux" ]; then
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage"
+            generate_checksums "Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
+          
+            gh release upload ${{ needs.create-release.outputs.tag_name }} \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage" \
+              "./Electros-${{ steps.get_tag_name.outputs.tag_name_nodate }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload checksums artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums-${{ matrix.os }}-${{ matrix.arch }}
+          path: electros-electron/build/checksums-${{ matrix.os }}-${{ matrix.arch }}.txt
+
+  combine-checksums:
+    name: Combine Checksums
+    needs: [create-release, build]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          ref: ${{ github.ref }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Combine checksums and update release notes
+        run: |
+          # Create header for combined checksums
+          {
+            echo "# Electros ${{ needs.create-release.outputs.tag_name }} Checksums"
+            echo "# Generated on $(date)"
+            echo "# This file contains checksums for all platform builds"
+            echo ""
+          } > combined_checksums.txt
+          
+          # Find and combine all checksum files
+          find artifacts -name "checksums-*.txt" -type f | while read -r file; do
+            echo "Processing $file"
+            platform=$(basename "$file" | sed 's/checksums-\(.*\)\.txt/\1/')
+            echo "## Platform: $platform" >> combined_checksums.txt
+            # Skip the header lines and add the content
+            tail -n +4 "$file" >> combined_checksums.txt
+            echo "" >> combined_checksums.txt
+          done
+
+          # Get existing release notes
+          gh release view ${{ needs.create-release.outputs.tag_name }} --json body -q .body > existing_notes.txt
+
+          # Combine existing notes with checksums
+          {
+            cat existing_notes.txt
+            echo ""
+            echo "<details>"
+            echo "<summary>Build Checksums</summary>"
+            echo ""
+            cat combined_checksums.txt
+            echo "</details>"
+          } > updated_notes.txt
+
+          # Update release notes
+          gh release edit ${{ needs.create-release.outputs.tag_name }} --notes-file updated_notes.txt
+
+          # Still upload the checksums file separately for direct access
+          gh release upload ${{ needs.create-release.outputs.tag_name }} combined_checksums.txt --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
