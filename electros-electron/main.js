@@ -430,7 +430,7 @@ app.on('child-process-gone', (event, details) => {
 });
 
 
-ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = false }) => {
+ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = true }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable && refuseUnsafe) {
         return false;
@@ -442,7 +442,7 @@ ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = fals
     return safeStorage.encryptString(value)
 });
 
-ipcMain.handle("safestorage-decrypt", async (event, { value, defaultValue = null }) => {
+ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable) { return false; }
 
