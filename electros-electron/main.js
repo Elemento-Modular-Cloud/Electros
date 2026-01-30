@@ -206,7 +206,6 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
 });
 
 
-// Then modify the before-quit handler to use the cleanup function directly
 app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
 
@@ -414,7 +413,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         return sshWindow.id;
     } catch (error) {
         console.error('Error setting up SSH window:', error);
-        if (ssh_port) {
+        if (ssh_port !== null || ssh_port !== undefined || ssh_port !== "") {
             PortHandler.ReleasePort(parseInt(ssh_port));
         }
         throw error;
