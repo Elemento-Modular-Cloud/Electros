@@ -118,7 +118,7 @@
         ]
     },
     "devDependencies": {
-        "electron": "^35.7.5",
+        "electron": "^40.1.0",
         "electron-builder": "^25.1.8"
     },
     "overrides": {
@@ -132,12 +132,11 @@
         "boolean": "^4.0.0"
     },
     "dependencies": {
-        "ssh2": "^1.15.0",
+        "@xterm/addon-fit": "latest",
+        "@xterm/xterm": "^5.5.0",
         "cors": "^2.8.5",
         "express": "^4.21.2",
         "socket.io": "^4.8.1",
-        "@xterm/xterm": "^5.5.0",
-        "@xterm/addon-fit": "latest"
+        "ssh2": "^1.15.0"
     }
 }
-
