@@ -1,1 +1,0 @@
-# elemento-new-app-tests
