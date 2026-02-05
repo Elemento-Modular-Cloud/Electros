@@ -447,3 +447,10 @@ ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
 
     return safeStorage.decryptString(value)
 });
+
+ipcMain.handle("app-version", () => {
+    return {
+        version: app.getVersion(),
+        node: process.versions
+    };
+});
