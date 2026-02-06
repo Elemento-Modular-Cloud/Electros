@@ -2,21 +2,36 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css" />
-    <script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
     <link rel="stylesheet" href="../electros/css/style.css" />
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             margin: 0;
             background-color: #0a0e14 !important;
+            position: relative;
         }
-        #terminal { 
-            width: 100vw; 
-            height: 100vh;
-            font-size: 12px; /* Smaller font size */
-            padding-top: 43px; /* Add top padding */
-            padding-left: 13px;
+        #terminal {
+            width: calc(100vw - 1rem);
+            height: calc(100vh - 3rem);
+            position: absolute;
+            bottom: 1rem;
+            left: .5rem;
+            right: .5rem;
+            top: 2rem;
+            overflow: hidden;
             font-variant-ligatures: none;
         }
+
+        .xterm {
+            font-variant-ligatures: none;
+            text-rendering: geometricPrecision;
+        }
+
         .electros-titlebar-title {
             color: #ffa600 !important;
         }
@@ -31,6 +46,8 @@
         const { Terminal } = require('@xterm/xterm');
         const { ipcRenderer } = require('electron');
         const { Platform } = require('../common/Platform');
+        const {FitAddon} = require("@xterm/addon-fit");
+        const {WebglAddon} = require("@xterm/addon-webgl");
 
         const CurrentPlatform = new Platform();
 
@@ -77,37 +94,71 @@
         });
 
         const term = new Terminal({
-            fontSize: 12,
-            lineHeight: 1.2,
-            fontFamily: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", monospace`,
+            fontSize: 14,
+            lineHeight: 1.1,
+            fontFamily: `'JetBrains Mono', ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", monospace`,
             fontWeight: 'normal',
             cursorBlink: true,
-            cols: Math.floor(window.innerWidth / 8),
-            rows: Math.floor(window.innerHeight / 16),
             convertEol: true,
             disableStdin: true,
+            allowTransparency: false,
             scrollback: 2000,
             theme: {
                 background: '#0a0e14',
-                foreground: '#ffa600'
-            }
+                foreground: '#ffffff'
+            },
         });
-        
+
+        const fitAddon = new FitAddon();
+        const webGlAddon = new WebglAddon({
+            preserveDrawingBuffer: true,
+            antialias: true
+        });
+
+        term.loadAddon(fitAddon);
+        term.loadAddon(webGlAddon);
+
         term.open(document.getElementById('terminal'));
+        fitAddon.fit();
 
         window.addEventListener('resize', () => {
-            const terminalElement = document.getElementById('terminal');
-            const availableWidth = window.innerWidth - 13; // Subtract left padding
-            const availableHeight = window.innerHeight - 43; // Subtract top padding
-            
-            const newCols = Math.floor(availableWidth / 8); // Assuming 8px per character width
-            const newRows = Math.floor(availableHeight / 16); // Assuming 16px per character height
-            
-            term.resize(newCols, newRows);
+            fitAddon.fit();
         });
 
+        const COLOURS = {
+            BLUE: `\x1b[38:5:38m`,
+            RED: `\x1b[38:5:196m`,
+            YELLOW: `\x1b[38:5:220m`,
+            ORANGE: `\x1b[38:5:202m`,
+            MAGENTA: `\x1b[38:5:134m`,
+            RED_BG: `\x1b[48:5:52m`,
+            GREEN: `\x1b[38:5:34m`,
+            RESET: `\x1b[0m`,
+        };
+
         ipcRenderer.on('terminal-output', (event, data) => {
-            term.write(data);
+            let colour = "";
+            let actualData = data;
+            if (data instanceof Uint8Array) {
+                actualData = new TextDecoder().decode(data);
+            }
+
+            if (actualData.includes('[INFO]') || actualData.trim().startsWith("INFO: ")) {
+                colour = COLOURS.BLUE;
+            } else if (actualData.includes('[ERROR]')) {
+                colour = COLOURS.RED;
+            } else if (actualData.includes('[WARNING]')) {
+                colour = COLOURS.YELLOW;
+            } else if (actualData.includes('[CRITICAL]')) {
+                colour = COLOURS.RED_BG;
+            } else if (actualData.includes('[DEBUG]')) {
+                colour = COLOURS.MAGENTA;
+            } else if (actualData.includes('[SUCCESS]')) {
+                colour = COLOURS.GREEN;
+            }
+
+
+            term.write(`${colour}${actualData}${COLOURS.RESET}`);
         });
     </script>
 </body>
