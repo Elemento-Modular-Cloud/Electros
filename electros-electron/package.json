@@ -89,7 +89,8 @@
             "target": [
                 "AppImage",
                 "deb",
-                "rpm"
+                "rpm",
+                "pacman"
             ],
             "maintainer": "Elemento Cloud Srl <hello@elemento.cloud>",
             "category": "Utility"
