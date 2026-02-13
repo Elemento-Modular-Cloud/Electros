@@ -119,7 +119,7 @@
     },
     "devDependencies": {
         "electron": "^40.1.0",
-        "electron-builder": "^25.1.8"
+        "electron-builder": "^26.7.0"
     },
     "overrides": {
         "inflight": "^2.0.0",
