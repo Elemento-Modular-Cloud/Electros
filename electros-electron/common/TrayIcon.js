@@ -30,19 +30,19 @@ export class TrayIcon {
         console.log(`The theme is light: ${isLight}`);
 
         if (platform.isMac()) {
-            const templateIcon = path.join(__dirname, 'electros.iconset', 'tray_icon_black_32x32@2x.png');
+            const templateIcon = path.join(__dirname, 'elemento-gui-new', 'electros.iconset', 'tray_icon_black_32x32@2x.png');
             const icon = nativeImage.createFromPath(templateIcon);
             icon.setTemplateImage(true);
             return icon;
         }
 
         if (platform.isWin()) {
-            const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.ico');
+            const iconName = path.join(__dirname, 'elemento-gui-new', 'electros.iconset', 'tray_icon.ico');
             return nativeImage.createFromPath(iconName);
         }
 
         if (platform.isLinux()) {
-            const iconName = path.join(__dirname, 'electros.iconset', 'tray_icon.png');
+            const iconName = path.join(__dirname, 'elemento-gui-new', 'electros.iconset', 'tray_icon.png');
             const icon = nativeImage.createFromPath(iconName);
             return icon;
         }

@@ -51,7 +51,7 @@ function createMainWindow() {
         win.setWindowButtonVisibility(false);
     }
 
-    win.loadFile('electros/electros.html');
+    win.loadFile('./elemento-gui-new/electros/electros.html');
 
     // Inject custom titlebar after the page loads
     win.webContents.on('did-finish-load', () => {
@@ -364,7 +364,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         const sshPath = path.join(
             baseDir,
             app.isPackaged ? 'app.asar.unpacked' : '',
-            'electros', 'remotes', 'ssh', 'ssh.cjs'
+            'elemento-gui-new', 'electros', 'remotes', 'ssh', 'ssh.cjs'
         );
 
         // Start the SSH server process
