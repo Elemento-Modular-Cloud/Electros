@@ -38,6 +38,12 @@ COPY elemento-gui-new/ /usr/share/nginx/html/
 COPY elemento-gui-new/electros/configs/atomosFlags.json /usr/share/nginx/html/electros/configs/flags.json
 COPY elemento-gui-new/electros/electrosOnAtomos.html /usr/share/nginx/html/electros/electros.html
 COPY docker/startup.sh /opt/app/startup.sh
+COPY ./docker/follow_log.sh /opt/app/follow_log.sh
+COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
+
+RUN apt update
+RUN apt install -y socat
+RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 RUN chmod +x /opt/daemons/*
 RUN chmod +x /opt/app/startup.sh

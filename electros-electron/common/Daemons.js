@@ -22,13 +22,13 @@ export class Daemons {
     static Launch(platform, __dirname) {
         if (app.commandLine.hasSwitch("no-daemons")) {
             console.log("Daemons have been disabled by `--no-daemons`");
-            Terminal.Write("Elemento Client Daemons have been disabled by `--no-daemons`.");
+            Terminal.Write("[INFO] Elemento Client Daemons have been disabled by `--no-daemons`.");
             throw new DaemonsNotEnabledError();
         }
 
         if (!app.isPackaged) {
-            Terminal.Write("Electros is not packaged. Daemons might have to be manually started.")
-            console.log("Electros is not packaged. Daemons might have to be manually started.")
+            Terminal.Write("[WARNING] Electros is not packaged. Daemons might have to be manually started.")
+            console.warn("Electros is not packaged. Daemons might have to be manually started.")
         }
 
         const execPath = Daemons._GetCommand(platform, __dirname);

@@ -1,6 +1,6 @@
 const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell, safeStorage} = require('electron');
 
-app.commandLine.appendSwitch('disable-zoom-level-persistence');
+app.commandLine.appendSwitch('force-device-scale-factor', '1');
 const path = require('path');
 const {spawn} = require('child_process');
 const net = require('net');
@@ -446,4 +446,11 @@ ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
     if (!isAvailable) { return false; }
 
     return safeStorage.decryptString(value)
+});
+
+ipcMain.handle("app-version", () => {
+    return {
+        version: app.getVersion(),
+        node: process.versions
+    };
 });

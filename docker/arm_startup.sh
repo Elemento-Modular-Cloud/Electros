@@ -30,7 +30,8 @@
 # start background daemons
 
 #/opt/daemons/Elemento_Daemons_linux_x86 > /var/log/elemento/elemento_daemons.log 2>&1 &
-/opt/daemons/Elemento_Daemons_linux_arm >/var/log/elemento/elemento_daemons.log 2>&1 &
+/opt/daemons/elemento_daemons_linux_arm >/var/log/elemento/elemento_daemons.log 2>&1 &
+/opt/app/logger_stream.sh >/dev/null &
 
 # run the project
 
