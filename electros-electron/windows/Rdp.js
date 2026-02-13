@@ -73,7 +73,7 @@ export class RdpWindow {
                 const mstscPath = path.join(
                     baseDir,
                     app.isPackaged ? 'app.asar.unpacked' : '',
-                    'electros', 'remotes', 'rdp', 'mstsc-rs'
+                    'elemento-gui-new', 'electros', 'remotes', 'rdp', 'mstsc-rs'
                 );
 
                 const spawnOptions = {
@@ -269,7 +269,7 @@ export class RdpWindow {
             throw new Error("RDP Window not instantiated");
         }
         try {
-            await this._window.loadFile('electros/remotes/rdp/index.html', {
+            await this._window.loadFile('elemento-gui-new/electros/remotes/rdp/index.html', {
                 query: connectionDetails
             });
         } catch (error) {

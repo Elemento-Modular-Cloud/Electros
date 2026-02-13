@@ -41,7 +41,7 @@ class SshWindow {
             const baseDir = app.isPackaged ? process.resourcesPath : this.__dirname;
             const sshPath = path.join(
                 baseDir, app.isPackaged ? 'app.asar.unpacked' : '',
-                'electros', 'remotes', 'ssh', 'ssh.cjs'
+                'elemento-gui-new', 'electros', 'remotes', 'ssh', 'ssh.cjs'
             );
 
 

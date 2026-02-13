@@ -19,8 +19,8 @@ export class Loaders {
         try {
             this.Css.Titlebar = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.css'), 'utf8');
             const titlebarTempJs = fs.readFileSync(path.join(__dirname, 'titlebar', 'titlebar.js'), 'utf8');
-            this.Css.Themes = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'themes.css'), 'utf8');
-            this.Css.FormControl = fs.readFileSync(path.join(__dirname, 'electros', 'css', 'form-controls.css'), 'utf8');
+            this.Css.Themes = fs.readFileSync(path.join(__dirname, 'elemento-gui-new', 'electros', 'css', 'themes.css'), 'utf8');
+            this.Css.FormControl = fs.readFileSync(path.join(__dirname, 'elemento-gui-new', 'electros', 'css', 'form-controls.css'), 'utf8');
 
             this.Js.Themes = `
             var theme = document.createElement('style');
