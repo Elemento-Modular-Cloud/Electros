@@ -92,7 +92,8 @@
                 "rpm"
             ],
             "maintainer": "Elemento Cloud Srl <hello@elemento.cloud>",
-            "category": "Utility"
+            "category": "Utility",
+            "sandbox": true
         },
         "compression": "maximum",
         "asar": true,

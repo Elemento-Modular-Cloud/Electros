@@ -122,7 +122,7 @@ get_release_assets() {
 # Function to download a single asset
 download_asset() {
     local asset_id="$1"
-    local filename="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
+    local filename="$2"
     local target_dir="$3"
     local repo="Elemento-Modular-Cloud/elemento-monorepo-client"
     
@@ -212,6 +212,7 @@ main() {
     local output_dir="electros-daemons"
     
     get_release_assets "$version" | while IFS='|' read -r asset_id filename url; do
+        filename="$(echo "$filename" | tr '[:upper:]' '[:lower:]')"
         [ -z "$asset_id" ] && continue
         
         # Get platform info
