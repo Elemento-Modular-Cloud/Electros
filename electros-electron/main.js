@@ -23,11 +23,14 @@ const {homedir} = require("node:os");
 
 
 let mainWindow = null;
-let terminalWindow = null;
 
 const PreloadedContent = new Loaders(__dirname);
 const platform = new Platform();
 const Rdp = new RdpWindow(PreloadedContent, platform, __dirname);
+
+if (process.env.XDG_SESSION_TYPE === 'wayland') {
+    app.commandLine.appendSwitch('ozone-platform', 'wayland');
+}
 
 
 function createMainWindow() {
@@ -43,7 +46,7 @@ function createMainWindow() {
             backgroundThrottling: false,
             enableRemoteModule: false,
             experimentalFeatures: false,
-            devTools: !app.isPackaged || app.commandLine.hasSwitch("allow-debug"),
+            devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
         }
     });
 
@@ -71,26 +74,6 @@ function createMainWindow() {
     win.webContents.setVisualZoomLevelLimits(1, 1);
 
     return win;
-}
-
-function createTerminalWindow() {
-    terminalWindow.webContents.on('did-finish-load', () => {
-        Daemons.Launch(platform, __dirname);
-
-        // // Set up periodic buffer flushing
-        // flushInterval = setInterval(() => {
-        //     if (stdoutBuffer) {
-        //         terminalWindow.webContents.send('terminal-output', stdoutBuffer);
-        //         stdoutBuffer = '';
-        //     }
-        //     if (stderrBuffer) {
-        //         terminalWindow.webContents.send('terminal-output', stderrBuffer);
-        //         stderrBuffer = '';
-        //     }
-        // }, 100); // Flush every 100ms
-
-        terminalWindow.webContents.executeJavaScript(PreloadedContent.Js.Titlebar);
-    });
 }
 
 function createWindows() {
@@ -234,7 +217,7 @@ app.on('before-quit', () => {
                 Rdp.handleCloseRdpProcess(window.webContents);
             }
 
-            if (window !== terminalWindow && !window.isDestroyed()) {
+            if (!window.isDestroyed()) {
                 window.destroy();
             }
         });
@@ -297,7 +280,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     const mainWindows = BrowserWindow.getAllWindows().filter(win =>
-        win !== terminalWindow && !win.isDestroyed()
+        !win.isDestroyed()
     );
 
     if (mainWindows.length === 0) {

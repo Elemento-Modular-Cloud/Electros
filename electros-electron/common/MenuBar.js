@@ -71,7 +71,7 @@ export function BuildMenuTemplate() {
         }
     ];
 
-    if (!app.isPackaged) {
+    if (!app.isPackaged || process.argv.includes("--enable-devtools")) {
         baseMenu.push({
             label: 'Developer',
             submenu:[
