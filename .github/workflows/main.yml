@@ -57,7 +57,7 @@ jobs:
           fi
           
           echo "TAG_NAME=$FINAL_TAG" >> $GITHUB_ENV
-          echo "tag_name=$FINAL_TAG" >> $GITGUB_OUTPUT
+          echo "tag_name=$FINAL_TAG" >> $GITHUB_OUTPUT
           echo "Using tag: $FINAL_TAG"
 
   create-release:
