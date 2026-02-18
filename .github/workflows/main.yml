@@ -4,9 +4,8 @@ on:
   push:
     tags:
       - 'v*'
-    tags-ignore:
-      - '*-beta'
-      - '*-nightly'
+      - '!v*-beta'
+      - '!v*-nightly'
     paths-ignore:
       - '**.md'
   workflow_dispatch:
