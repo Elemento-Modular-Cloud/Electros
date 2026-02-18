@@ -1,5 +1,10 @@
 # Electros
 
+> [!note]
+> If you're trying to run the app on macOS from the `.dmg` image, the daemons will not start. This is caused by the 
+> read-only filesystem of the disk image. You will need to copy it to `/Applications` or any other filesystem that 
+> is readable.
+
 ## Command line switches
 Electros has a set of custom command line switches other than the Electron switches:
 
