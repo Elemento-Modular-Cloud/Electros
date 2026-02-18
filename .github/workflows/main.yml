@@ -162,7 +162,7 @@ jobs:
           # Clean up
           cd ./electros-electron
           chmod +x ./autobuild.sh
-          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
+          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --version ${{ needs.set-tag.outputs.tag_name }}
         shell: bash
 
 
@@ -355,7 +355,7 @@ jobs:
 
   combine-checksums:
     name: Combine Checksums
-    needs: [create-release, build]
+    needs: [create-release, build, set-tag]
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     steps:

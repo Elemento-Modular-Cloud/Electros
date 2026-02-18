@@ -22,17 +22,22 @@ setup_daemons() {
 
 platforms=()
 archs=()
+version=""
 
 # Parse command line arguments for platform and architecture
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --platform) platforms+=("$2"); shift ;;
         --arch) user_archs+=("$2"); shift ;;
+        --version) version="$2"; shift ;;
     esac
     shift
 done
 
-version=$(node -p "require('${script_dir}/package.json').version")
+# Extract version from package.json if not provided
+if [ -z "$version" ]; then
+    version=$(node -p "require('${script_dir}/package.json').version")
+fi
 
 # Default to all platforms if none specified
 if [ ${#platforms[@]} -eq 0 ]; then
