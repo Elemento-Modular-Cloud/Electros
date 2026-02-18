@@ -15,6 +15,10 @@ on:
         description: "The tag that will be created for the version, format should be vX.X.X"
         type: string
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   remove-old-releases:
     name: Remove old releases
@@ -143,7 +147,7 @@ jobs:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ ${{ matrix.os }} == "mac" ]; then
             # Create keychain
@@ -346,6 +350,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Upload checksums artifact
         uses: actions/upload-artifact@v4
@@ -411,3 +416,4 @@ jobs:
           gh release upload ${{ needs.set-tag.outputs.tag_name }} combined_checksums.txt --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
