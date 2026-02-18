@@ -1,0 +1,18 @@
+name: 'Sync Version'
+description: 'Syncs package.json version with the git tag'
+inputs:
+  tag:
+    description: 'The tag to sync'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Update package.json
+      shell: bash
+      run: |
+        CLEAN_VERSION=${{ inputs.tag }}
+        CLEAN_VERSION=${CLEAN_VERSION#v}
+        
+        echo "Updating package.json to $CLEAN_VERSION"
+        jq --arg VER "$CLEAN_VERSION" '.version = $VER' ./electros-electron/package.json > tmp.json && mv tmp.json ./electros-electron/package.json
