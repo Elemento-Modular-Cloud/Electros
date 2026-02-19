@@ -39,6 +39,8 @@ if [ -z "$version" ]; then
     version=$(node -p "require('${script_dir}/package.json').version")
 fi
 
+clean_version=${version#v}
+
 # Default to all platforms if none specified
 if [ ${#platforms[@]} -eq 0 ]; then
     platforms=("mac" "linux" "win")
@@ -66,17 +68,17 @@ for platform in "${platforms[@]}"; do
         npm run build -- --"$platform" --"$arch"
         mkdir -p "${build_dir}/${platform}/${arch}"
         if [ "$platform" == "mac" ]; then
-            mv "${dist_dir}/Electros-${version}_mac-${arch}.dmg" "${build_dir}/${platform}/${arch}/Electros-${version}-mac-${arch}.dmg"
+            mv "${dist_dir}/Electros-${clean_version}_mac-${arch}.dmg" "${build_dir}/${platform}/${arch}/Electros-${version}-mac-${arch}.dmg"
         elif [ "$platform" == "linux" ]; then
             if [ "$arch" == "x64" ]; then
-                mv "${dist_dir}/Electros-${version}_linux-x86_64.AppImage" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.AppImage"
-                mv "${dist_dir}/Electros-${version}_linux-amd64.deb" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.deb"
+                mv "${dist_dir}/Electros-${clean_version}_linux-x86_64.AppImage" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.AppImage"
+                mv "${dist_dir}/Electros-${clean_version}_linux-amd64.deb" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.deb"
             elif [ "$arch" == "arm64" ]; then
                 mv "${dist_dir}/Electros-${version}_linux-arm64.AppImage" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.AppImage"
-                mv "${dist_dir}/Electros-${version}_linux-arm64.deb" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.deb"
+                mv "${dist_dir}/Electros-${clean_version}_linux-arm64.deb" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.deb"
             fi
         elif [ "$platform" == "win" ]; then
-            mv "${dist_dir}/Electros-${version}_win-${arch}.exe" "${build_dir}/${platform}/${arch}/Electros-${version}-win-${arch}.exe"
+            mv "${dist_dir}/Electros-${clean_version}_win-${arch}.exe" "${build_dir}/${platform}/${arch}/Electros-${version}-win-${arch}.exe"
         fi
     done
 done
