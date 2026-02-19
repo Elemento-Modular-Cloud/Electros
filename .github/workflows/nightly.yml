@@ -112,10 +112,9 @@ jobs:
 
       - name: Update GUI Submodule
         run: |
-          cd elemento-gui-new
-          git fetch
-          git pull origin develop
-          git submodule update --init --recursive
+          cd ./elemento-gui-new || exit 1
+          git fetch origin develop
+          git checkout FETCH_HEAD
 
       - name: Setup step
         if: runner.os != 'Windows'
