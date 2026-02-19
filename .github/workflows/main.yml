@@ -84,7 +84,7 @@ jobs:
           gh release create ${{ needs.set-tag.outputs.tag_name }} \
             --title "Electros Release ${{ needs.set-tag.outputs.tag_name }}" \
             --generate-notes \
-            --latest=false
+            --prerelease
 
   build:
     name: Build (${{ matrix.os }}-${{ matrix.arch }})
