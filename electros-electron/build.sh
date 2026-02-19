@@ -40,6 +40,7 @@ if [ -z "$version" ]; then
 fi
 
 clean_version=${version#v}
+clean_version=${clean_version%%[-+]*}
 
 # Default to all platforms if none specified
 if [ ${#platforms[@]} -eq 0 ]; then
