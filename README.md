@@ -5,6 +5,21 @@
 > read-only filesystem of the disk image. You will need to copy it to `/Applications` or any other filesystem that 
 > is readable.
 
+## Building
+To build, three github action workflows are present:
+
+### Build releases
+Releases can be built only against `main` by tagging a commit with `vX.X.X`. The build will automatically start. To fully 
+release it, mark it as latest manually.
+
+### Build beta
+todo))
+
+### Nightly builds
+Every evening at 17:00 (CEST) a build is automatically run against Develop, and will be tagged accordingly to the 
+`package.json` version, for example, `v3.1.5-DDMMYY-HHMM-nightly`. You can also manually trigger a nightly build from 
+the Github Actions Nightly workflow. It can only be run against `develop`.
+
 ## Command line switches
 Electros has a set of custom command line switches other than the Electron switches:
 
