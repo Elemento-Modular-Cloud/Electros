@@ -12,7 +12,6 @@ runs:
       shell: bash
       run: |
         CLEAN_VERSION=${{ inputs.tag }}
-        CLEAN_VERSION=${CLEAN_VERSION#v}
         
         echo "Updating package.json to $CLEAN_VERSION"
         jq --arg VER "$CLEAN_VERSION" '.version = $VER' ./electros-electron/package.json > tmp.json && mv tmp.json ./electros-electron/package.json
