@@ -1,4 +1,4 @@
-name: nightly.yml
+name: Build Nightly Release
 
 on:
   schedule:
@@ -110,11 +110,11 @@ jobs:
           ref: 'develop'
           persist-credentials: true
 
-      - name: Update GUI Submodule
-        run: |
-          cd ./elemento-gui-new || exit 1
-          git fetch origin develop --force
-          git reset --hard origin/develop
+#      - name: Update GUI Submodule
+#        run: |
+#          cd ./elemento-gui-new || exit 1
+#          git fetch origin develop --force
+#          git reset --hard origin/develop
 
       - name: Setup step
         if: runner.os != 'Windows'
