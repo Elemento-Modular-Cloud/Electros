@@ -8,12 +8,6 @@ on:
       - '!v*-nightly'
     paths-ignore:
       - '**.md'
-  workflow_dispatch:
-    inputs:
-      tag:
-        required: true
-        description: "The tag that will be created for the version, format should be vX.X.X"
-        type: string
 
 permissions:
   contents: write
