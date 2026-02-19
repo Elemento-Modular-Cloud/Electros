@@ -73,9 +73,11 @@ for platform in "${platforms[@]}"; do
             if [ "$arch" == "x64" ]; then
                 mv "${dist_dir}/Electros-${clean_version}_linux-x86_64.AppImage" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.AppImage"
                 mv "${dist_dir}/Electros-${clean_version}_linux-amd64.deb" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.deb"
+                mv "${dist_dir}/Electros-${clean_version}_linux-x86_64.rpm" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-x64.rpm"
             elif [ "$arch" == "arm64" ]; then
-                mv "${dist_dir}/Electros-${version}_linux-arm64.AppImage" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.AppImage"
+                mv "${dist_dir}/Electros-${clean_version}_linux-arm64.AppImage" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.AppImage"
                 mv "${dist_dir}/Electros-${clean_version}_linux-arm64.deb" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.deb"
+                mv "${dist_dir}/Electros-${clean_version}_linux-aarch64.rpm" "${build_dir}/${platform}/${arch}/Electros-${version}-linux-arm64.rpm"
             fi
         elif [ "$platform" == "win" ]; then
             mv "${dist_dir}/Electros-${clean_version}_win-${arch}.exe" "${build_dir}/${platform}/${arch}/Electros-${version}-win-${arch}.exe"

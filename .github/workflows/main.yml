@@ -340,7 +340,8 @@ jobs:
             
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage" \
-              "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
+              "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb" \
+              "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.rpm"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
