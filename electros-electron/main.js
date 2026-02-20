@@ -437,3 +437,7 @@ ipcMain.handle("app-version", () => {
         node: process.versions
     };
 });
+
+ipcMain.handle("get-daemons-log", () => {
+    return Daemons.GetDaemonsLogBuffer();
+});

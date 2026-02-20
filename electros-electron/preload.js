@@ -22,7 +22,8 @@ contextBridge.exposeInMainWorld('electron', {
             'open-dot-config',
             'app-version',
             'safestorage-encrypt',
-            'safestorage-decrypt'
+            'safestorage-decrypt',
+            'get-daemons-log'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
