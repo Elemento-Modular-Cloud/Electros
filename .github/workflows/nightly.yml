@@ -9,7 +9,7 @@ jobs:
   remove-old-releases:
     name: Remove old releases
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' && github.ref_name == 'develop'
+    if: github.event_name == 'schedule' || github.ref_name == 'develop'
     steps:
       - name: Delete old releases
         uses: s00d/delete-older-releases@0.2.1
@@ -34,7 +34,7 @@ jobs:
     name: Set tag variable
     needs: remove-old-releases
     runs-on: ubuntu-latest
-    if: github.ref_name == 'develop'
+    if: github.ref_name == 'develop' || github.event_name == 'schedule'
     outputs:
       tag_name: ${{ steps.set.outputs.tag_name }}
     steps:
@@ -58,7 +58,7 @@ jobs:
     name: Create Release
     needs: [set-tag, remove-old-releases]
     runs-on: ubuntu-latest
-    if: github.ref_name == 'develop'
+    if: github.ref_name == 'develop' || github.event_name == 'schedule'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -357,7 +357,7 @@ jobs:
     name: Combine Checksums
     needs: [create-release, build, set-tag]
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' && github.ref_name == 'develop'
+    if: github.event_name == 'schedule' && github.ref_name == 'develop'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
