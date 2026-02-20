@@ -12,10 +12,8 @@ export class Daemons {
     static _Process = null;
     static _Ports = {};
 
-    static stdoutBuffer = "";
-    static stderrBuffer = "";
-    static BUFFER_SIZE = 1024;
-    static flushInterval = null;
+    static _DaemonsLogArray = [];
+    static BUFFER_SIZE = 2000;
 
     static DataUpdateCriticalHook = null;
 
@@ -43,18 +41,26 @@ export class Daemons {
         );
 
         Daemons._Process.stdout.on("data", (data) => {
-            // this.stdoutBuffer += data.toString();
+            this._DaemonsLogArray.push(data);
             Terminal.Write(data);
         });
 
         Daemons._Process.stderr.on("data", (data) => {
-            // this.stderrBuffer += data.toString();
+            this._DaemonsLogArray.push(data);
             Terminal.Write(data);
         });
+
+        while (this._DaemonsLogArray.length > this.BUFFER_SIZE) {
+            this._DaemonsLogArray.shift();
+        }
 
         Daemons._Process.on("error", (data) => {
             if (Daemons.DataUpdateCriticalHook) { Daemons.DataUpdateCriticalHook(data); }
         });
+    }
+
+    static GetDaemonsLogBuffer() {
+        return this._DaemonsLogArray;
     }
 
     static Terminate() {
