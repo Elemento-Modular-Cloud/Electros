@@ -126,7 +126,7 @@ jobs:
         run: |
           export CI_TOKEN=${{ secrets.CI_TOKEN }}
           chmod +x ./populate_daemons.sh
-          ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --develop
+          ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
       
       - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
