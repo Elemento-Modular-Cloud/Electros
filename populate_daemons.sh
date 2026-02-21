@@ -212,6 +212,7 @@ main() {
     local output_dir="electros-daemons"
     
     get_release_assets "$version" | while IFS='|' read -r asset_id filename url; do
+        filename="$(echo "$filename" | tr '[:upper:]' '[:lower:]')"
         [ -z "$asset_id" ] && continue
         
         # Get platform info

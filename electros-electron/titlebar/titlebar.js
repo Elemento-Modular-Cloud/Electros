@@ -1,5 +1,4 @@
 function initializeTitlebar(options = { minimizeOnly: false }) {
-    console.log('Electron is defined');
     const titlebar = document.querySelector('.electros-titlebar');
     const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
                      navigator.userAgent.includes('Win') ? 'win' :
@@ -8,8 +7,7 @@ function initializeTitlebar(options = { minimizeOnly: false }) {
     titlebar.classList.add(platform);
 
     const buttonsAlignClass = platform === 'mac' ? 'electros-titlebar-buttons-align-left' : 'electros-titlebar-buttons-align-right';
-    console.log(buttonsAlignClass);
-    
+
     if (platform === 'mac') {
         titlebar.innerHTML = `
             <div class='electros-titlebar-buttons ${buttonsAlignClass}'>

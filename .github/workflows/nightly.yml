@@ -1,23 +1,15 @@
-name: Build Electron App
+name: Build Nightly Release
 
 on:
-  push:
-    tags:
-      - 'v*'
-      - '!v*-beta'
-      - '!v*-nightly'
-    paths-ignore:
-      - '**.md'
-
-permissions:
-  contents: write
-  packages: write
+  schedule:
+    - cron: "0 17 * * *"
+  workflow_dispatch:
 
 jobs:
   remove-old-releases:
     name: Remove old releases
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'schedule' || github.ref_name == 'develop'
     steps:
       - name: Delete old releases
         uses: s00d/delete-older-releases@0.2.1
@@ -42,33 +34,38 @@ jobs:
     name: Set tag variable
     needs: remove-old-releases
     runs-on: ubuntu-latest
+    if: github.ref_name == 'develop' || github.event_name == 'schedule'
     outputs:
       tag_name: ${{ steps.set.outputs.tag_name }}
     steps:
-      - name: Set tag name
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          submodules: recursive
+          ref: 'develop'
+      - name: "Set tag name"
         id: set
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            FINAL_TAG="${{ github.event.inputs.tag }}"
-          else
-            FINAL_TAG="${{ github.ref_name }}"
-          fi
+          tag_name="v$(cat ./electros-electron/package.json | jq -r '.version')-$(date '+%d%m%y-%H%M')-nightly"
           
-          echo "TAG_NAME=$FINAL_TAG" >> $GITHUB_ENV
-          echo "tag_name=$FINAL_TAG" >> $GITHUB_OUTPUT
-          echo "Using tag: $FINAL_TAG"
+          echo "TAG_NAME=$tag_name" > $GITHUB_ENV
+          echo "TAG_NAME=$tag_name" > $GITHUB_OUTPUT
+          echo "Using tag: $tag_name"
+
 
   create-release:
     name: Create Release
     needs: [set-tag, remove-old-releases]
     runs-on: ubuntu-latest
+    if: github.ref_name == 'develop' || github.event_name == 'schedule'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.CI_TOKEN }}
           submodules: recursive
-          ref: 'main'
+          ref: 'develop'
 
       - name: Create Release
         env:
@@ -76,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ needs.set-tag.outputs.tag_name }} \
-            --title "Electros Release ${{ needs.set-tag.outputs.tag_name }}" \
+            --title "Electros Nightly ${{ needs.set-tag.outputs.tag_name }}" \
             --generate-notes \
             --prerelease
 
@@ -103,18 +100,21 @@ jobs:
           - platform: ubuntu-latest
             os: linux
             arch: arm64
-        
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.CI_TOKEN }}
           submodules: recursive
-          ref: ${{ github.ref }}
+          ref: 'develop'
+          persist-credentials: true
 
-      - uses: ./.github/actions/sync-version
-        with:
-          tag: ${{ needs.set-tag.outputs.tag_name }}
+#      - name: Update GUI Submodule
+#        run: |
+#          cd ./elemento-gui-new || exit 1
+#          git fetch origin develop --force
+#          git reset --hard origin/develop
 
       - name: Setup step
         if: runner.os != 'Windows'
@@ -132,7 +132,7 @@ jobs:
           chmod +x ./populate_daemons.sh
           ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
-      
+
       - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
         if: runner.os != 'Windows'
         env:
@@ -326,18 +326,18 @@ jobs:
           
           if [ ${{ matrix.os }} == "mac" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-            
+          
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
           elif [ ${{ matrix.os }} == "win" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
-            
+          
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
           elif [ ${{ matrix.os }} == "linux" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage"
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
-            
+          
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage" \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb" \
@@ -357,13 +357,13 @@ jobs:
     name: Combine Checksums
     needs: [create-release, build, set-tag]
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'schedule' && github.ref_name == 'develop'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.CI_TOKEN }}
-          ref: ${{ github.ref }}
+          ref: 'develop'
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
