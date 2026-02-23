@@ -33,4 +33,3 @@
 # run the project
 
 nginx -g 'daemon off;'
-
