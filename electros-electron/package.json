@@ -120,7 +120,6 @@
     },
     "devDependencies": {
         "electron": "^40.1.0",
-        "electron-builder": "^25.1.8",
         "electron-builder": "^25.1.8"
     },
     "overrides": {
