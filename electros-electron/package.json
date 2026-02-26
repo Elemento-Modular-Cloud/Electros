@@ -15,7 +15,8 @@
     "scripts": {
         "start": "electron . --trace-warnings --v=1 --js-flags=\"--max-old-space-size=4096\"",
         "build": "electron-builder",
-        "pack": "electron-builder --dir"
+        "pack": "electron-builder --dir",
+        "postinstall": "electron-rebuild -f -w sharp"
     },
     "build": {
         "appId": "app.elemento.cloud",
@@ -119,6 +120,7 @@
     },
     "devDependencies": {
         "electron": "^40.1.0",
+        "electron-builder": "^25.1.8",
         "electron-builder": "^25.1.8"
     },
     "overrides": {
@@ -137,7 +139,9 @@
         "@xterm/xterm": "^6.0.0",
         "cors": "^2.8.5",
         "express": "^4.21.2",
+        "sharp": "^0.33.5",
         "socket.io": "^4.8.1",
         "ssh2": "^1.15.0"
     }
 }
+
