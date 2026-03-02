@@ -49,7 +49,8 @@
         ],
         "asarUnpack": [
             "node_modules/sharp/**/*",
-            "electros/remotes/**/*"
+            "electros/remotes/**/*",
+            "configs/**"
         ],
         "win": {
             "icon": "electros.iconset/electros.ico",

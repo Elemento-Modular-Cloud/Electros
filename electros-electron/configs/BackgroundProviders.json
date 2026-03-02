@@ -1,0 +1,42 @@
+{
+  "wikimedia": {
+    "feed": {
+      "url": "https://commons.wikimedia.org/w/api.php?action=featuredfeed&feed=potd&feedformat=atom&language=en",
+      "format": "application/xml",
+      "itemLocation": "feed/entry",
+      "itemStructure": {
+        "title": "title",
+        "imgUrl": "summary/*/img.src",
+        "pubDate": "updated"
+      }
+    }
+  },
+  "bing": {
+    "feed": {
+      "url": "https://peapix.com/bing/feed?country=${region}&n=1",
+      "format": "application/json",
+      "itemStructure": {
+        "title": "title",
+        "copyright": "copyright",
+        "imgUrl": "imageUrl",
+        "thumbUrl": "thumbUrl",
+        "pubDate": "date"
+      }
+    }
+  },
+  "nasa": {
+    "feed": {
+      "url": "https://apod.com/feed.rss",
+      "format": "application/xml",
+      "itemLocation": "rss/channel/item",
+      "copyright": "rss/channel/copyright",
+      "itemStructure": {
+        "title": "title",
+        "pubDate": "pubDate",
+        "description": "description",
+        "copyright": "dc:creator",
+        "imgUrl": "enclosure.url"
+      }
+    }
+  }
+}
