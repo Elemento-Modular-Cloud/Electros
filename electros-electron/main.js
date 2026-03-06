@@ -20,6 +20,7 @@ const {RdpWindow} = require("./windows/Rdp.js");
 const {DaemonsNotEnabledError} = require("./common/Daemons.js");
 const fs = require("fs");
 const {homedir} = require("node:os");
+const {WindowProvider} = require("./windows/WindowProvider.js");
 
 
 let mainWindow = null;
@@ -34,7 +35,8 @@ if (process.env.XDG_SESSION_TYPE === 'wayland') {
 
 
 function createMainWindow() {
-    const win = new BrowserWindow({
+    const win = WindowProvider("electros/electros.html",
+      {
         width: 1800,
         height: 1200,
         ...WindowOptions.Common,
@@ -53,8 +55,6 @@ function createMainWindow() {
     if (platform.os === 'mac') {
         win.setWindowButtonVisibility(false);
     }
-
-    win.loadFile('electros/electros.html');
 
     // Inject custom titlebar after the page loads
     win.webContents.on('did-finish-load', () => {
