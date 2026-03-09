@@ -7,7 +7,15 @@ export default defineConfig({
     root: resolve(__dirname),
     base: './', // Crucial for Electron to load relative assets in production
     resolve: {
-        preserveSymlinks: true
+        preserveSymlinks: true,
+        alias: {
+            "@interoperable": resolve(__dirname, "js/interoperable"),
+            "@electros": resolve(__dirname, "js/electros"),
+            "@gui": resolve(__dirname, "js/gui/components"),
+            "@dataTypes": resolve(__dirname, "js/dataTypes"),
+            "@common": resolve(__dirname, "js/common"),
+            "@": resolve(__dirname, "js"),
+        }
     },
     build: {
         outDir: 'dist-renderer',
@@ -31,6 +39,9 @@ export default defineConfig({
         watch: {
             usePolling: true,
             followSymlinks: true
+        },
+        fs: {
+            allow: [".."]
         }
     }
 })
