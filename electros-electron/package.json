@@ -13,7 +13,7 @@
         "email": "hello@elemento.cloud"
     },
     "scripts": {
-        "start": "concurrently --kill-others \"vite\" \"electron . --trace-warnings --v=1\"",
+        "start": "concurrently --kill-others --names \"vite,electron\" -c \"green,yellow\" -l 10 --pad-prefix \"vite\" \"electron . --trace-warnings --v=1\"",
         "dev": "vite",
         "build": "vite build && electron-builder",
         "pack": "vite build && electron-builder --dir",

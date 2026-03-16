@@ -54,6 +54,7 @@ RUN mkdir -p /var/log/elemento
 RUN ls -lah /usr/share/nginx/html/
 
 EXPOSE 80
+EXPOSE 443
 
 ENTRYPOINT [ "/opt/app/startup.sh" ]
 
