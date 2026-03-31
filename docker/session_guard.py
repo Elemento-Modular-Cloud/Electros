@@ -20,15 +20,11 @@ class Handler(BaseHTTPRequestHandler):
 
     # ── validate: called by nginx auth_request ──────────────────
     def do_GET(self):
-        if self.path != "/validate":
-            self._send(404)
-            return
-        incoming = self.headers.get("X-Session-Token", "")
-        with _lock:
-            ok = bool(_token) and secrets.compare_digest(_token, incoming)
-        self._send(200 if ok else 401)
-
-    def do_POST(self):
+        if self.path == "/validate":
+            incoming = self.headers.get("X-Session-Token", "")
+            with _lock:
+                ok = bool(_token) and secrets.compare_digest(_token, incoming)
+            self._send(200 if ok else 401)
         if self.path.startswith("/login-proxy"):
             self._handle_login()
         elif self.path == "/local-login":
@@ -77,8 +73,6 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(resp_body)
 
     def _handle_login(self):
-        import ssl
-
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
