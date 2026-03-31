@@ -38,11 +38,12 @@ COPY elemento-gui-new/ /usr/share/nginx/html/
 COPY elemento-gui-new/electros/configs/atomosFlags.json /usr/share/nginx/html/electros/configs/flags.json
 COPY elemento-gui-new/electros/electrosOnAtomos.html /usr/share/nginx/html/electros/electros.html
 COPY docker/startup.sh /opt/app/startup.sh
+COPY docker/session_guard.py /opt/app/session_guard.py
 COPY ./docker/follow_log.sh /opt/app/follow_log.sh
 COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
 RUN apt-get update
-RUN apt-get install -y socat
+RUN apt-get install -y socat python3
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 RUN chmod +x /opt/daemons/*

@@ -29,6 +29,7 @@
 
 /opt/daemons/elemento_daemons_linux_x86 --cert /certs/atomos.crt --key /certs/atomos.key >/var/log/elemento/elemento_daemons.log 2>&1 &
 /opt/app/logger_stream.sh >/dev/null &
+python3 /opt/app/session_guard.py >/dev/null &
 
 # run the project
 
