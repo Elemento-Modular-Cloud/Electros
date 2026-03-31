@@ -42,7 +42,7 @@ The container nginx is updated to:
   daemon directly.
 - Add an `auth_request` check to every other location, pointing to the sidecar's
   `/validate` endpoint.
-- Return a `401` JSON response for any request that fails validation.
+- Return a `401` or `403` JSON response for any request that fails validation.
 
 ---
 

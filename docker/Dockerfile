@@ -43,7 +43,9 @@ COPY ./docker/follow_log.sh /opt/app/follow_log.sh
 COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
 RUN apt-get update
-RUN apt-get install -y socat python3
+RUN apt-get install -y socat=1.8.0.3-1 \
+  python3=3.13.5-1
+
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 RUN chmod +x /opt/daemons/*
