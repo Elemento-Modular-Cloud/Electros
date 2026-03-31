@@ -20,17 +20,28 @@ class Handler(BaseHTTPRequestHandler):
 
     # ── validate: called by nginx auth_request ──────────────────
     def do_GET(self):
+        print(self.path)
         if self.path == "/validate":
             incoming = self.headers.get("X-Session-Token", "")
             with _lock:
                 ok = bool(_token) and secrets.compare_digest(_token, incoming)
             self._send(200 if ok else 401)
-        if self.path.startswith("/login-proxy"):
+
+    def do_POST(self):
+        if self.path == "/login-proxy/api/v1/authenticate/login":
             self._handle_login()
         elif self.path == "/local-login":
             self._handle_local_login()
+        elif self.path == "/login-proxy/api/v1/authenticate/logout":
+            self._handle_logout()
         else:
             self._send(404)
+
+    # TODO: implement
+    def _handle_logout(self):
+        # call authclient logout endpoint -> if nothing responds -> ok -> local account logout
+        # remove session token for both
+        pass
 
     def _handle_local_login(self):
         ctx = ssl.create_default_context()
@@ -73,6 +84,8 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(resp_body)
 
     def _handle_login(self):
+        import ssl
+
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
@@ -99,15 +112,23 @@ class Handler(BaseHTTPRequestHandler):
             status = resp.status
             resp_body = resp.read()
             resp_headers = dict(resp.headers)
+            print(
+                f"\n\n#################################\n\nresp: {resp}\nstatus: {status}\nresp_body: {resp_body}\nresp_headers: {resp_headers}\n\n#################################\n\n"
+            )
+
         except urllib.error.HTTPError as e:
             status = e.code
             resp_body = e.read()
             resp_headers = dict(e.headers)
+            print(
+                f"\n\n##EXCEPTION##\n\nstatus: {status}\nresp_body: {resp_body}\nresp_headers: {resp_headers}\n\n############################\n\n"
+            )
 
         # Issue a new token only on successful login
         cookie_header = None
         if status == 200:
             tok = secrets.token_urlsafe(32)
+            print(f"\nSetting token: {tok}\n\n")
             with _lock:
                 global _token
                 _token = tok
@@ -123,7 +144,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header(k, v)
         if cookie_header:
             self.send_header("Set-Cookie", cookie_header)
-        self.send_header("Content-Length", str(len(resp_body)))
+        # self.send_header("Content-Length", str(len(resp_body)))
         self.end_headers()
         self.wfile.write(resp_body)
 
