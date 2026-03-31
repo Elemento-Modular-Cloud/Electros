@@ -3,11 +3,14 @@ import secrets
 import threading
 import urllib.request
 import urllib.error
+import os
+import ssl
 
 _token = None
 _lock = threading.Lock()
 
 AUTH_DAEMON = "https://127.0.0.1:47777"
+FLASK_HOST = os.environ.get("PROXIMA_FLASK_HOST", "https://10.88.0.1:7781")
 VERIFY_SSL = False  # daemon uses self-signed cert
 
 
@@ -26,11 +29,52 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200 if ok else 401)
 
     def do_POST(self):
-        # ── login proxy: forward to auth daemon, issue token on 200
         if self.path.startswith("/login-proxy"):
             self._handle_login()
+        elif self.path == "/local-login":
+            self._handle_local_login()
         else:
             self._send(404)
+
+    def _handle_local_login(self):
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+        length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(length) if length else b""
+
+        req = urllib.request.Request(
+            f"{FLASK_HOST}/api/v1.0/local_login",
+            data=body,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            resp = urllib.request.urlopen(req, context=ctx, timeout=10)
+            status = resp.status
+            resp_body = resp.read()
+        except urllib.error.HTTPError as e:
+            status = e.code
+            resp_body = e.read()
+
+        cookie_header = None
+        if status == 200:
+            tok = secrets.token_urlsafe(32)
+            with _lock:
+                global _token
+                _token = tok
+            cookie_header = (
+                f"session_token={tok}; Path=/; HttpOnly; Secure; SameSite=Lax"
+            )
+
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        if cookie_header:
+            self.send_header("Set-Cookie", cookie_header)
+        self.send_header("Content-Length", str(len(resp_body)))
+        self.end_headers()
+        self.wfile.write(resp_body)
 
     def _handle_login(self):
         import ssl
@@ -95,4 +139,3 @@ class Handler(BaseHTTPRequestHandler):
 
 
 HTTPServer(("127.0.0.1", 9999), Handler).serve_forever()
-
