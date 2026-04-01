@@ -1,5 +1,5 @@
 # #******************************************************************************#
-# # Copyright(c) 2019-2023, Elemento srl, All rights reserved                    #
+# # Copyright(c) 2019-2026, Elemento srl, All rights reserved                    #
 # # Author: Elemento srl                                                         #
 # # Contributors are mentioned in the code where appropriate.                    #
 # # Permission to use and modify this software and its documentation strictly    #
@@ -42,7 +42,7 @@ COPY docker/session_guard.py /opt/app/session_guard.py
 COPY ./docker/follow_log.sh /opt/app/follow_log.sh
 COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
-RUN apt-get update
+RUN apt-get update -y
 RUN apt-get install -y socat=1.8.0.3-1 \
   python3=3.13.5-1
 

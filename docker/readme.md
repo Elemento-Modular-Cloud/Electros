@@ -23,11 +23,13 @@ It is never reachable from outside — it only talks to the container nginx inte
 
 It does two things:
 
-- **Acts as a login proxy** — when a user logs in, the container nginx routes the login
+- **Acts as a login proxy** —> when a user logs in, the container nginx routes the login
   request through the sidecar instead of directly to the auth daemon. The sidecar forwards
   the request, and if the auth daemon returns a success, it generates a secure random token,
   stores it in memory, and injects a `Set-Cookie` header into the response before returning
   it to the browser.
+
+> same is done for the logout -> when a user close the web page or request a logout, nginx routes to the sidecar -> sidecar delete the session token and call the auth client logout
 
 - **Validates sessions** — on every request to any protected resource, the container nginx
   calls the sidecar's `/validate` endpoint as a subrequest. The sidecar compares the token
@@ -38,8 +40,9 @@ It does two things:
 
 The container nginx is updated to:
 
-- Route `/api/v1/authenticate/` through the sidecar (login proxy) instead of the auth
-  daemon directly.
+- Route `/api/v1.0/local_login/` through the sidecar (login proxy) instead of the flask app.
+- Route `/api/v1/authenticate/logout` through the sidecar, then auth client
+- Route `/api/v1/authenticate/login` through the sidecar, then auth client
 - Add an `auth_request` check to every other location, pointing to the sidecar's
   `/validate` endpoint.
 - Return a `401` or `403` JSON response for any request that fails validation.

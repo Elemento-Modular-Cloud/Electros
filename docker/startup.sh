@@ -1,6 +1,6 @@
 #! /bin/bash
 # #******************************************************************************#
-# # Copyright(c) 2019-2023, Elemento srl, All rights reserved                    #
+# # Copyright(c) 2019-2026, Elemento srl, All rights reserved                    #
 # # Author: Elemento srl                                                         #
 # # Contributors are mentioned in the code where appropriate.                    #
 # # Permission to use and modify this software and its documentation strictly    #
