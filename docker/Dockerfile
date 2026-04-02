@@ -28,10 +28,7 @@
 
 FROM nginx:trixie
 
-# gather daemons
-# copy app code
-# daemons must run in background - ./daemons
-# entrypoint must run the electros app on port 80
+# Stage 1: Copy data
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY electros-daemons/linux/x64/* /opt/daemons/
 COPY elemento-gui-new/ /usr/share/nginx/html/
@@ -42,15 +39,18 @@ COPY docker/session_guard.py /opt/app/session_guard.py
 COPY ./docker/follow_log.sh /opt/app/follow_log.sh
 COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
+# Stage 2: Install dependencies
 RUN apt-get update -y
 RUN apt-get install -y socat=1.8.0.3-1 \
   python3=3.13.5-1
 
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
+# Stage 3: permissions for scripts
 RUN chmod +x /opt/daemons/*
 RUN chmod +x /opt/app/startup.sh
 
+# Stage 4: prepared forlders
 RUN mkdir -p /var/log/elemento
 
 RUN ls -lah /usr/share/nginx/html/
