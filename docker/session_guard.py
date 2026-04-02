@@ -60,7 +60,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/login-proxy/api/v1/authenticate/login":
             self._handle_login()
-        elif self.path == "/local-login":
+        elif self.path == "/login-proxy/api/v1/authenticate/local-login":
             self._handle_local_login()
         elif self.path == "/login-proxy/api/v1/authenticate/logout":
             self._handle_logout()
