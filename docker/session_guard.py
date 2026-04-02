@@ -117,7 +117,7 @@ class Handler(BaseHTTPRequestHandler):
                 continue
             self.send_header(k, v)
         self.send_header("Set-Cookie", expired_cookie)
-        self.send_header("Content-Length", str(len(resp_body)))
+        # self.send_header("Content-Length", str(len(resp_body)))
         self.end_headers()
         self.wfile.write(resp_body)
 
