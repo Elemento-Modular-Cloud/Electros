@@ -67,10 +67,7 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self._send(404)
 
-    # TODO: need elecros button in order to call it
     def _handle_logout(self):
-        # call authclient logout endpoint -> if nothing responds -> ok -> local account logout
-        # remove session token for both
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
@@ -83,7 +80,6 @@ class Handler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length) if length else b""
 
-        # Forward headers, strip hop-by-hop
         skip = {"host", "connection", "transfer-encoding", "content-length"}
         fwd_headers = {k: v for k, v in self.headers.items() if k.lower() not in skip}
         if body:
@@ -102,6 +98,7 @@ class Handler(BaseHTTPRequestHandler):
             status = e.code
             resp_body = e.read()
             resp_headers = dict(e.headers)
+
         # remove token on logout regardless of auth daemon response
         with _lock:
             global _token
@@ -117,7 +114,6 @@ class Handler(BaseHTTPRequestHandler):
                 continue
             self.send_header(k, v)
         self.send_header("Set-Cookie", expired_cookie)
-        # self.send_header("Content-Length", str(len(resp_body)))
         self.end_headers()
         self.wfile.write(resp_body)
 
@@ -159,7 +155,6 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(status)
         if cookie_header:
             self.send_header("Set-Cookie", cookie_header)
-        # self.send_header("Content-Length", str(len(resp_body)))
         self.end_headers()
         self.wfile.write(resp_body)
 
@@ -176,7 +171,6 @@ class Handler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length) if length else b""
 
-        # Forward headers, strip hop-by-hop
         skip = {"host", "connection", "transfer-encoding", "content-length"}
         fwd_headers = {k: v for k, v in self.headers.items() if k.lower() not in skip}
         if body:
@@ -215,7 +209,6 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header(k, v)
         if cookie_header:
             self.send_header("Set-Cookie", cookie_header)
-        # self.send_header("Content-Length", str(len(resp_body)))
         self.end_headers()
         self.wfile.write(resp_body)
 
