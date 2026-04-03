@@ -25,7 +25,7 @@ export class Daemons {
         }
 
         if (!app.isPackaged) {
-            Terminal.Write("[WARNING] Electros is not packaged. Daemons might have to be manually started.")
+            Terminal.Write("[WARN] Electros is not packaged. Daemons might have to be manually started.")
             console.warn("Electros is not packaged. Daemons might have to be manually started.")
         }
 
@@ -102,12 +102,33 @@ export class Daemons {
             }
         } else if (platform.isWin()) {
             if (platform.arch === 'x64' || platform.arch === 'x86') {
-                daemonsCmd = path.join(daemonsPath, `elemento_daemons_win_x86.exe`);
-                if (!fs.existsSync(daemonsCmd)) {
-                    daemonsCmd = path.join(daemonsPath, `elemento_daemons_win_x64.exe`);
+                const possibleNames = [
+                  "elemento_daemons_win_x86.exe",
+                  "elemento_daemons_win_x64.exe",
+                  "elemento_daemons_windows_x86.exe",
+                  "elemento_daemons_windows_x64.exe",
+                ];
+
+                for (const possibleName of possibleNames) {
+                    const attemptedName = path.join(daemonsPath, possibleName);
+                    if (fs.existsSync(attemptedName)) {
+                        daemonsCmd = attemptedName;
+                    }
                 }
             } else {
-                daemonsCmd = path.join(daemonsPath, `elemento_daemons_win_arm64.exe`);
+                const possibleNames = [
+                    "elemento_daemons_win_arm64.exe",
+                    "elemento_daemons_win_aarch64.exe",
+                    "elemento_daemons_windows_arm64.exe",
+                    "elemento_daemons_windows_aarch64.exe",
+                ];
+
+                for (const possibleName of possibleNames) {
+                    const attemptedName = path.join(daemonsPath, possibleName);
+                    if (fs.existsSync(attemptedName)) {
+                        daemonsCmd = attemptedName;
+                    }
+                }
             }
         }
 

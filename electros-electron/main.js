@@ -82,7 +82,10 @@ function createWindows() {
         mainWindow = createMainWindow();
 
         mainWindow.on('closed', () => {
-            app.quit();
+            mainWindow = null;
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
         });
 
         setupWindowShortcuts(mainWindow);
@@ -286,24 +289,27 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-    app.quit();
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', () => {
-    const mainWindows = BrowserWindow.getAllWindows().filter(win =>
-        !win.isDestroyed()
-    );
-
-    if (mainWindows.length === 0) {
-        createMainWindow();
-    } else {
-        // Show the first hidden main window if it exists
-        for (const win of mainWindows) {
-            if (!win.isVisible()) {
-                win.show();
-                break;
-            }
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        if (!mainWindow.isVisible()) {
+            mainWindow.show();
+        } else {
+            mainWindow.focus();
         }
+    } else {
+        mainWindow = createMainWindow();
+        mainWindow.on('closed', () => {
+            mainWindow = null;
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
+        });
+        setupWindowShortcuts(mainWindow);
     }
 });
 

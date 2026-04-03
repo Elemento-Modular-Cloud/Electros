@@ -29,7 +29,7 @@ Electros has a set of custom command line switches other than the Electron switc
 > [!note]
 > On macOS, to add a CLI switch, you'll have to append them directly onto the executable:
 > ```zsh 
-> $ /Applications/Electron.app/Contents/MacOS/Electros  # add your CLI switches here
+> $ /Applications/Electros.app/Contents/MacOS/Electros  # add your CLI switches here
 > ```
 
 ### Linux-specific switches
