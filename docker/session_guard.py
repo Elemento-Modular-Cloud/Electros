@@ -108,7 +108,7 @@ class Handler(BaseHTTPRequestHandler):
             "session_token=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0"
         )
 
-        self.send_response(status)
+        self.send_response(200)
         for k, v in resp_headers.items():
             if k.lower() in ("connection", "transfer-encoding", "set-cookie"):
                 continue
