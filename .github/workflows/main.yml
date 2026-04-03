@@ -103,7 +103,7 @@ jobs:
           - platform: ubuntu-latest
             os: linux
             arch: arm64
-        
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
           chmod +x ./populate_daemons.sh
           ./populate_daemons.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }}
         shell: bash
-      
+
       - name: Build step (${{ matrix.os }}-${{ matrix.arch }})
         if: runner.os != 'Windows'
         env:
@@ -326,18 +326,18 @@ jobs:
           
           if [ ${{ matrix.os }} == "mac" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-            
+          
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
           elif [ ${{ matrix.os }} == "win" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
-            
+          
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
           elif [ ${{ matrix.os }} == "linux" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage"
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
-            
+          
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage" \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb" \
@@ -412,3 +412,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ github.token }}
+
+  build-and-push:
+      name: Build AtomOS-GUI docker image
+      runs-on: ubuntu-latest
+      steps:
+
+          # build and push the docker image to ghcr.io
+
+          - name: Checkout code
+            uses: actions/checkout@v4
+            with:
+              token: ${{ secrets.CI_TOKEN }}
+              submodules: recursive
+              ref: ${{ github.ref }}
+
+          - name: Populate daemons folder
+            run: |
+              export CI_TOKEN=${{ secrets.CI_TOKEN }}
+              ./populate_daemons.sh --platform linux --arch x64 --develop
+
+          - name: Login to GHCR
+            uses: docker/login-action@v2
+            with:
+              registry: ghcr.io
+              username: ${{ github.actor }}
+              password: ${{ secrets.REPO_KEY }}
+
+          - name: Build and push Docker image
+            run: |
+              OWNER_NAME=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+              docker build -f docker/Dockerfile -t ghcr.io/${OWNER_NAME}/elemento-electros-instance:latest .
+              docker push ghcr.io/${OWNER_NAME}/elemento-electros-instance:latest

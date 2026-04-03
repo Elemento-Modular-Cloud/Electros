@@ -39,11 +39,14 @@ COPY elemento-gui-new/ /usr/share/nginx/html/
 COPY elemento-gui-new/electros/configs/atomosFlags.json /usr/share/nginx/html/electros/configs/flags.json
 COPY elemento-gui-new/electros/electrosOnAtomos.html /usr/share/nginx/html/electros/electros.html
 COPY ./docker/arm_startup.sh /opt/app/startup.sh
+COPY ./docker/session_guard.py /opt/app/session_guard.py
 COPY ./docker/follow_log.sh /opt/app/follow_log.sh
 COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
-RUN apt update
-RUN apt install -y socat
+RUN apt-get update -y
+RUN apt install -y socat=1.8.0.3-1 \
+  python3=3.13.5-1
+
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 RUN chmod +x /opt/daemons/*
@@ -53,7 +56,7 @@ RUN mkdir -p /var/log/elemento
 
 RUN ls -lah /usr/share/nginx/html/
 
-EXPOSE 80
+EXPOSE 443
 
 ENTRYPOINT [ "/opt/app/startup.sh" ]
 

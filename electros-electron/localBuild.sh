@@ -43,6 +43,6 @@ rm -rf "$dist_dir"
 mkdir -p "$dist_dir"
 
 # Run electron-builder
-npx electron-builder --$platform --$arch
+npx electron-builder --$platform --$arch --config.mac.identity=null
 
 echo "✅ Build complete. Artifacts are in: $dist_dir"

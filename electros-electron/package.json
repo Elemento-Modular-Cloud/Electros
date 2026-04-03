@@ -13,9 +13,11 @@
         "email": "hello@elemento.cloud"
     },
     "scripts": {
-        "start": "electron . --trace-warnings --v=1 --js-flags=\"--max-old-space-size=4096\"",
-        "build": "electron-builder",
-        "pack": "electron-builder --dir"
+        "start": "concurrently --kill-others --names \"vite,electron\" -c \"green,yellow\" -l 10 --pad-prefix \"vite\" \"electron . --trace-warnings --v=1\"",
+        "dev": "vite",
+        "build": "vite build && electron-builder",
+        "pack": "vite build && electron-builder --dir",
+        "postinstall": "electron-rebuild -f -w sharp"
     },
     "build": {
         "appId": "app.elemento.cloud",
@@ -48,7 +50,8 @@
         ],
         "asarUnpack": [
             "node_modules/sharp/**/*",
-            "electros/remotes/**/*"
+            "electros/remotes/**/*",
+            "configs/**"
         ],
         "win": {
             "icon": "electros.iconset/electros.ico",
@@ -118,8 +121,12 @@
         ]
     },
     "devDependencies": {
+        "concurrently": "^9.2.1",
         "electron": "^40.1.0",
-        "electron-builder": "^25.1.8"
+        "electron-builder": "^25.1.8",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.1",
+        "vite-tsconfig-paths": "^6.1.1"
     },
     "overrides": {
         "inflight": "^2.0.0",
@@ -137,6 +144,8 @@
         "@xterm/xterm": "^6.0.0",
         "cors": "^2.8.5",
         "express": "^4.21.2",
+        "fast-xml-parser": "^5.4.1",
+        "sharp": "^0.33.5",
         "socket.io": "^4.8.1",
         "ssh2": "^1.15.0"
     }
