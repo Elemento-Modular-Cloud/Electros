@@ -38,7 +38,7 @@ _token = None
 _lock = threading.Lock()
 
 AUTH_DAEMON = "https://127.0.0.1:47777"
-FLASK_HOST = os.environ.get("PROXIMA_FLASK_HOST", "https://10.88.0.1:7781")
+FLASK_HOST = os.environ.get("ATOMOS_FLASK_HOST", "https://10.88.0.1:7781")
 VERIFY_SSL = False  # daemon uses self-signed cert
 
 
