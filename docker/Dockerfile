@@ -1,5 +1,5 @@
 # #******************************************************************************#
-# # Copyright(c) 2019-2023, Elemento srl, All rights reserved                    #
+# # Copyright(c) 2019-2026, Elemento srl, All rights reserved                    #
 # # Author: Elemento srl                                                         #
 # # Contributors are mentioned in the code where appropriate.                    #
 # # Permission to use and modify this software and its documentation strictly    #
@@ -28,26 +28,29 @@
 
 FROM nginx:trixie
 
-# gather daemons
-# copy app code
-# daemons must run in background - ./daemons
-# entrypoint must run the electros app on port 80
+# Stage 1: Copy data
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY electros-daemons/linux/x64/* /opt/daemons/
 COPY elemento-gui-new/ /usr/share/nginx/html/
 COPY elemento-gui-new/electros/configs/atomosFlags.json /usr/share/nginx/html/electros/configs/flags.json
 COPY elemento-gui-new/electros/electrosOnAtomos.html /usr/share/nginx/html/electros/electros.html
 COPY docker/startup.sh /opt/app/startup.sh
+COPY docker/session_guard.py /opt/app/session_guard.py
 COPY ./docker/follow_log.sh /opt/app/follow_log.sh
 COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
-RUN apt-get update
-RUN apt-get install -y socat
+# Stage 2: Install dependencies
+RUN apt-get update -y
+RUN apt-get install -y socat=1.8.0.3-1 \
+  python3=3.13.5-1
+
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
+# Stage 3: permissions for scripts
 RUN chmod +x /opt/daemons/*
 RUN chmod +x /opt/app/startup.sh
 
+# Stage 4: prepared forlders
 RUN mkdir -p /var/log/elemento
 
 RUN ls -lah /usr/share/nginx/html/

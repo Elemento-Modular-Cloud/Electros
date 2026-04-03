@@ -1,6 +1,6 @@
 #! /bin/bash
 # #******************************************************************************#
-# # Copyright(c) 2019-2023, Elemento srl, All rights reserved                    #
+# # Copyright(c) 2019-2026, Elemento srl, All rights reserved                    #
 # # Author: Elemento srl                                                         #
 # # Contributors are mentioned in the code where appropriate.                    #
 # # Permission to use and modify this software and its documentation strictly    #
@@ -32,6 +32,7 @@
 #/opt/daemons/Elemento_Daemons_linux_x86 > /var/log/elemento/elemento_daemons.log 2>&1 &
 /opt/daemons/elemento_daemons_linux_arm >/var/log/elemento/elemento_daemons.log 2>&1 &
 /opt/app/logger_stream.sh >/dev/null &
+python3 /opt/app/session_guard.py >/dev/null &
 
 # run the project
 
