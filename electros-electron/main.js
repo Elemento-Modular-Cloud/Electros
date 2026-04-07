@@ -35,7 +35,7 @@ if (process.env.XDG_SESSION_TYPE === 'wayland') {
 
 
 function createMainWindow() {
-    const win = WindowProvider("electros/electros.html",
+    const win = WindowProvider(__dirname, "electros/electros.html",
       {
         width: 1800,
         height: 1200,

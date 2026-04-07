@@ -1,7 +1,7 @@
 import {app, BrowserWindow} from "electron";
 import path from "path";
 
-function getWindowUrl(relativeHtmlPath) {
+function getWindowUrl(__dirname, relativeHtmlPath) {
     if (!app.isPackaged) {
         // During dev, point to the Vite server
         return `http://localhost:5173/${relativeHtmlPath}`;
@@ -10,13 +10,13 @@ function getWindowUrl(relativeHtmlPath) {
     return path.join(__dirname, 'dist-renderer', relativeHtmlPath);
 }
 
-export function WindowProvider(windowFilePath, options) {
+export function WindowProvider(__dirname, windowFilePath, options) {
     const win = new BrowserWindow(options);
 
     if (!app.isPackaged) {
-        win.loadURL(getWindowUrl(windowFilePath));
+        win.loadURL(getWindowUrl(__dirname, windowFilePath));
     } else {
-        win.loadFile(getWindowUrl(windowFilePath));
+        win.loadFile(getWindowUrl(__dirname, windowFilePath));
     }
 
     return win;
