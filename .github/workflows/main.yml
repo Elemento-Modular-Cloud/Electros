@@ -200,19 +200,19 @@ jobs:
           # Now notarize the extracted .app bundle
           echo "Notarizing .app bundle..."
           ditto -c -k --keepParent "Electros.app" "Electros.zip"
-          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros.zip | tee app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          # Notarize the extracted .app bundle (wait for completion)
+          echo "Notarizing .app bundle..."
+          ditto -c -k --keepParent "Electros.app" "Electros.zip"
           
-          # Wait for app notarization to complete and staple the app
-          while read -r line; do
-            if [[ $line =~ "id: "([^\ ]+) ]]; then
-              submission_id="${BASH_REMATCH[1]}"
-              echo "Waiting for app notarization to complete..."
-              xcrun notarytool wait "$submission_id" --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID
-              xcrun stapler staple "Electros.app"
-              break
-            fi
-          done < app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          xcrun notarytool submit "./Electros.zip" \
+          --apple-id "$APPLE_ID" \
+          --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+          --team-id "$APPLE_TEAM_ID" \
+          --wait | tee "app-${{ matrix.os }}-${{ matrix.arch }}-notarize.log"
           
+          # Staple after notarytool reports success
+          xcrun stapler staple "Electros.app"
+          xcrun stapler validate "Electros.app"          
           rm Electros.zip
           
           # Create new DMG with the notarized app while preserving electron-builder layout
@@ -247,20 +247,20 @@ jobs:
           codesign -s "$SIGNING_IDENTITY" -vvv --deep --timestamp --options=runtime \
             "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
           
-          # Now notarize the new DMG
           echo "Notarizing DMG..."
-          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID --wait ./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
-          
-          # Wait for DMG notarization to complete and staple
-          while read -r line; do
-            if [[ $line =~ "id: "([^\ ]+) ]]; then
-              submission_id="${BASH_REMATCH[1]}"
-              echo "Waiting for DMG notarization to complete..."
-              xcrun notarytool wait "$submission_id" --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID
-              xcrun stapler staple "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-              break
-            fi
-          done < ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          DMG_LOG="${{ matrix.os }}-${{ matrix.arch }}-notarize.log"
+
+          xcrun notarytool submit \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait \
+            "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg" \
+            | tee "$DMG_LOG"
+
+          echo "Stapling + validating DMG..."
+          xcrun stapler staple "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
+          xcrun stapler validate "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
 
       - name: Upload Apple notarize logs artifact
         uses: actions/upload-artifact@v4
