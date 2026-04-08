@@ -50,7 +50,7 @@ function createMainWindow() {
             experimentalFeatures: false,
             devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
         }
-    });
+    }, __dirname);
 
     if (platform.os === 'mac') {
         win.setWindowButtonVisibility(false);
