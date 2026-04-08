@@ -249,7 +249,7 @@ jobs:
           
           # Now notarize the new DMG
           echo "Notarizing DMG..."
-          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID ./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
+          xcrun notarytool submit --apple-id $APPLE_ID --password $APPLE_APP_SPECIFIC_PASSWORD --team-id $APPLE_TEAM_ID --wait ./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg | tee ${{ matrix.os }}-${{ matrix.arch }}-notarize.log
           
           # Wait for DMG notarization to complete and staple
           while read -r line; do
