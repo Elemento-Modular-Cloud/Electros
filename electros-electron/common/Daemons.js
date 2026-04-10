@@ -5,7 +5,8 @@ import {spawn, execSync} from "child_process";
 import {Terminal} from "../windows/Terminal.js";
 
 
-export class DaemonsNotEnabledError extends Error {}
+export class DaemonsNotEnabledError extends Error {
+}
 
 
 export class Daemons {
@@ -25,19 +26,19 @@ export class Daemons {
         }
 
         if (!app.isPackaged) {
-            Terminal.Write("[WARN] Electros is not packaged. Daemons might have to be manually started.")
-            console.warn("Electros is not packaged. Daemons might have to be manually started.")
+            Terminal.Write("[WARN] Electros is not packaged. Daemons might have to be manually started.");
+            console.warn("Electros is not packaged. Daemons might have to be manually started.");
         }
 
         const execPath = Daemons._GetCommand(platform, __dirname);
         console.trace(execPath);
 
         Daemons._Process = spawn(
-            execPath, [], {
-                env: { ...process.env, GUI_APP: '1' },
-                stdio: ['pipe', 'pipe', 'pipe'],
-                detached: false,
-            }
+          execPath, [], {
+              env: {...process.env, GUI_APP: '1'},
+              stdio: ['pipe', 'pipe', 'pipe'],
+              detached: false
+          }
         );
 
         Daemons._Process.stdout.on("data", (data) => {
@@ -55,7 +56,9 @@ export class Daemons {
         }
 
         Daemons._Process.on("error", (data) => {
-            if (Daemons.DataUpdateCriticalHook) { Daemons.DataUpdateCriticalHook(data); }
+            if (Daemons.DataUpdateCriticalHook) {
+                Daemons.DataUpdateCriticalHook(data);
+            }
         });
     }
 
@@ -93,7 +96,22 @@ export class Daemons {
         let daemonsCmd = '';
 
         if (platform.isMac()) {
-            daemonsCmd = path.join(daemonsPath, "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons");
+            const possibleNames = [
+              "elemento_client_daemons.app/Contents/MacOS/elemento_client_daemons",
+              "elemento_client_daemons.app/Contents/MacOS/daemon_launcher"
+            ];
+
+            let actualName = "";
+
+            for (const name of possibleNames) {
+                const attemptedName = path.join(daemonsPath, name);
+                if (fs.existsSync(attemptedName)) {
+                    actualName = attemptedName;
+                    break;
+                }
+            }
+
+            daemonsCmd = path.join(daemonsPath, actualName);
         } else if (platform.isLinux()) {
             if (platform.arch === 'arm64') {
                 daemonsCmd = path.join(daemonsPath, `elemento_daemons_linux_arm`);
@@ -103,10 +121,10 @@ export class Daemons {
         } else if (platform.isWin()) {
             if (platform.arch === 'x64' || platform.arch === 'x86') {
                 const possibleNames = [
-                  "elemento_daemons_win_x86.exe",
-                  "elemento_daemons_win_x64.exe",
-                  "elemento_daemons_windows_x86.exe",
-                  "elemento_daemons_windows_x64.exe",
+                    "elemento_daemons_win_x86.exe",
+                    "elemento_daemons_win_x64.exe",
+                    "elemento_daemons_windows_x86.exe",
+                    "elemento_daemons_windows_x64.exe"
                 ];
 
                 for (const possibleName of possibleNames) {
@@ -120,7 +138,7 @@ export class Daemons {
                     "elemento_daemons_win_arm64.exe",
                     "elemento_daemons_win_aarch64.exe",
                     "elemento_daemons_windows_arm64.exe",
-                    "elemento_daemons_windows_aarch64.exe",
+                    "elemento_daemons_windows_aarch64.exe"
                 ];
 
                 for (const possibleName of possibleNames) {
