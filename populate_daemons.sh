@@ -235,6 +235,11 @@ main() {
         
         download_asset "$asset_id" "$filename" "$target_dir"
 
+        echo "Downloaded asset filetype"
+        file "${target_dir}/${filename}"
+
+        ls -lah "${target_dir}"
+
         if [[ "$filename" == *.zip ]]; then
             echo "Extracting contents of $filename"
             unzip "${target_dir}/${filename}" -d "$target_dir"
