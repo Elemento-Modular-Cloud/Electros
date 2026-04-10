@@ -1,0 +1,1 @@
+../elemento-gui-new/vite.config.mjs
