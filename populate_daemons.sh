@@ -247,8 +247,7 @@ main() {
             tar -xzf "${target_dir}/${filename}" -C "$target_dir"
             rm "${target_dir}/${filename}"
         else
-            echo "[ERROR] Unrecognised file type: $actual_type"
-            exit 1
+            echo "[WARN] File is not an archive ($actual_type), treating as a plain asset"
         fi
 
         # Now handle the DMG file that was either downloaded directly or extracted from ZIP
