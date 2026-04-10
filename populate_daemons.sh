@@ -235,26 +235,19 @@ main() {
         
         download_asset "$asset_id" "$filename" "$target_dir"
 
-        if [[ "$filename" == *.zip ]]; then
-            echo "Extracting contents of $filename"
+        echo "Verifying actual archive file type"
+        actual_type=$(file --brief "${target_dir}/${filename}")
+
+        if [[ "$actual_type" == *"Zip archive"* ]]; then
+            echo "[INFO] Extracting zip: $filename"
             unzip "${target_dir}/${filename}" -d "$target_dir"
-            # Find the DMG file inside the extracted contents
-            dmg_file=$(find "$target_dir" -name "*.dmg" -type f)
-            if [[ -n "$dmg_file" ]]; then
-                echo "Found DMG file: $dmg_file"
-                # Move the DMG file to the target directory if it's in a subdirectory
-                if [[ "$(dirname "$dmg_file")" != "$target_dir" ]]; then
-                    mv "$dmg_file" "$target_dir/"
-                fi
-                dmg_filename=$(basename "$dmg_file")
-                # Clean up everything except the DMG
-                find "$target_dir" -not -name "$dmg_filename" -not -path "$target_dir" -delete
-            fi
             rm "${target_dir}/${filename}"
-        elif [[ "$filename" == *.tar.gz ]]; then
-            echo "Extracting contents of $filename"
+        elif [[ "$actual_type" == *"gzip"* ]]; then
+            echo "[INFO] Extracting gzip: $filename"
             tar -xzf "${target_dir}/${filename}" -C "$target_dir"
             rm "${target_dir}/${filename}"
+        else
+            echo "[WARN] File is not an archive ($actual_type), treating as a plain asset"
         fi
 
         # Now handle the DMG file that was either downloaded directly or extracted from ZIP

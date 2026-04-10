@@ -1,1 +1,1 @@
-../../elemento-gui-new/vite.config.mjs
+../elemento-gui-new/vite.config.mjs
