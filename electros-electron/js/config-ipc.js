@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { ipcMain, dialog } = require('electron');
-const sharp = require('sharp');
+// const sharp = require('sharp');
 
 // File paths
 const CONFIG_DIR = path.join(os.homedir(), '.elemento');
@@ -24,43 +24,43 @@ if (!fs.existsSync(BACKGROUNDS_DIR)) {
 }
 
 // Convert image to WebP format
-async function convertToWebP(sourcePath, quality = 80) {
-    try {
-        // Skip if already WebP
-        const ext = path.extname(sourcePath).toLowerCase();
-        if (ext === '.webp') {
-            return sourcePath;
-        }
-        
-        // Check if file exists
-        if (!fs.existsSync(sourcePath)) {
-            console.warn(`Cannot convert to WebP: file does not exist: ${sourcePath}`);
-            return null;
-        }
-        
-        // Generate WebP filename
-        const dir = path.dirname(sourcePath);
-        const baseName = path.basename(sourcePath, ext);
-        const webpPath = path.join(dir, `${baseName}.webp`);
-        
-        // Check if WebP version already exists
-        if (fs.existsSync(webpPath)) {
-            console.log(`WebP version already exists: ${webpPath}`);
-            return webpPath;
-        }
-        
-        // Convert to WebP
-        await sharp(sourcePath)
-            .webp({ quality: quality })
-            .toFile(webpPath);
-        
-        console.log(`Converted to WebP: ${sourcePath} -> ${webpPath}`);
-        return webpPath;
-    } catch (error) {
-        console.error(`Error converting to WebP: ${sourcePath}`, error);
-        return null;
-    }
-}
+// async function convertToWebP(sourcePath, quality = 80) {
+//     try {
+//         // Skip if already WebP
+//         const ext = path.extname(sourcePath).toLowerCase();
+//         if (ext === '.webp') {
+//             return sourcePath;
+//         }
+//
+//         // Check if file exists
+//         if (!fs.existsSync(sourcePath)) {
+//             console.warn(`Cannot convert to WebP: file does not exist: ${sourcePath}`);
+//             return null;
+//         }
+//
+//         // Generate WebP filename
+//         const dir = path.dirname(sourcePath);
+//         const baseName = path.basename(sourcePath, ext);
+//         const webpPath = path.join(dir, `${baseName}.webp`);
+//
+//         // Check if WebP version already exists
+//         if (fs.existsSync(webpPath)) {
+//             console.log(`WebP version already exists: ${webpPath}`);
+//             return webpPath;
+//         }
+//
+//         // Convert to WebP
+//         await sharp(sourcePath)
+//             .webp({ quality: quality })
+//             .toFile(webpPath);
+//
+//         console.log(`Converted to WebP: ${sourcePath} -> ${webpPath}`);
+//         return webpPath;
+//     } catch (error) {
+//         console.error(`Error converting to WebP: ${sourcePath}`, error);
+//         return null;
+//     }
+// }
 
 // IPC Handlers
 ipcMain.handle('read-config', async () => {
@@ -570,7 +570,8 @@ async function convertExistingBackgrounds() {
                     }
                     
                     // Convert to WebP
-                    const result = await convertToWebP(filePath);
+                    // const result = await convertToWebP(filePath);
+                    let result = false;
                     if (result) {
                         converted++;
                     } else {
