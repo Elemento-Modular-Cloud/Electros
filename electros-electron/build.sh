@@ -66,6 +66,12 @@ for platform in "${platforms[@]}"; do
 
     for arch in "${archs[@]}"; do
         setup_daemons "$platform" "$arch"
+
+        # Fix for sharp on Linux to bundle dependency on appimage
+        if [ $platform == "linux" ]
+          npm install --platform=$platform --arch=$arch sharp
+        fi
+
         npm run build -- --"$platform" --"$arch"
         mkdir -p "${build_dir}/${platform}/${arch}"
         if [ "$platform" == "mac" ]; then
