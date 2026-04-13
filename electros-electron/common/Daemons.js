@@ -111,7 +111,7 @@ export class Daemons {
                 }
             }
 
-            daemonsCmd = daemonsCmd;
+            daemonsCmd = actualName;
         } else if (platform.isLinux()) {
             if (platform.arch === 'arm64') {
                 daemonsCmd = path.join(daemonsPath, `elemento_daemons_linux_arm`);
