@@ -86,7 +86,8 @@
             ],
             "asarUnpack": [
                 "node_modules/ssh2/**/*",
-                "node_modules/sharp/**/*",
+                "**/node_modules/sharp/**/*",
+                "**/node_modules/@img/**/*",
                 "electros/remotes/**/*"
             ]
         },
