@@ -98,7 +98,7 @@
                 "rpm"
             ],
             "maintainer": "Elemento Cloud Srl <hello@elemento.cloud>",
-            "category": "Utility",
+            "category": "Utility"
         },
         "deb": {
             "depends": ["libvips42 | libvips40 | libvips"]

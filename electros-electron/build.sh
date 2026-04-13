@@ -69,7 +69,8 @@ for platform in "${platforms[@]}"; do
 
         # Fix for sharp on Linux to bundle dependency on appimage
         if [ $platform == "linux" ]
-          npm install --platform=$platform --arch=$arch sharp
+          export npm_config_arch=$arch
+          npm install sharp
         fi
 
         npm run build -- --"$platform" --"$arch"
