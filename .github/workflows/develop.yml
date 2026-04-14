@@ -3,12 +3,12 @@ name: Build Electron App Develop
 on:
   push:
     tags:
-      - 'v*-beta'
+      - "v*-beta"
     paths-ignore:
-      - '**.md'
+      - "**.md"
   pull_request:
-    branches: [ develop ]  # Trigger on PRs to main/master
-  workflow_dispatch:  # Allow manual trigger
+    branches: [develop] # Trigger on PRs to main/master
+  workflow_dispatch: # Allow manual trigger
 
 permissions:
   contents: write
@@ -25,7 +25,7 @@ jobs:
         with:
           repo: Elemento-Modular-Cloud/Electros
           keep_latest: 3
-          delete_type: 'release'
+          delete_type: "release"
           delete_branch: ${{ github.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
         with:
           repo: Elemento-Modular-Cloud/Electros
           keep_latest: 1
-          delete_type: 'prerelease'
+          delete_type: "prerelease"
           delete_branch: ${{ github.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
           else
             FINAL_TAG="${{ github.ref_name }}"
           fi
-          
+
           echo "TAG_NAME=$FINAL_TAG" >> $GITHUB_ENV
           echo "tag_name=$FINAL_TAG" >> $GITHUB_OUTPUT
           echo "Using tag: $FINAL_TAG"
@@ -74,7 +74,7 @@ jobs:
         with:
           token: ${{ secrets.CI_TOKEN }}
           submodules: recursive
-          ref: 'develop'
+          ref: "develop"
 
       - name: Create Release
         env:
@@ -168,7 +168,6 @@ jobs:
           chmod +x ./autobuild.sh
           ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --version ${{ needs.set-tag.outputs.tag_name }}
         shell: bash
-
 
       - name: Upload un-notarized & un-stapled DMG artifact
         uses: actions/upload-artifact@v4
@@ -351,7 +350,7 @@ jobs:
           echo "# Electros ${{ needs.set-tag.outputs.tag_name }} Checksums" > "$checksum_file"
           echo "# Generated on $(date)" >> "$checksum_file"
           echo "" >> "$checksum_file"
-          
+
           # Function to generate checksums for a file
           generate_checksums() {
             local file=$1
@@ -370,21 +369,21 @@ jobs:
           }
 
           cd "${{ matrix.os }}/${{ matrix.arch }}"
-          
+
           if [ ${{ matrix.os }} == "mac" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
-          
+
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.dmg"
           elif [ ${{ matrix.os }} == "win" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
-          
+
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.exe"
           elif [ ${{ matrix.os }} == "linux" ]; then
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage"
             generate_checksums "Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb"
-          
+
             gh release upload ${{ needs.set-tag.outputs.tag_name }} \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.AppImage" \
               "./Electros-${{ needs.set-tag.outputs.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.deb" \
@@ -426,7 +425,7 @@ jobs:
             echo "# This file contains checksums for all platform builds"
             echo ""
           } > combined_checksums.txt
-          
+
           # Find and combine all checksum files
           find artifacts -name "checksums-*.txt" -type f | while read -r file; do
             echo "Processing $file"
@@ -464,7 +463,6 @@ jobs:
     name: Build AtomOS-GUI docker image
     runs-on: ubuntu-latest
     steps:
-
       # build and push the docker image to ghcr.io
 
       - name: Checkout code
@@ -490,4 +488,4 @@ jobs:
         run: |
           OWNER_NAME=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           docker build -f docker/Dockerfile -t ghcr.io/${OWNER_NAME}/elemento-electros-instance:latest .
-          docker push ghcr.io/${OWNER_NAME}/elemento-electros-instance:latest
+          docker push ghcr.io/${OWNER_NAME}/elemento-electros-instance:beta
