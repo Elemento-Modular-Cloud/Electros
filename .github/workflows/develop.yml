@@ -487,5 +487,5 @@ jobs:
       - name: Build and push Docker image
         run: |
           OWNER_NAME=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          docker build -f docker/Dockerfile -t ghcr.io/${OWNER_NAME}/elemento-electros-instance:latest .
+          docker build -f docker/Dockerfile -t ghcr.io/${OWNER_NAME}/elemento-electros-instance:beta .
           docker push ghcr.io/${OWNER_NAME}/elemento-electros-instance:beta
