@@ -49,7 +49,7 @@ contextBridge.exposeInMainWorld('electron', {
                 ipcRenderer.on(channel, callback);
             }
         }
-    }
-
-}); 
+    },
+    onDeepLink: (callback) => ipcRenderer.on('deep-link', (event, url) => callback(url))
+});
 
