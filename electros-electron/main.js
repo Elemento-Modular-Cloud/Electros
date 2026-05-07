@@ -33,6 +33,10 @@ if (process.env.XDG_SESSION_TYPE === 'wayland') {
     app.commandLine.appendSwitch('ozone-platform', 'wayland');
 }
 
+if (process.env.NODE_ENV === 'development') {
+    app.setAsDefaultProtocolClient('electros');
+}
+
 
 function createMainWindow() {
     const win = WindowProvider("electros/electros.html",
@@ -120,6 +124,14 @@ function setupWindowShortcuts(window) {
     });
 }
 
+function sendUrlToRenderer(url) {
+    const win = BrowserWindow.getAllWindows()[0];
+    if (win && !win.isDestroyed()) {
+        win.webContents.send('deep-link', url);
+    }
+    // TODO: Reopen window
+}
+
 ipcMain.handle('create-popup', async (event, options = {}) => {
     console.log(options);
 
@@ -190,6 +202,25 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         throw error;
     }
 });
+
+// macOS URL handling
+app.on('open-url', (event, url) => {
+    event.preventDefault();
+    console.log('App opened with URL:', url);
+    sendUrlToRenderer(url);
+});
+
+// Windows/Linux URL handling - ensure single instance and handle second instance URLs
+app.requestSingleInstanceLock();
+app.on('second-instance', (event, argv) => {
+    const url = argv.find(arg => arg.startsWith('electros://'));
+    if (url) {
+        console.log('Second instance opened with URL:', url);
+        sendUrlToRenderer(url);
+    }
+});
+
+let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
 
 
 app.on('before-quit', () => {
