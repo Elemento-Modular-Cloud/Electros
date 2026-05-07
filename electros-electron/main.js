@@ -41,20 +41,20 @@ if (process.env.NODE_ENV === 'development') {
 function createMainWindow() {
     const win = WindowProvider("electros/electros.html",
       {
-        width: 1800,
-        height: 1200,
-        ...WindowOptions.Common,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js'),
-            zoomFactor: 1.0,
-            backgroundThrottling: false,
-            enableRemoteModule: false,
-            experimentalFeatures: false,
-            devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
-        }
-    }, __dirname);
+          width: 1800,
+          height: 1200,
+          ...WindowOptions.Common,
+          webPreferences: {
+              nodeIntegration: true,
+              contextIsolation: true,
+              preload: path.join(__dirname, 'preload.js'),
+              zoomFactor: 1.0,
+              backgroundThrottling: false,
+              enableRemoteModule: false,
+              experimentalFeatures: false,
+              devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
+          }
+      }, __dirname);
 
     if (platform.os === 'mac') {
         win.setWindowButtonVisibility(false);
@@ -64,8 +64,8 @@ function createMainWindow() {
     win.webContents.on('did-finish-load', () => {
         try {
             const safeJS = typeof PreloadedContent.Js.Titlebar === 'string'
-                ? PreloadedContent.Js.Titlebar
-                : JSON.stringify(PreloadedContent.Js.Titlebar);
+              ? PreloadedContent.Js.Titlebar
+              : JSON.stringify(PreloadedContent.Js.Titlebar);
 
             win.webContents.executeJavaScript(safeJS).catch(err => {
                 throw err;
@@ -127,6 +127,7 @@ function setupWindowShortcuts(window) {
 function sendUrlToRenderer(url) {
     const win = BrowserWindow.getAllWindows()[0];
     if (win && !win.isDestroyed()) {
+        console.trace("Sending URL", url);
         win.webContents.send('deep-link', url);
     }
     // TODO: Reopen window
@@ -173,8 +174,8 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         if (!options.defaultTitlebar) {
             popup.webContents.on('did-finish-load', () => {
                 const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
-                    'titleElement.textContent = document.title;',
-                    `titleElement.textContent = ${JSON.stringify(options.title)};`
+                  'titleElement.textContent = document.title;',
+                  `titleElement.textContent = ${JSON.stringify(options.title)};`
                 );
                 popup.webContents.executeJavaScript(popupTitlebarJS);
             });
@@ -293,7 +294,7 @@ ipcMain.handle('check-port', async (event, {ip, port}) => {
 
 app.whenReady().then(() => {
     const menu = Menu.buildFromTemplate(
-        BuildMenuTemplate(),
+      BuildMenuTemplate(),
     );
     Menu.setApplicationMenu(menu);
 
@@ -306,7 +307,7 @@ app.whenReady().then(() => {
     }
 
     createWindows();
-    
+
     // Convert existing background images to WebP on startup (async, non-blocking)
     configHandlers.convertExistingBackgrounds().then(result => {
         if (result.success) {
@@ -393,9 +394,9 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
 
         const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
         const sshPath = path.join(
-            baseDir,
-            app.isPackaged ? 'app.asar.unpacked' : '',
-            'electros', 'remotes', 'ssh', 'ssh.cjs'
+          baseDir,
+          app.isPackaged ? 'app.asar.unpacked' : '',
+          'electros', 'remotes', 'ssh', 'ssh.cjs'
         );
 
         // Start the SSH server process
@@ -406,8 +407,8 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
 
         sshWindow.webContents.on('did-finish-load', () => {
             const sshTitlebarJS = PreloadedContent.Js.Titlebar.replace(
-                'titleElement.textContent = document.title;',
-                `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
+              'titleElement.textContent = document.title;',
+              `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
             );
             sshWindow.webContents.executeJavaScript(sshTitlebarJS);
         });
