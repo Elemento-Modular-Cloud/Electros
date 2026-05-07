@@ -41,11 +41,27 @@ $ /opt/Electros/electros --ozone-platform=wayland
 ```
 
 ## Protocol
-A protocol `electros://` is registered and supports the two following formats:
-1. Path to a page
-    When a path to a page is provided, for example, `electros://iaas/virtual-machines`, that page will be opened.
-2. Dialog name
-    To open a globally-registered dialog, you can open `electros://dialog/{{ dialog-name }}` and that dialog will be opened.
-
-In both cases, parameters can be passed to the page, if supported, by inserting them into the URL as URL Query Parameters.
+A protocol `electros://` is registered and supports three formats defined below.
+In all cases, parameters can be passed to the page, if supported, by inserting them into the URL as URL Query Parameters.
 E.g. `electros://example/page?uuid=an-uuid&admin=true`
+
+### Page Path Format
+When a path to a page is provided, for example, `electros://iaas/virtual-machines`, that page will be opened.
+
+### Dialog
+To open a globally-registered dialog, you can open `electros://dialog/dialog-name` and that dialog will be opened.
+
+### Special Handler
+If a given page has a special handler defined, it can be used by providing a path like this:
+```
+electros://page/path{specialHandler}?parameter1=loremIpsum
+```
+
+For example, to open a VM's VNC, you can use `electros://iaas/virtual-machiens{openVnc}?vmUuid=cfd0d0b0-9538-4043-9e43-3352cf77b8b6`
+
+What follows is a table of supported special features by page:
+
+| Page Path               | Special Feature | Parameters |
+|-------------------------|-----------------|------------|
+| `iaas/virtual-machines` | `openVnc`       | `vmUuid`   |
+
