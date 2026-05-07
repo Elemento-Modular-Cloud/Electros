@@ -39,3 +39,13 @@ Xwayland:
 ```bash
 $ /opt/Electros/electros --ozone-platform=wayland
 ```
+
+## Protocol
+A protocol `electros://` is registered and supports the two following formats:
+1. Path to a page
+    When a path to a page is provided, for example, `electros://iaas/virtual-machines`, that page will be opened.
+2. Dialog name
+    To open a globally-registered dialog, you can open `electros://dialog/{{ dialog-name }}` and that dialog will be opened.
+
+In both cases, parameters can be passed to the page, if supported, by inserting them into the URL as URL Query Parameters.
+E.g. `electros://example/page?uuid=an-uuid&admin=true`
