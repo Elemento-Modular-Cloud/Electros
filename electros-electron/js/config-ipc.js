@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const { ipcMain, dialog } = require('electron');
+const fsp = require('fs/promises');
+const { ipcMain, dialog, protocol } = require('electron');
 const sharp = require('sharp');
 
 // File paths
@@ -21,6 +22,86 @@ if (!fs.existsSync(CONFIG_DIR)) {
 // Ensure backgrounds directory exists
 if (!fs.existsSync(BACKGROUNDS_DIR)) {
     fs.mkdirSync(BACKGROUNDS_DIR, { recursive: true });
+}
+
+const BG_ROOT_RESOLVED = path.resolve(BACKGROUNDS_DIR);
+
+/**
+ * App-internal URL for wallpaper files. Using this instead of file:// avoids
+ * Chromium blocking local resources when the UI is loaded from http://localhost
+ * (Vite) or any non-file origin.
+ *
+ * Format: elemento-bg://bg/<url-encoded path relative to ~/.elemento/backgrounds>
+ */
+function elementoBgUrlForPath(absolutePath) {
+    const resolved = path.resolve(absolutePath);
+    if (!resolved.startsWith(BG_ROOT_RESOLVED + path.sep) && resolved !== BG_ROOT_RESOLVED) {
+        throw new Error('Invalid background path');
+    }
+    const rel = path.relative(BG_ROOT_RESOLVED, resolved);
+    if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) {
+        throw new Error('Invalid background path');
+    }
+    const posixRel = rel.split(path.sep).join('/');
+    return `elemento-bg://bg/${encodeURIComponent(posixRel)}`;
+}
+
+function registerElementoBgProtocol() {
+    protocol.handle('elemento-bg', async (request) => {
+        let requestUrl;
+        try {
+            requestUrl = new URL(request.url);
+        } catch {
+            return new Response(null, { status: 400 });
+        }
+        if (requestUrl.hostname !== 'bg') {
+            return new Response(null, { status: 404 });
+        }
+        const encoded = requestUrl.pathname.replace(/^\//, '');
+        if (!encoded) {
+            return new Response(null, { status: 404 });
+        }
+        let rel;
+        try {
+            rel = decodeURIComponent(encoded);
+        } catch {
+            return new Response(null, { status: 400 });
+        }
+        if (!rel || rel.includes('..')) {
+            return new Response(null, { status: 404 });
+        }
+        const segments = rel.split('/');
+        const filePath = path.resolve(path.join(BG_ROOT_RESOLVED, ...segments));
+        if (!filePath.startsWith(BG_ROOT_RESOLVED + path.sep)) {
+            return new Response(null, { status: 403 });
+        }
+        let st;
+        try {
+            st = await fsp.stat(filePath);
+        } catch {
+            return new Response(null, { status: 404 });
+        }
+        if (!st.isFile()) {
+            return new Response(null, { status: 404 });
+        }
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeTypes = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.gif': 'image/gif',
+            '.webp': 'image/webp',
+            '.bmp': 'image/bmp',
+        };
+        const mimeType = mimeTypes[ext] || 'application/octet-stream';
+        const buf = await fsp.readFile(filePath);
+        return new Response(buf, {
+            headers: {
+                'Content-Type': mimeType,
+                'Cache-Control': 'private, max-age=3600',
+            },
+        });
+    });
 }
 
 // Convert image to WebP format
@@ -190,8 +271,7 @@ ipcMain.handle('list-backgrounds', async () => {
             return {
                 name: file,
                 path: filePath,
-                // Use file:// URL for efficient loading of large images
-                fileUrl: `file://${filePath}`
+                fileUrl: elementoBgUrlForPath(filePath),
             };
         });
     } catch (error) {
@@ -200,12 +280,12 @@ ipcMain.handle('list-backgrounds', async () => {
     }
 });
 
-// Get background image - returns file:// URL for large images, base64 for small
+// Get background image - returns elemento-bg URL for large images, base64 for small
 ipcMain.handle('get-background-data', async (event, imagePath, forThumbnail = false) => {
     try {
         // Security: ensure the path is within the backgrounds directory
         const resolvedPath = path.resolve(imagePath);
-        if (!resolvedPath.startsWith(BACKGROUNDS_DIR)) {
+        if (!resolvedPath.startsWith(BG_ROOT_RESOLVED + path.sep) && resolvedPath !== BG_ROOT_RESOLVED) {
             throw new Error('Invalid path: must be within backgrounds directory');
         }
         
@@ -217,7 +297,6 @@ ipcMain.handle('get-background-data', async (event, imagePath, forThumbnail = fa
         const fileSizeInMB = stats.size / (1024 * 1024);
         
         // For thumbnails, use base64 only for small files (< 1MB)
-        // For wallpaper display, always use file:// URL for efficiency
         if (forThumbnail && fileSizeInMB < 1) {
             const data = fs.readFileSync(resolvedPath);
             const ext = path.extname(resolvedPath).toLowerCase();
@@ -232,9 +311,8 @@ ipcMain.handle('get-background-data', async (event, imagePath, forThumbnail = fa
             const mimeType = mimeTypes[ext] || 'image/png';
             return `data:${mimeType};base64,${data.toString('base64')}`;
         }
-        
-        // Return file:// URL for large images
-        return `file://${resolvedPath}`;
+
+        return elementoBgUrlForPath(resolvedPath);
     } catch (error) {
         console.error('Error reading background image:', error);
         return null;
@@ -275,7 +353,7 @@ ipcMain.handle('import-background', async (event) => {
             file: {
                 name: finalFileName,
                 path: finalPath,
-                fileUrl: `file://${finalPath}`
+                fileUrl: elementoBgUrlForPath(finalPath),
             }
         };
     } catch (error) {
@@ -461,7 +539,7 @@ ipcMain.handle('save-background-from-url', async (event, imageUrl, filename, sub
                                             file: {
                                                 name: path.basename(finalPath),
                                                 path: finalPath,
-                                                fileUrl: `file://${finalPath}`
+                                                fileUrl: elementoBgUrlForPath(finalPath),
                                             }
                                         });
                                     });
@@ -505,7 +583,7 @@ ipcMain.handle('save-background-from-url', async (event, imageUrl, filename, sub
                             file: {
                                 name: path.basename(finalPath),
                                 path: finalPath,
-                                fileUrl: `file://${finalPath}`
+                                fileUrl: elementoBgUrlForPath(finalPath),
                             }
                         });
                     });
@@ -604,7 +682,7 @@ ipcMain.handle('delete-background', async (event, imagePath) => {
     try {
         // Security: ensure the path is within the backgrounds directory
         const resolvedPath = path.resolve(imagePath);
-        if (!resolvedPath.startsWith(BACKGROUNDS_DIR)) {
+        if (!resolvedPath.startsWith(BG_ROOT_RESOLVED + path.sep) && resolvedPath !== BG_ROOT_RESOLVED) {
             throw new Error('Invalid path: must be within backgrounds directory');
         }
         
@@ -622,5 +700,6 @@ ipcMain.handle('delete-background', async (event, imagePath) => {
 
 module.exports = {
     channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'list-backgrounds', 'get-background-data', 'import-background', 'save-background-from-url', 'delete-background', 'convert-existing-backgrounds'],
-    convertExistingBackgrounds: convertExistingBackgrounds
+    convertExistingBackgrounds: convertExistingBackgrounds,
+    registerElementoBgProtocol,
 };

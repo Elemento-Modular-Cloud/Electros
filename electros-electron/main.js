@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell, safeStorage} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell, safeStorage, protocol} = require('electron');
 
 app.commandLine.appendSwitch('force-device-scale-factor', '1');
 const path = require('path');
@@ -36,6 +36,21 @@ if (process.env.XDG_SESSION_TYPE === 'wayland') {
 if (process.env.NODE_ENV === 'development') {
     app.setAsDefaultProtocolClient('electros');
 }
+
+// Wallpaper images must not use raw file:// URLs in the renderer when the page
+// is served from http(s) (e.g. Vite); register a privileged custom scheme instead.
+protocol.registerSchemesAsPrivileged([
+    {
+        scheme: 'elemento-bg',
+        privileges: {
+            standard: true,
+            secure: true,
+            supportFetchAPI: true,
+            corsEnabled: true,
+            stream: true,
+        },
+    },
+]);
 
 
 function createMainWindow() {
@@ -293,6 +308,8 @@ ipcMain.handle('check-port', async (event, {ip, port}) => {
 });
 
 app.whenReady().then(() => {
+    configHandlers.registerElementoBgProtocol();
+
     const menu = Menu.buildFromTemplate(
       BuildMenuTemplate(),
     );
