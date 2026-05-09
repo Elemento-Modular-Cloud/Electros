@@ -224,6 +224,60 @@ ipcMain.handle('write-hosts', async (event, hosts) => {
     }
 });
 
+const POTD_FETCH_USER_AGENT = 'Electros/3.1 (https://elemento.cloud/electros; hello@elemento.cloud)';
+
+/** Hosts the main process may fetch for POTD metadata (renderer bypasses CORS). */
+const ALLOWED_POTD_FETCH_HOSTS = new Set([
+    'commons.wikimedia.org',
+    'upload.wikimedia.org',
+    'peapix.com',
+    'img.peapix.com',
+    'www.bing.com',
+    'cn.bing.com',
+    'www2.bing.com',
+    'api.nasa.gov',
+    'apod.nasa.gov',
+]);
+
+ipcMain.handle('cors-safe-fetch', async (event, urlString) => {
+    let u;
+    try {
+        u = new URL(urlString);
+    } catch {
+        return { ok: false, status: 0, text: '', contentType: '', error: 'Invalid URL' };
+    }
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') {
+        return { ok: false, status: 0, text: '', contentType: '', error: 'Invalid protocol' };
+    }
+    if (!ALLOWED_POTD_FETCH_HOSTS.has(u.hostname)) {
+        return { ok: false, status: 0, text: '', contentType: '', error: `Host not allowed: ${u.hostname}` };
+    }
+    try {
+        const res = await fetch(urlString, {
+            headers: {
+                'User-Agent': POTD_FETCH_USER_AGENT,
+                Accept: '*/*',
+            },
+        });
+        const text = await res.text();
+        return {
+            ok: res.ok,
+            status: res.status,
+            text,
+            contentType: res.headers.get('content-type') || '',
+        };
+    } catch (error) {
+        console.error('cors-safe-fetch failed:', urlString, error);
+        return {
+            ok: false,
+            status: 0,
+            text: '',
+            contentType: '',
+            error: error.message || String(error),
+        };
+    }
+});
+
 // List background images from ~/.elemento/backgrounds/
 ipcMain.handle('list-backgrounds', async () => {
     try {
@@ -699,7 +753,7 @@ ipcMain.handle('delete-background', async (event, imagePath) => {
 });
 
 module.exports = {
-    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'list-backgrounds', 'get-background-data', 'import-background', 'save-background-from-url', 'delete-background', 'convert-existing-backgrounds'],
+    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'cors-safe-fetch', 'list-backgrounds', 'get-background-data', 'import-background', 'save-background-from-url', 'delete-background', 'convert-existing-backgrounds'],
     convertExistingBackgrounds: convertExistingBackgrounds,
     registerElementoBgProtocol,
 };

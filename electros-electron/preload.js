@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electron', {
             'write-config',
             'read-hosts',
             'write-hosts',
+            'cors-safe-fetch',
             'list-backgrounds',
             'get-background-data',
             'import-background',
