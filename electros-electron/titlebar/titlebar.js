@@ -12,23 +12,23 @@ function initializeTitlebar(options = { minimizeOnly: false }) {
         titlebar.innerHTML = `
             <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
                 ${options.minimizeOnly ? `
-                    <button class='electros-titlebar-button' id='minimize-button'></button>
-                    <button class='electros-titlebar-button' id='hide-button'></button>
+                    <button class='electros-titlebar-button' id='minimize-button' tabindex="-1"></button>
+                    <button class='electros-titlebar-button' id='hide-button' tabindex="-1"></button>
                 ` : `
-                    <button class='electros-titlebar-button' id='close-button'></button>
-                    <button class='electros-titlebar-button' id='minimize-button'></button>
-                    <button class='electros-titlebar-button' id='maximize-button'></button>
-                    <button class='electros-titlebar-button' id='fullscreen-button'></button>
+                    <button class='electros-titlebar-button' id='close-button' tabindex="-1"></button>
+                    <button class='electros-titlebar-button' id='minimize-button' tabindex="-1"></button>
+                    <button class='electros-titlebar-button' id='maximize-button' tabindex="-1"></button>
+                    <button class='electros-titlebar-button' id='fullscreen-button' tabindex="-1"></button>
                 `}
             </div>
         `;
     } else {
         titlebar.innerHTML = `
             <div class='electros-titlebar-buttons ${buttonsAlignClass}'>
-                <button class='electros-titlebar-button' id='minimize-button'></button>
+                <button class='electros-titlebar-button' id='minimize-button' tabindex="-1"></button>
                 ${!options.minimizeOnly ? `
-                    <button class='electros-titlebar-button' id='maximize-button'></button>
-                    <button class='electros-titlebar-button' id='close-button'></button>
+                    <button class='electros-titlebar-button' id='maximize-button' tabindex="-1"></button>
+                    <button class='electros-titlebar-button' id='close-button' tabindex="-1"></button>
                 ` : ''}
             </div>
         `;
