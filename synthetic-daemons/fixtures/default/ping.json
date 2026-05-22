@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "data": {
+    "target_id": "atomos-lab",
+    "target_type": "atomos_local_ip",
+    "pingable": true,
+    "trust_established": true,
+    "health": "ok",
+    "servers": [
+      { "ip": "192.168.1.10", "pingable": true, "ping_time_ms": 8 }
+    ]
+  }
+}

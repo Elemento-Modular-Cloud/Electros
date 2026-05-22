@@ -1,0 +1,200 @@
+[
+  {
+    "serverurl": "192.168.1.10",
+    "protocol": "tcp",
+    "port": 20000,
+    "target": "ubuntu-vm-001",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000001",
+    "target_port": 22,
+    "tailscale": true,
+    "force": true,
+    "forward_uid": "pf-synth-001"
+  },
+  {
+    "serverurl": "10.0.0.5",
+    "protocol": "tcp",
+    "port": 20001,
+    "target": "debian-vm-002",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000002",
+    "target_port": 80,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-002"
+  },
+  {
+    "serverurl": "192.168.1.20",
+    "protocol": "udp",
+    "port": 20002,
+    "target": "rocky-vm-003",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000003",
+    "target_port": 443,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-003"
+  },
+  {
+    "serverurl": "192.168.1.30",
+    "protocol": "tcp",
+    "port": 20003,
+    "target": "windows-server-vm-004",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000004",
+    "target_port": 3306,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-004"
+  },
+  {
+    "serverurl": "192.168.1.10",
+    "protocol": "tcp",
+    "port": 20004,
+    "target": "alpine-vm-005",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000005",
+    "target_port": 5432,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-005"
+  },
+  {
+    "serverurl": "10.0.0.5",
+    "protocol": "udp",
+    "port": 20005,
+    "target": "centos-vm-006",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000006",
+    "target_port": 6379,
+    "tailscale": true,
+    "force": false,
+    "forward_uid": "pf-synth-006"
+  },
+  {
+    "serverurl": "192.168.1.20",
+    "protocol": "tcp",
+    "port": 20006,
+    "target": "ubuntu-vm-007",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000007",
+    "target_port": 8080,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-007"
+  },
+  {
+    "serverurl": "192.168.1.30",
+    "protocol": "tcp",
+    "port": 20007,
+    "target": "windows-server-vm-008",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000008",
+    "target_port": 9000,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-008"
+  },
+  {
+    "serverurl": "192.168.1.10",
+    "protocol": "udp",
+    "port": 20008,
+    "target": "rocky-vm-009",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000009",
+    "target_port": 22,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-009"
+  },
+  {
+    "serverurl": "10.0.0.5",
+    "protocol": "tcp",
+    "port": 20009,
+    "target": "fedora-vm-010",
+    "target_vm_uid": "a0000000-0000-4000-8000-00000000000a",
+    "target_port": 80,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-010"
+  },
+  {
+    "serverurl": "192.168.1.20",
+    "protocol": "tcp",
+    "port": 20010,
+    "target": "alpine-vm-011",
+    "target_vm_uid": "a0000000-0000-4000-8000-00000000000b",
+    "target_port": 443,
+    "tailscale": true,
+    "force": false,
+    "forward_uid": "pf-synth-011"
+  },
+  {
+    "serverurl": "192.168.1.30",
+    "protocol": "udp",
+    "port": 20011,
+    "target": "windows-server-vm-012",
+    "target_vm_uid": "a0000000-0000-4000-8000-00000000000c",
+    "target_port": 3306,
+    "tailscale": false,
+    "force": true,
+    "forward_uid": "pf-synth-012"
+  },
+  {
+    "serverurl": "192.168.1.10",
+    "protocol": "tcp",
+    "port": 20012,
+    "target": "ubuntu-vm-013",
+    "target_vm_uid": "a0000000-0000-4000-8000-00000000000d",
+    "target_port": 5432,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-013"
+  },
+  {
+    "serverurl": "10.0.0.5",
+    "protocol": "tcp",
+    "port": 20013,
+    "target": "debian-vm-014",
+    "target_vm_uid": "a0000000-0000-4000-8000-00000000000e",
+    "target_port": 6379,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-014"
+  },
+  {
+    "serverurl": "192.168.1.20",
+    "protocol": "udp",
+    "port": 20014,
+    "target": "rocky-vm-015",
+    "target_vm_uid": "a0000000-0000-4000-8000-00000000000f",
+    "target_port": 8080,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-015"
+  },
+  {
+    "serverurl": "192.168.1.30",
+    "protocol": "tcp",
+    "port": 20015,
+    "target": "windows-server-vm-016",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000010",
+    "target_port": 9000,
+    "tailscale": true,
+    "force": false,
+    "forward_uid": "pf-synth-016"
+  },
+  {
+    "serverurl": "192.168.1.10",
+    "protocol": "tcp",
+    "port": 20016,
+    "target": "alpine-vm-017",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000011",
+    "target_port": 22,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-017"
+  },
+  {
+    "serverurl": "10.0.0.5",
+    "protocol": "udp",
+    "port": 20017,
+    "target": "centos-vm-018",
+    "target_vm_uid": "a0000000-0000-4000-8000-000000000012",
+    "target_port": 80,
+    "tailscale": false,
+    "force": false,
+    "forward_uid": "pf-synth-018"
+  }
+]

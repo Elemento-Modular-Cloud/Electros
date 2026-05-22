@@ -20,11 +20,21 @@ Every evening at 17:00 (CEST) a build is automatically run against Develop, and 
 `package.json` version, for example, `v3.1.5-DDMMYY-HHMM-nightly`. You can also manually trigger a nightly build from 
 the Github Actions Nightly workflow. It can only be run against `develop`.
 
+## Synthetic mock daemons (UI development)
+
+To run the UI without native client daemons, start the HTTP mock servers in [`synthetic-daemons/`](synthetic-daemons/) and launch Electros with `--no-daemons`. See [synthetic-daemons/README.md](synthetic-daemons/README.md) for ports, fixtures, and verification steps.
+
+```bash
+cd synthetic-daemons && npm install && npm start
+# separate terminal:
+cd electros-electron && npm start -- --no-daemons
+```
+
 ## Command line switches
 Electros has a set of custom command line switches other than the Electron switches:
 
 - `--enable-devtools` enables the devtools for the application
-- `--no-daemons` disables the execution of the embedded daemons
+- `--no-daemons` disables the execution of the embedded daemons (use with synthetic-daemons above)
 
 > [!note]
 > On macOS, to add a CLI switch, you'll have to append them directly onto the executable:
