@@ -49,6 +49,9 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:47777
 # Auth status (splash / login)
 curl -s http://127.0.0.1:47777/api/v1/authenticate/status
 
+# Licenses (Settings → Licenses)
+curl -s http://127.0.0.1:47777/api/v1/authenticate/license/list
+
 # VM list
 curl -s http://127.0.0.1:17777/api/v1.0/client/vm/status
 
@@ -65,7 +68,7 @@ curl -s http://127.0.0.1:37777/api/v1.0/client/network/list
 curl -s http://127.0.0.1:37777/api/v1.0/client/network/portforwards
 ```
 
-Then open Dashboard, My Clouds, VMs, Storage, and Networking in Electros.
+Then open Dashboard, My Clouds, VMs, Storage, Networking, and Settings → Licenses in Electros.
 
 ## Default scenario
 
@@ -78,8 +81,9 @@ The `fixtures/default/` set includes:
 - **18 port forwards** — TCP/UDP, tailscale/force flags, wired to synthetic VM UUIDs
 - **18 VM templates** — CPU/RAM/GPU combinations
 - Host status aggregates derived from the generated fleet
+- **15 licenses** — armed, inactive, expired, and expiring-soon rows for Settings → Licenses (`GET/POST /api/v1/authenticate/license/*`)
 
-Regenerate IaaS + PaaS fixtures:
+Regenerate IaaS + PaaS + licenses fixtures:
 
 ```bash
 npm run generate:fixtures        # both

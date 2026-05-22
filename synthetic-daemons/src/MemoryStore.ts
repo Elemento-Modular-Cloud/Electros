@@ -27,6 +27,20 @@ export type PortForwardRecord = Record<string, unknown>;
 export type ServiceInstanceRecord = Record<string, unknown>;
 export type BillingTransactionRecord = Record<string, unknown>;
 
+export interface LicenseRecord {
+  license_key: string;
+  expire?: number;
+  is_armed: boolean;
+  hmac: string;
+  duration: number;
+  reseller_entity?: string;
+  support_json: Record<string, unknown>;
+}
+
+export interface LicensesListResponse {
+  licenses: LicenseRecord[];
+}
+
 const STATE_PATH = "/tmp/synthetic-daemons-state.json";
 
 function loadFixture<T>(dir: string, name: string): T {
@@ -46,6 +60,7 @@ export class MemoryStore {
   portTunnels: Record<string, unknown>[];
   services: ServiceInstanceRecord[];
   billingTransactions: BillingTransactionRecord[];
+  licenses: LicensesListResponse;
 
   private readonly persistState: boolean;
 
@@ -71,6 +86,8 @@ export class MemoryStore {
       } catch {
         this.billingTransactions = [];
       }
+      this.licenses = (saved.licenses as LicensesListResponse)
+        ?? loadFixture(fixturesDir, "licenses.json");
     } else {
       this.authStatus = loadFixture(fixturesDir, "auth-status.json");
       this.targets = loadFixture(fixturesDir, "targets.json");
@@ -91,6 +108,7 @@ export class MemoryStore {
       } catch {
         this.billingTransactions = [];
       }
+      this.licenses = loadFixture(fixturesDir, "licenses.json");
     }
   }
 
@@ -112,6 +130,7 @@ export class MemoryStore {
         portTunnels: this.portTunnels,
         services: this.services,
         billingTransactions: this.billingTransactions,
+        licenses: this.licenses,
       }, null, 2)
     );
   }
@@ -331,5 +350,44 @@ export class MemoryStore {
       return [...this.billingTransactions];
     }
     return this.billingTransactions.filter((t) => t.billing_uuid === billingUuid);
+  }
+
+  findLicense(licenseKey: string): LicenseRecord | undefined {
+    return this.licenses.licenses.find((l) => l.license_key === licenseKey);
+  }
+
+  getArmedLicense(): LicenseRecord | null {
+    return this.licenses.licenses.find((l) => l.is_armed) ?? null;
+  }
+
+  armLicense(licenseKey: string): Record<string, unknown> {
+    const license = this.findLicense(licenseKey);
+    if (!license) {
+      throw new Error(`Unknown license key: ${licenseKey}`);
+    }
+
+    for (const entry of this.licenses.licenses) {
+      entry.is_armed = entry.license_key === licenseKey;
+    }
+    this.touch();
+
+    const serial = `SN-SYNTH-${licenseKey.replace(/-/g, "").slice(-12)}`;
+    const content = [
+      "# Synthetic AtomOS license (development only)",
+      `license_key=${licenseKey}`,
+      `serial_number=${serial}`,
+      `duration_days=${license.duration}`,
+      `hmac=${license.hmac}`,
+      `issued=${new Date().toISOString()}`,
+    ].join("\n");
+
+    return {
+      message: "License armed successfully",
+      license: {
+        key: licenseKey,
+        serial_number: serial,
+        file: content,
+      },
+    };
   }
 }

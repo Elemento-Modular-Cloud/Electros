@@ -51,7 +51,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": true,
           "size": 10737418240,
           "sizeOnDisk": 3221225472,
@@ -64,7 +64,7 @@
           "fs": "ext4",
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         },
         {
           "alg": "lzo",
@@ -88,7 +88,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 21474836480,
           "sizeOnDisk": 10737418240,
@@ -101,7 +101,7 @@
           "fs": "ext4",
           "kind": null,
           "priority": 3,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -178,7 +178,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 53687091200,
           "sizeOnDisk": 26843545600,
@@ -191,7 +191,7 @@
           "fs": null,
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -268,7 +268,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 268435456000,
           "sizeOnDisk": 187904819200,
@@ -281,7 +281,7 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         },
         {
           "alg": "zlib",
@@ -305,7 +305,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 536870912000,
           "sizeOnDisk": 214748364800,
@@ -318,7 +318,7 @@
           "fs": null,
           "kind": null,
           "priority": 3,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -395,7 +395,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": true,
           "size": 10737418240,
           "sizeOnDisk": 4294967296,
@@ -408,7 +408,7 @@
           "fs": null,
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -491,7 +491,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 53687091200,
           "sizeOnDisk": 32212254720,
@@ -504,7 +504,7 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         },
         {
           "alg": "no",
@@ -528,7 +528,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 107374182400,
           "sizeOnDisk": 32212254720,
@@ -541,7 +541,7 @@
           "fs": null,
           "kind": null,
           "priority": 3,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -618,7 +618,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 268435456000,
           "sizeOnDisk": 80530636800,
@@ -631,7 +631,7 @@
           "fs": null,
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -708,7 +708,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": true,
           "size": 10737418240,
           "sizeOnDisk": 5368709120,
@@ -721,7 +721,7 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         },
         {
           "alg": "lzo",
@@ -745,7 +745,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 21474836480,
           "sizeOnDisk": 8589934592,
@@ -758,7 +758,7 @@
           "fs": null,
           "kind": null,
           "priority": 1,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }
@@ -841,7 +841,7 @@
           "servers": [
             "192.168.1.30"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.30",
           "shareable": false,
           "size": 53687091200,
           "sizeOnDisk": 37580963840,
@@ -854,7 +854,7 @@
           "fs": "ext4",
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": "hypervisor_esxi"
         }
       ]
     }
@@ -931,7 +931,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 268435456000,
           "sizeOnDisk": 107374182400,
@@ -944,7 +944,7 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         },
         {
           "alg": "zlib",
@@ -968,7 +968,7 @@
           "servers": [
             "192.168.1.10"
           ],
-          "serverurl": null,
+          "serverurl": "https://192.168.1.10",
           "shareable": false,
           "size": 536870912000,
           "sizeOnDisk": 161061273600,
@@ -981,7 +981,7 @@
           "fs": null,
           "kind": null,
           "priority": 1,
-          "target_type": null
+          "target_type": "atomos_local_ip"
         }
       ]
     }

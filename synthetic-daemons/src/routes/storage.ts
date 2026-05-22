@@ -30,7 +30,7 @@ function minimalVolume(body: Record<string, unknown>): Record<string, unknown> {
     readonly: Boolean(body.readonly),
     server: (body.ip as string) ?? "192.168.1.10",
     servers: [(body.ip as string) ?? "192.168.1.10"],
-    serverurl: null,
+    serverurl: (body.serverurl as string) ?? `https://${(body.ip as string) ?? "192.168.1.10"}`,
     shareable: Boolean(body.shareable),
     size: sizeBytes,
     sizeOnDisk: sizeBytes,
@@ -43,7 +43,7 @@ function minimalVolume(body: Record<string, unknown>): Record<string, unknown> {
     fs: null,
     kind: null,
     priority: (body.priority as number) ?? 0,
-    target_type: null,
+    target_type: (body.target_type as string) ?? "atomos_local_ip",
   };
 }
 

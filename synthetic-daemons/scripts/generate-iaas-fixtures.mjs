@@ -61,8 +61,8 @@ function vmUuid(i) {
   return `a0000000-0000-4000-8000-${hex}`;
 }
 
-/** Resolve host so VmModel.host / getHypervisorDisplayLabel() match My Clouds targets. */
-function resolveVmHost(i) {
+/** Resolve host so VmModel / VolumeModel host tagchips match My Clouds targets. */
+function resolveIaasHost(i) {
   if (i % 15 === 9) {
     return PROXMOX_HOST;
   }
@@ -87,7 +87,7 @@ const templates = [];
 for (let i = 0; i < COUNT; i++) {
   const n = pad3(i + 1);
   const id = vmUuid(i);
-  const host = resolveVmHost(i);
+  const host = resolveIaasHost(i);
   const osFamily = pick(OS_FAMILIES, i);
   const osFlavour =
     osFamily === "windows" ? pick(WINDOWS_FLAVOURS, i) : pick(LINUX_FLAVOURS, i);
@@ -131,7 +131,7 @@ for (let i = 0; i < COUNT; i++) {
   const n = pad3(i + 1);
   const sizeGb = [10, 20, 50, 100, 250, 500][i % 6];
   const size = sizeGb * 1024 ** 3;
-  const server = pick(SERVERS, i);
+  const host = resolveIaasHost(i);
   volumes.push({
     alg: pick(["no", "lzo", "zlib"], i),
     bootable: i % 5 === 0,
@@ -150,11 +150,11 @@ for (let i = 0; i < COUNT; i++) {
     own: i % 4 !== 0,
     private: i % 3 === 0,
     readonly: i % 13 === 0,
-    server,
-    servers: [server, ...(i % 3 === 0 ? [pick(SERVERS, i + 1)] : [])].filter(
+    server: host.ip,
+    servers: [host.ip, ...(i % 3 === 0 ? [resolveIaasHost(i + 1).ip] : [])].filter(
       (v, idx, a) => a.indexOf(v) === idx
     ),
-    serverurl: null,
+    serverurl: host.serverurl,
     shareable: i % 6 === 0,
     size,
     sizeOnDisk: Math.round(size * (0.3 + (i % 5) * 0.1)),
@@ -167,20 +167,28 @@ for (let i = 0; i < COUNT; i++) {
     fs: i % 7 === 0 ? "ext4" : null,
     kind: null,
     priority: i % 4,
-    target_type: null,
+    target_type: host.target_type,
   });
 }
 
-// Attach volumes to ~half of VMs (1–2 disks each); disk server must match VM host IP
+// Attach volumes to ~half of VMs (1–2 disks each); disk host must match VM host
 for (let i = 0; i < COUNT; i++) {
   if (i % 2 !== 0) continue;
   const vm = vms[i];
-  const hostIp = vm._hostIp;
-  const volA = { ...volumes[i], server: hostIp, servers: [hostIp] };
+  const host = resolveIaasHost(i);
+  const volA = {
+    ...volumes[i],
+    server: host.ip,
+    servers: [host.ip],
+    serverurl: host.serverurl,
+    target_type: host.target_type,
+  };
   const volB = {
     ...volumes[(i + 7) % COUNT],
-    server: hostIp,
-    servers: [hostIp],
+    server: host.ip,
+    servers: [host.ip],
+    serverurl: host.serverurl,
+    target_type: host.target_type,
   };
   vm.req_json.volumes = [volA, ...(i % 4 === 0 ? [volB] : [])];
 }

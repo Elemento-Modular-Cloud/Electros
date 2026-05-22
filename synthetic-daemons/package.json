@@ -13,7 +13,8 @@
     "generate:paas-fixtures": "node scripts/generate-paas-fixtures.mjs",
     "generate:iaas-fixtures": "node scripts/generate-iaas-fixtures.mjs",
     "generate:targets-fixtures": "node scripts/generate-targets-fixtures.mjs",
-    "generate:fixtures": "npm run generate:targets-fixtures && npm run generate:iaas-fixtures && npm run generate:paas-fixtures"
+    "generate:licenses-fixtures": "node scripts/generate-licenses-fixtures.mjs",
+    "generate:fixtures": "npm run generate:targets-fixtures && npm run generate:iaas-fixtures && npm run generate:paas-fixtures && npm run generate:licenses-fixtures"
   },
   "engines": {
     "node": ">=20"

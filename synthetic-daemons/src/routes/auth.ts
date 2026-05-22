@@ -45,11 +45,22 @@ export function authRouter(store: MemoryStore, config: AppConfig): Router {
   });
 
   router.get("/license/list", (_req: Request, res: Response) => {
-    json(res, []);
+    json(res, store.licenses);
   });
 
   router.get("/license/armed", (_req: Request, res: Response) => {
-    json(res, null);
+    const armed = store.getArmedLicense();
+    json(res, armed);
+  });
+
+  router.post("/license/arm", (req: Request, res: Response) => {
+    const licenseKey =
+      (req.body?.license_key as string) ?? (req.body?.licenseKey as string) ?? "";
+    try {
+      json(res, store.armLicense(licenseKey));
+    } catch (err) {
+      json(res, { message: String(err) }, 404);
+    }
   });
 
   router.get("/org/list", (_req: Request, res: Response) => {
