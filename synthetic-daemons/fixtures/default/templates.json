@@ -1,0 +1,336 @@
+[
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [
+        "vmx"
+      ],
+      "overprovision": 1,
+      "slots": 1
+    },
+    "ram": {
+      "ramsize": 2,
+      "reqECC": true
+    },
+    "info": {
+      "name": "template-001",
+      "description": "1 vCPU, 2 GiB — general"
+    },
+    "pci": [
+      {
+        "vendor": "NVIDIA",
+        "model": "A100",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 2,
+      "slots": 2
+    },
+    "ram": {
+      "ramsize": 4,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-002",
+      "description": "2 vCPU, 4 GiB — compute"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 3,
+      "slots": 4
+    },
+    "ram": {
+      "ramsize": 8,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-003",
+      "description": "4 vCPU, 8 GiB — memory"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 1,
+      "slots": 8
+    },
+    "ram": {
+      "ramsize": 16,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-004",
+      "description": "8 vCPU, 16 GiB — gpu"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 2,
+      "slots": 16
+    },
+    "ram": {
+      "ramsize": 32,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-005",
+      "description": "16 vCPU, 32 GiB — general"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 3,
+      "slots": 32
+    },
+    "ram": {
+      "ramsize": 64,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-006",
+      "description": "32 vCPU, 64 GiB — compute"
+    },
+    "pci": [
+      {
+        "vendor": "NVIDIA",
+        "model": "L4",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 1,
+      "slots": 1
+    },
+    "ram": {
+      "ramsize": 128,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-007",
+      "description": "1 vCPU, 128 GiB — memory"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 2,
+      "slots": 2
+    },
+    "ram": {
+      "ramsize": 2,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-008",
+      "description": "2 vCPU, 2 GiB — gpu"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 3,
+      "slots": 4
+    },
+    "ram": {
+      "ramsize": 4,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-009",
+      "description": "4 vCPU, 4 GiB — general"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [
+        "vmx"
+      ],
+      "overprovision": 1,
+      "slots": 8
+    },
+    "ram": {
+      "ramsize": 8,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-010",
+      "description": "8 vCPU, 8 GiB — compute"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 2,
+      "slots": 16
+    },
+    "ram": {
+      "ramsize": 16,
+      "reqECC": true
+    },
+    "info": {
+      "name": "template-011",
+      "description": "16 vCPU, 16 GiB — memory"
+    },
+    "pci": [
+      {
+        "vendor": "NVIDIA",
+        "model": "T4",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 3,
+      "slots": 32
+    },
+    "ram": {
+      "ramsize": 32,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-012",
+      "description": "32 vCPU, 32 GiB — gpu"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 1,
+      "slots": 1
+    },
+    "ram": {
+      "ramsize": 64,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-013",
+      "description": "1 vCPU, 64 GiB — general"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 2,
+      "slots": 2
+    },
+    "ram": {
+      "ramsize": 128,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-014",
+      "description": "2 vCPU, 128 GiB — compute"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 3,
+      "slots": 4
+    },
+    "ram": {
+      "ramsize": 2,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-015",
+      "description": "4 vCPU, 2 GiB — memory"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 1,
+      "slots": 8
+    },
+    "ram": {
+      "ramsize": 4,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-016",
+      "description": "8 vCPU, 4 GiB — gpu"
+    },
+    "pci": [
+      {
+        "vendor": "AMD",
+        "model": "MI300",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 2,
+      "slots": 16
+    },
+    "ram": {
+      "ramsize": 8,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-017",
+      "description": "16 vCPU, 8 GiB — general"
+    },
+    "pci": []
+  },
+  {
+    "cpu": {
+      "allowSMT": false,
+      "flags": [],
+      "overprovision": 3,
+      "slots": 32
+    },
+    "ram": {
+      "ramsize": 16,
+      "reqECC": false
+    },
+    "info": {
+      "name": "template-018",
+      "description": "32 vCPU, 16 GiB — compute"
+    },
+    "pci": []
+  }
+]
