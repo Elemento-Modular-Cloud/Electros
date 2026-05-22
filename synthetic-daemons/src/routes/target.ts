@@ -10,7 +10,7 @@ export function targetRouter(store: MemoryStore, config: AppConfig): Router {
   const router = Router();
   const keys = config.restKeys;
   const base = rk(keys, "TARGET_CLIENT_API_URL_KEY");
-  const pingPath = rk(keys, "TARGET_PING_API_KEY");
+  const pingPath = keys.TARGET_PING_API_KEY ?? "/ping";
 
   router.get(rk(keys, "TARGET_LIST_API_KEY"), (_req: Request, res: Response) => {
     json(res, store.targets);
