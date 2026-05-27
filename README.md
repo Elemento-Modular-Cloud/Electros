@@ -1,6 +1,6 @@
 # Electros
 
-> [!note]
+> [!NOTE]
 > If you're trying to run the app on macOS from the `.dmg` image, the daemons will not start. This is caused by the 
 > read-only filesystem of the disk image. You will need to copy it to `/Applications` or any other filesystem that 
 > is readable.
@@ -26,7 +26,7 @@ Electros has a set of custom command line switches other than the Electron switc
 - `--enable-devtools` enables the devtools for the application
 - `--no-daemons` disables the execution of the embedded daemons
 
-> [!note]
+> [!NOTE]
 > On macOS, to add a CLI switch, you'll have to append them directly onto the executable:
 > ```zsh 
 > $ /Applications/Electros.app/Contents/MacOS/Electros  # add your CLI switches here

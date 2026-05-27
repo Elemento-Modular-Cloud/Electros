@@ -30,6 +30,6 @@ The *daemons executable* name must be one of the following:
 | macOS    | x86 / x64 / arm64 / aarch64 | `elemento_client_daemons.app`    |
 
 
-> [!note] macOS `.app` daemons
+> [!NOTE]
 > Inside the `.app`, the executable inside of `elemento_client_daemons.app/Contents/MacOS/` must be called either
 > `elemento_client_daemons` or `daemon_launcher`.
