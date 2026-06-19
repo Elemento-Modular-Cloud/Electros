@@ -3,6 +3,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000001",
     "serverurl": "https://192.168.1.10",
     "target_type": "atomos_local_ip",
+    "provider": "atomos",
     "req_json": {
       "vm_name": "ubuntu-vm-001",
       "allowSMT": true,
@@ -64,19 +65,20 @@
           "fs": "ext4",
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": null,
+          "provider": "atomos"
         },
         {
           "alg": "lzo",
           "bootable": false,
-          "bus": "ide",
+          "bus": "scsi",
           "cache": null,
           "ceph": false,
           "clonable": true,
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "vmdk",
+          "format": "qcow2",
           "iscsi_name": "",
           "lastUpdated": "2025-05-08 12:00:00.000",
           "name": "disk-008",
@@ -101,7 +103,8 @@
           "fs": "ext4",
           "kind": null,
           "priority": 3,
-          "target_type": null
+          "target_type": null,
+          "provider": "esxi"
         }
       ]
     }
@@ -110,6 +113,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000002",
     "serverurl": "https://10.0.0.5",
     "target_type": "atomos_local_ip",
+    "provider": "ovh",
     "req_json": {
       "vm_name": "debian-vm-002",
       "allowSMT": false,
@@ -136,6 +140,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000003",
     "serverurl": "https://192.168.1.10",
     "target_type": "atomos_local_ip",
+    "provider": "atomos",
     "req_json": {
       "vm_name": "rocky-vm-003",
       "allowSMT": false,
@@ -191,7 +196,8 @@
           "fs": null,
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": null,
+          "provider": "atomos"
         }
       ]
     }
@@ -200,6 +206,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000004",
     "serverurl": "https://10.0.0.5",
     "target_type": "atomos_local_ip",
+    "provider": "ovh",
     "req_json": {
       "vm_name": "windows-server-vm-004",
       "allowSMT": true,
@@ -226,6 +233,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000005",
     "serverurl": "https://192.168.1.10",
     "target_type": "atomos_local_ip",
+    "provider": "atomos",
     "req_json": {
       "vm_name": "alpine-vm-005",
       "allowSMT": false,
@@ -281,19 +289,20 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": null,
+          "provider": "atomos"
         },
         {
           "alg": "zlib",
           "bootable": false,
-          "bus": "ide",
+          "bus": "scsi",
           "cache": null,
           "ceph": false,
           "clonable": true,
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": true,
-          "format": "vmdk",
+          "format": "raw",
           "iscsi_name": "",
           "lastUpdated": "2025-05-12 12:00:00.000",
           "name": "disk-012",
@@ -318,7 +327,8 @@
           "fs": null,
           "kind": null,
           "priority": 3,
-          "target_type": null
+          "target_type": null,
+          "provider": "esxi"
         }
       ]
     }
@@ -327,6 +337,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000006",
     "serverurl": "https://10.0.0.5",
     "target_type": "atomos_local_ip",
+    "provider": "ovh",
     "req_json": {
       "vm_name": "centos-vm-006",
       "allowSMT": false,
@@ -353,6 +364,7 @@
     "uniqueID": "a0000000-0000-4000-8000-000000000007",
     "serverurl": "https://192.168.1.10",
     "target_type": "atomos_local_ip",
+    "provider": "atomos",
     "req_json": {
       "vm_name": "ubuntu-vm-007",
       "allowSMT": true,
@@ -383,7 +395,7 @@
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "raw",
+          "format": "qcow2",
           "iscsi_name": "",
           "lastUpdated": "2025-05-07 12:00:00.000",
           "name": "disk-007",
@@ -408,15 +420,17 @@
           "fs": null,
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": null,
+          "provider": "atomos"
         }
       ]
     }
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-000000000008",
-    "serverurl": "https://10.0.0.5",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.30",
+    "target_type": "hypervisor_esxi",
+    "provider": "esxi",
     "req_json": {
       "vm_name": "windows-server-vm-008",
       "allowSMT": false,
@@ -447,8 +461,9 @@
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-000000000009",
-    "serverurl": "https://192.168.1.10",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.30",
+    "target_type": "hypervisor_esxi",
+    "provider": "esxi",
     "req_json": {
       "vm_name": "rocky-vm-009",
       "allowSMT": false,
@@ -472,14 +487,14 @@
         {
           "alg": "zlib",
           "bootable": false,
-          "bus": "virtio",
+          "bus": "scsi",
           "cache": null,
           "ceph": false,
           "clonable": true,
           "cloudinit": true,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "qcow2",
+          "format": "vmdk",
           "iscsi_name": "",
           "lastUpdated": "2025-05-09 12:00:00.000",
           "name": "disk-009",
@@ -487,9 +502,9 @@
           "own": false,
           "private": false,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.30",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.30"
           ],
           "serverurl": null,
           "shareable": false,
@@ -504,12 +519,13 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": null,
+          "provider": "esxi"
         },
         {
           "alg": "no",
           "bootable": true,
-          "bus": "ide",
+          "bus": "scsi",
           "cache": null,
           "ceph": false,
           "clonable": false,
@@ -524,9 +540,9 @@
           "own": true,
           "private": true,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.30",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.30"
           ],
           "serverurl": null,
           "shareable": false,
@@ -541,15 +557,17 @@
           "fs": null,
           "kind": null,
           "priority": 3,
-          "target_type": null
+          "target_type": null,
+          "provider": "proxmox"
         }
       ]
     }
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-00000000000a",
-    "serverurl": "https://192.168.1.20:8006",
-    "target_type": "hypervisor_proxmox",
+    "serverurl": "https://192.168.1.30",
+    "target_type": "hypervisor_esxi",
+    "provider": "esxi",
     "req_json": {
       "vm_name": "fedora-vm-010",
       "allowSMT": true,
@@ -574,8 +592,9 @@
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-00000000000b",
-    "serverurl": "https://192.168.1.10",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.30",
+    "target_type": "hypervisor_esxi",
+    "provider": "esxi",
     "req_json": {
       "vm_name": "alpine-vm-011",
       "allowSMT": false,
@@ -606,7 +625,7 @@
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "raw",
+          "format": "vmdk",
           "iscsi_name": "",
           "lastUpdated": "2025-05-11 12:00:00.000",
           "name": "disk-011",
@@ -614,9 +633,9 @@
           "own": true,
           "private": false,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.30",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.30"
           ],
           "serverurl": null,
           "shareable": false,
@@ -631,15 +650,17 @@
           "fs": null,
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": null,
+          "provider": "esxi"
         }
       ]
     }
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-00000000000c",
-    "serverurl": "https://10.0.0.5",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.30",
+    "target_type": "hypervisor_esxi",
+    "provider": "esxi",
     "req_json": {
       "vm_name": "windows-server-vm-012",
       "allowSMT": false,
@@ -664,8 +685,9 @@
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-00000000000d",
-    "serverurl": "https://192.168.1.10",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.30",
+    "target_type": "hypervisor_esxi",
+    "provider": "esxi",
     "req_json": {
       "vm_name": "ubuntu-vm-013",
       "allowSMT": true,
@@ -689,14 +711,14 @@
         {
           "alg": "no",
           "bootable": false,
-          "bus": "virtio",
+          "bus": "scsi",
           "cache": null,
           "ceph": true,
           "clonable": false,
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "qcow2",
+          "format": "vmdk",
           "iscsi_name": "",
           "lastUpdated": "2025-05-13 12:00:00.000",
           "name": "disk-013",
@@ -704,9 +726,9 @@
           "own": false,
           "private": true,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.30",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.30"
           ],
           "serverurl": null,
           "shareable": true,
@@ -721,19 +743,20 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": null,
+          "provider": "esxi"
         },
         {
           "alg": "lzo",
           "bootable": false,
-          "bus": "virtio",
+          "bus": "scsi",
           "cache": null,
           "ceph": false,
           "clonable": true,
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "qcow2",
+          "format": "vmdk",
           "iscsi_name": "",
           "lastUpdated": "2025-05-02 12:00:00.000",
           "name": "disk-002",
@@ -741,9 +764,9 @@
           "own": true,
           "private": false,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.30",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.30"
           ],
           "serverurl": null,
           "shareable": false,
@@ -758,15 +781,17 @@
           "fs": null,
           "kind": null,
           "priority": 1,
-          "target_type": null
+          "target_type": null,
+          "provider": "ovh"
         }
       ]
     }
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-00000000000e",
-    "serverurl": "https://10.0.0.5",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.20:8006",
+    "target_type": "hypervisor_proxmox",
+    "provider": "proxmox",
     "req_json": {
       "vm_name": "debian-vm-014",
       "allowSMT": false,
@@ -791,8 +816,9 @@
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-00000000000f",
-    "serverurl": "https://192.168.1.30",
-    "target_type": "hypervisor_esxi",
+    "serverurl": "https://192.168.1.20:8006",
+    "target_type": "hypervisor_proxmox",
+    "provider": "proxmox",
     "req_json": {
       "vm_name": "rocky-vm-015",
       "allowSMT": false,
@@ -837,9 +863,9 @@
           "own": true,
           "private": false,
           "readonly": false,
-          "server": "192.168.1.30",
+          "server": "192.168.1.20",
           "servers": [
-            "192.168.1.30"
+            "192.168.1.20"
           ],
           "serverurl": null,
           "shareable": false,
@@ -854,15 +880,17 @@
           "fs": "ext4",
           "kind": null,
           "priority": 2,
-          "target_type": null
+          "target_type": null,
+          "provider": "proxmox"
         }
       ]
     }
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-000000000010",
-    "serverurl": "https://10.0.0.5",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.20:8006",
+    "target_type": "hypervisor_proxmox",
+    "provider": "proxmox",
     "req_json": {
       "vm_name": "windows-server-vm-016",
       "allowSMT": true,
@@ -887,8 +915,9 @@
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-000000000011",
-    "serverurl": "https://192.168.1.10",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.20:8006",
+    "target_type": "hypervisor_proxmox",
+    "provider": "proxmox",
     "req_json": {
       "vm_name": "alpine-vm-017",
       "allowSMT": false,
@@ -927,9 +956,9 @@
           "own": false,
           "private": false,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.20",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.20"
           ],
           "serverurl": null,
           "shareable": false,
@@ -944,7 +973,8 @@
           "fs": null,
           "kind": null,
           "priority": 0,
-          "target_type": null
+          "target_type": null,
+          "provider": "proxmox"
         },
         {
           "alg": "zlib",
@@ -956,7 +986,7 @@
           "cloudinit": false,
           "creatorID": "synthetic",
           "exported": false,
-          "format": "qcow2",
+          "format": "raw",
           "iscsi_name": "",
           "lastUpdated": "2025-05-06 12:00:00.000",
           "name": "disk-006",
@@ -964,9 +994,9 @@
           "own": true,
           "private": false,
           "readonly": false,
-          "server": "192.168.1.10",
+          "server": "192.168.1.20",
           "servers": [
-            "192.168.1.10"
+            "192.168.1.20"
           ],
           "serverurl": null,
           "shareable": false,
@@ -981,15 +1011,17 @@
           "fs": null,
           "kind": null,
           "priority": 1,
-          "target_type": null
+          "target_type": null,
+          "provider": "ovh"
         }
       ]
     }
   },
   {
     "uniqueID": "a0000000-0000-4000-8000-000000000012",
-    "serverurl": "https://10.0.0.5",
-    "target_type": "atomos_local_ip",
+    "serverurl": "https://192.168.1.20:8006",
+    "target_type": "hypervisor_proxmox",
+    "provider": "proxmox",
     "req_json": {
       "vm_name": "centos-vm-018",
       "allowSMT": false,
@@ -1006,6 +1038,258 @@
       "reqECC": false,
       "slots": 4,
       "autostart": true,
+      "states": "shut off",
+      "networks": [],
+      "pcidevs": [],
+      "volumes": []
+    }
+  },
+  {
+    "uniqueID": "b0000000-0000-4000-8000-000000000001",
+    "serverurl": "https://cloud.google",
+    "target_type": "meson_public",
+    "provider": "google",
+    "req_json": {
+      "vm_name": "ephemeral-ubuntu-001",
+      "allowSMT": true,
+      "arch": "x86_64",
+      "creation_date": "2025-01-01T14:00:00Z",
+      "flags": [],
+      "netdevs": [],
+      "os_family": "linux",
+      "os_flavour": "ubuntu",
+      "instance_flavour_catalog": "aws",
+      "instance_flavour": "t3.medium",
+      "block_storage_gb": 30,
+      "deployment_region": "fr-par",
+      "provider": "google",
+      "network_config": {
+        "interface": "eth0",
+        "ipv4": "10.64.1.100",
+        "mac": "52:54:00:b0:00:01",
+        "model": "virtio",
+        "name": "default",
+        "source": "default",
+        "type": "bridge",
+        "is_reachable_from_host": true
+      },
+      "firmware": "bios",
+      "overprovision": 1,
+      "qemu_agent": true,
+      "ramsize": 4,
+      "reqECC": false,
+      "slots": 2,
+      "autostart": false,
+      "states": "running",
+      "networks": [],
+      "pcidevs": [],
+      "volumes": []
+    }
+  },
+  {
+    "uniqueID": "b0000000-0000-4000-8000-000000000002",
+    "serverurl": "https://cloud.azure",
+    "target_type": "meson_public",
+    "provider": "azure",
+    "req_json": {
+      "vm_name": "ephemeral-debian-002",
+      "allowSMT": false,
+      "arch": "x86_64",
+      "creation_date": "2025-02-02T14:00:00Z",
+      "flags": [],
+      "netdevs": [],
+      "os_family": "linux",
+      "os_flavour": "debian",
+      "instance_flavour_catalog": "aws",
+      "instance_flavour": "t3.large",
+      "block_storage_gb": 50,
+      "deployment_region": "gra7",
+      "provider": "azure",
+      "network_config": {
+        "interface": "eth0",
+        "ipv4": "10.64.1.101",
+        "mac": "52:54:00:b0:00:02",
+        "model": "virtio",
+        "name": "default",
+        "source": "default",
+        "type": "bridge",
+        "is_reachable_from_host": true
+      },
+      "firmware": "uefi",
+      "overprovision": 1,
+      "qemu_agent": true,
+      "ramsize": 8,
+      "reqECC": false,
+      "slots": 2,
+      "autostart": false,
+      "states": "running",
+      "networks": [],
+      "pcidevs": [],
+      "volumes": []
+    }
+  },
+  {
+    "uniqueID": "b0000000-0000-4000-8000-000000000003",
+    "serverurl": "https://cloud.ovh",
+    "target_type": "meson_public",
+    "provider": "ovh",
+    "req_json": {
+      "vm_name": "ephemeral-rocky-003",
+      "allowSMT": true,
+      "arch": "x86_64",
+      "creation_date": "2025-03-03T14:00:00Z",
+      "flags": [],
+      "netdevs": [],
+      "os_family": "linux",
+      "os_flavour": "rocky",
+      "instance_flavour_catalog": "azure",
+      "instance_flavour": "D2s_v5",
+      "block_storage_gb": 30,
+      "deployment_region": "rbx",
+      "provider": "ovh",
+      "network_config": {
+        "interface": "eth0",
+        "ipv4": "10.64.1.102",
+        "mac": "52:54:00:b0:00:03",
+        "model": "virtio",
+        "name": "default",
+        "source": "default",
+        "type": "bridge",
+        "is_reachable_from_host": true
+      },
+      "firmware": "bios",
+      "overprovision": 1,
+      "qemu_agent": true,
+      "ramsize": 8,
+      "reqECC": false,
+      "slots": 2,
+      "autostart": false,
+      "states": "running",
+      "networks": [],
+      "pcidevs": [],
+      "volumes": []
+    }
+  },
+  {
+    "uniqueID": "b0000000-0000-4000-8000-000000000004",
+    "serverurl": "https://cloud.scaleway",
+    "target_type": "meson_public",
+    "provider": "scaleway",
+    "req_json": {
+      "vm_name": "ephemeral-windows-server-004",
+      "allowSMT": false,
+      "arch": "x86_64",
+      "creation_date": "2025-04-04T14:00:00Z",
+      "flags": [],
+      "netdevs": [],
+      "os_family": "windows",
+      "os_flavour": "windows-server",
+      "instance_flavour_catalog": "google",
+      "instance_flavour": "e2-medium",
+      "block_storage_gb": 30,
+      "deployment_region": "europe-west1",
+      "provider": "scaleway",
+      "network_config": {
+        "interface": "eth0",
+        "ipv4": "10.64.1.103",
+        "mac": "52:54:00:b0:00:04",
+        "model": "virtio",
+        "name": "default",
+        "source": "default",
+        "type": "bridge",
+        "is_reachable_from_host": true
+      },
+      "firmware": "uefi",
+      "overprovision": 1,
+      "qemu_agent": true,
+      "ramsize": 4,
+      "reqECC": false,
+      "slots": 2,
+      "autostart": false,
+      "states": "shut off",
+      "networks": [],
+      "pcidevs": [],
+      "volumes": []
+    }
+  },
+  {
+    "uniqueID": "b0000000-0000-4000-8000-000000000005",
+    "serverurl": "https://cloud.oracle",
+    "target_type": "meson_public",
+    "provider": "oracle",
+    "req_json": {
+      "vm_name": "ephemeral-alpine-005",
+      "allowSMT": true,
+      "arch": "x86_64",
+      "creation_date": "2025-05-05T14:00:00Z",
+      "flags": [],
+      "netdevs": [],
+      "os_family": "linux",
+      "os_flavour": "alpine",
+      "instance_flavour_catalog": "scaleway",
+      "instance_flavour": "GP1-S",
+      "block_storage_gb": 40,
+      "deployment_region": "europe-west4",
+      "provider": "oracle",
+      "network_config": {
+        "interface": "eth0",
+        "ipv4": "10.64.1.104",
+        "mac": "52:54:00:b0:00:05",
+        "model": "virtio",
+        "name": "default",
+        "source": "default",
+        "type": "bridge",
+        "is_reachable_from_host": true
+      },
+      "firmware": "bios",
+      "overprovision": 1,
+      "qemu_agent": true,
+      "ramsize": 8,
+      "reqECC": false,
+      "slots": 2,
+      "autostart": false,
+      "states": "paused",
+      "networks": [],
+      "pcidevs": [],
+      "volumes": []
+    }
+  },
+  {
+    "uniqueID": "b0000000-0000-4000-8000-000000000006",
+    "serverurl": "https://10.0.0.5",
+    "target_type": "meson_private",
+    "provider": "ovh",
+    "req_json": {
+      "vm_name": "ephemeral-centos-006",
+      "allowSMT": false,
+      "arch": "x86_64",
+      "creation_date": "2025-06-06T14:00:00Z",
+      "flags": [],
+      "netdevs": [],
+      "os_family": "linux",
+      "os_flavour": "centos",
+      "instance_flavour_catalog": "ovh",
+      "instance_flavour": "b2-15",
+      "block_storage_gb": 50,
+      "deployment_region": "nl-ams",
+      "provider": "ovh",
+      "network_config": {
+        "interface": "eth0",
+        "ipv4": "10.64.1.105",
+        "mac": "52:54:00:b0:00:06",
+        "model": "virtio",
+        "name": "default",
+        "source": "default",
+        "type": "bridge",
+        "is_reachable_from_host": true
+      },
+      "firmware": "uefi",
+      "overprovision": 1,
+      "qemu_agent": true,
+      "ramsize": 15,
+      "reqECC": false,
+      "slots": 4,
+      "autostart": false,
       "states": "shut off",
       "networks": [],
       "pcidevs": [],

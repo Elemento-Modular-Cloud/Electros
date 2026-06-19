@@ -1,6 +1,21 @@
+import { randomUUID } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import type { AppConfig } from "./config.js";
+import { enrichEphemeralVmRecord } from "./cloudVmDefaults.js";
+import { enrichAllResourceProviders, enrichNetworkProvider, enrichPortForwardProvider, enrichVmProvider, enrichVolumeProvider, inferProviderFromResourceName } from "./resourceProviders.js";
+
+/** Fixed websockify port echoed by real compute daemons for VNC viewers. */
+export const SYNTHETIC_VNC_TUNNEL_PORT = 59441;
+
+export interface SyntheticVncTunnel {
+  instance_id: string;
+  tunnel_port: number;
+  service: "VNC";
+  synthetic: true;
+  vm_uuid?: string;
+  server_host?: string;
+}
 
 export interface AuthStatus {
   authenticated: boolean;
@@ -44,6 +59,7 @@ export class MemoryStore {
   hostStatus: Record<string, unknown>;
   portForwards: PortForwardRecord[];
   portTunnels: Record<string, unknown>[];
+  vncTunnels: Record<string, SyntheticVncTunnel>;
   services: ServiceInstanceRecord[];
   billingTransactions: BillingTransactionRecord[];
 
@@ -64,6 +80,7 @@ export class MemoryStore {
       this.hostStatus = (saved.hostStatus as Record<string, unknown>) ?? loadFixture(fixturesDir, "host-status.json");
       this.portForwards = (saved.portForwards as PortForwardRecord[]) ?? [];
       this.portTunnels = (saved.portTunnels as Record<string, unknown>[]) ?? [];
+      this.vncTunnels = (saved.vncTunnels as Record<string, SyntheticVncTunnel>) ?? {};
       this.services = (saved.services as ServiceInstanceRecord[]) ?? loadFixture(fixturesDir, "services.json");
       try {
         this.billingTransactions = (saved.billingTransactions as BillingTransactionRecord[])
@@ -85,6 +102,7 @@ export class MemoryStore {
         this.portForwards = [];
       }
       this.portTunnels = [];
+      this.vncTunnels = {};
       this.services = loadFixture(fixturesDir, "services.json");
       try {
         this.billingTransactions = loadFixture(fixturesDir, "billing-transactions.json");
@@ -92,6 +110,18 @@ export class MemoryStore {
         this.billingTransactions = [];
       }
     }
+
+    for (const vm of this.vms) {
+      enrichEphemeralVmRecord(vm);
+    }
+    enrichAllResourceProviders({
+      vms: this.vms,
+      volumes: this.volumes,
+      networks: this.networks,
+      portForwards: this.portForwards,
+      services: this.services,
+      targets: this.targets as unknown as { data: Record<string, unknown>[] },
+    });
   }
 
   private snapshot(): void {
@@ -110,6 +140,7 @@ export class MemoryStore {
         hostStatus: this.hostStatus,
         portForwards: this.portForwards,
         portTunnels: this.portTunnels,
+        vncTunnels: this.vncTunnels,
         services: this.services,
         billingTransactions: this.billingTransactions,
       }, null, 2)
@@ -157,6 +188,8 @@ export class MemoryStore {
   }
 
   addVm(vm: VmRecord): void {
+    enrichEphemeralVmRecord(vm);
+    enrichVmProvider(vm);
     this.vms.push(vm);
     this.touch();
   }
@@ -184,6 +217,7 @@ export class MemoryStore {
   }
 
   addVolume(volume: VolumeRecord): void {
+    enrichVolumeProvider(volume);
     this.volumes.push(volume);
     this.touch();
   }
@@ -198,6 +232,7 @@ export class MemoryStore {
   }
 
   addNetwork(network: NetworkRecord): void {
+    enrichNetworkProvider(network);
     const uid = network.network_uid as string;
     if (uid && this.findNetwork(uid)) {
       const idx = this.networks.findIndex((n) => n.network_uid === uid);
@@ -214,6 +249,7 @@ export class MemoryStore {
   }
 
   addPortForward(pf: PortForwardRecord): void {
+    enrichPortForwardProvider(pf);
     const uid = pf.forward_uid as string;
     if (uid) {
       this.portForwards = this.portForwards.filter((p) => p.forward_uid !== uid);
@@ -255,11 +291,13 @@ export class MemoryStore {
     let record: ServiceInstanceRecord;
 
     const region = (body.region as string) ?? "fr-par";
+    const provider = (body.provider as string) ?? null;
 
     if (serviceType === "kaas") {
       record = {
         ...base,
         cluster_name: (body.name as string) ?? `cluster-${serviceUuid.slice(0, 6)}`,
+        provider: provider ?? "google",
         status: "running",
         version: (body.kubernetes_version as string) ?? "1.34",
         network_cidr: (body["nodes_subnet/network"] as string) ?? "10.50.0.0/16",
@@ -270,6 +308,7 @@ export class MemoryStore {
       record = {
         ...base,
         name: (body.name as string) ?? `bucket-${serviceUuid.slice(0, 6)}`,
+        provider: provider ?? "ovh",
         endpoint: `https://s3.${region}.synthetic.local`,
         region,
         active_storage: Math.round(sizeTb * 1024 ** 4),
@@ -279,6 +318,7 @@ export class MemoryStore {
       record = {
         ...base,
         name: (body.name as string) ?? `db-${serviceUuid.slice(0, 6)}`,
+        provider: provider ?? "google",
         region,
         engine: (body.engine as string) ?? "postgres",
         backup_time: Math.floor(Date.now() / 1000),
@@ -289,11 +329,18 @@ export class MemoryStore {
       record = {
         ...base,
         vm_name: (body.vm_name as string) ?? `${serviceType}-${serviceUuid.slice(0, 6)}`,
+        provider: provider ?? "google",
         status: "running",
         region,
       };
     } else {
-      record = { ...base, ...body, status: (body.status as string) ?? "running" };
+      const fallbackName = (body.name ?? body.vm_name ?? body.cluster_name) as string | undefined;
+      record = {
+        ...base,
+        ...body,
+        status: (body.status as string) ?? "running",
+        provider: provider ?? inferProviderFromResourceName(fallbackName) ?? "google",
+      };
     }
 
     this.services.push(record);
@@ -331,5 +378,28 @@ export class MemoryStore {
       return [...this.billingTransactions];
     }
     return this.billingTransactions.filter((t) => t.billing_uuid === billingUuid);
+  }
+
+  createVncTunnel(meta: { vm_uuid?: string; server_host?: string }): SyntheticVncTunnel {
+    const instanceId = randomUUID();
+    const tunnel: SyntheticVncTunnel = {
+      instance_id: instanceId,
+      tunnel_port: SYNTHETIC_VNC_TUNNEL_PORT,
+      service: "VNC",
+      synthetic: true,
+      vm_uuid: meta.vm_uuid,
+      server_host: meta.server_host,
+    };
+    this.vncTunnels[instanceId] = tunnel;
+    this.touch();
+    return tunnel;
+  }
+
+  removeVncTunnel(instanceId: string): void {
+    if (!instanceId) {
+      return;
+    }
+    delete this.vncTunnels[instanceId];
+    this.touch();
   }
 }

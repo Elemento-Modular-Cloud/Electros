@@ -59,14 +59,15 @@ function start(): void {
       mountRouters: (app) => {
         mountRouter(app, rk(restKeys, "SERVICE_CLIENT_API_URL_KEY"), servicesRouter(store, config));
       },
-    }),
-    createDaemonServer({
-      name: "mcp",
-      port: networking.MCP_SERVER_PORT,
-      mountRouters: (app) => {
-        app.use(mcpRouter());
-      },
     })
+    // ,
+    // createDaemonServer({
+    //   name: "mcp",
+    //   port: networking.MCP_SERVER_PORT,
+    //   mountRouters: (app) => {
+    //     app.use(mcpRouter());
+    //   },
+    // })
   );
 
   console.log(`Synthetic daemons ready (scenario: ${config.scenario})`);

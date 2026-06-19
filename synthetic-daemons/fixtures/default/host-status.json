@@ -1,6 +1,6 @@
 {
-  "allocated_cores_count": 9,
-  "allocated_slots_count": 100,
+  "allocated_cores_count": 12,
+  "allocated_slots_count": 114,
   "bridge_interfaces": [
     "br-001",
     "br-005",
@@ -9,7 +9,7 @@
     "br-017"
   ],
   "client_id_count": 3,
-  "core_allocation_percentage": 50,
+  "core_allocation_percentage": 67,
   "core_provisioning": [
     {
       "available_slots": 8,
@@ -28,9 +28,10 @@
       "max_overprovision": 2,
       "provisioned_vms": [
         "debian-vm-002",
-        "rocky-vm-009"
+        "rocky-vm-009",
+        "ephemeral-ubuntu-001"
       ],
-      "provisioned_vms_count": 2
+      "provisioned_vms_count": 3
     },
     {
       "available_slots": 6,
@@ -38,9 +39,10 @@
       "max_overprovision": 2,
       "provisioned_vms": [
         "rocky-vm-003",
-        "ubuntu-vm-013"
+        "ubuntu-vm-013",
+        "ephemeral-debian-002"
       ],
-      "provisioned_vms_count": 2
+      "provisioned_vms_count": 3
     },
     {
       "available_slots": 5,
@@ -48,9 +50,10 @@
       "max_overprovision": 2,
       "provisioned_vms": [
         "ubuntu-vm-007",
-        "debian-vm-014"
+        "debian-vm-014",
+        "ephemeral-rocky-003"
       ],
-      "provisioned_vms_count": 2
+      "provisioned_vms_count": 3
     }
   ],
   "direct_interfaces": [],
@@ -64,7 +67,8 @@
       5905,
       5906,
       5907,
-      5908
+      5908,
+      5909
     ],
     "protocols": [
       "vnc",
@@ -74,19 +78,19 @@
   "nic_count": 18,
   "os_families": {
     "linux": {
-      "count": 14,
+      "count": 19,
       "flavours": [
         {
           "name": "ubuntu",
-          "count": 3
+          "count": 4
         },
         {
           "name": "debian",
-          "count": 2
+          "count": 3
         },
         {
           "name": "rocky",
-          "count": 3
+          "count": 4
         },
         {
           "name": "fedora",
@@ -94,25 +98,25 @@
         },
         {
           "name": "alpine",
-          "count": 3
+          "count": 4
         },
         {
           "name": "centos",
-          "count": 2
+          "count": 3
         }
       ]
     },
     "windows": {
-      "count": 4,
+      "count": 5,
       "flavours": [
         {
           "name": "windows-server",
-          "count": 4
+          "count": 5
         }
       ]
     }
   },
-  "slot_allocation_percentage": 78,
+  "slot_allocation_percentage": 89,
   "storage_count": 18,
   "storages": [
     {
@@ -144,7 +148,7 @@
     },
     {
       "bus": "ide",
-      "format": "vmdk",
+      "format": "qcow2",
       "sizeGB": "100",
       "vm_uuids": [],
       "volume_id": "vol-synth-004"
@@ -160,7 +164,7 @@
     },
     {
       "bus": "virtio",
-      "format": "qcow2",
+      "format": "raw",
       "sizeGB": "500",
       "vm_uuids": [
         "a0000000-0000-4000-8000-000000000011"
@@ -169,7 +173,7 @@
     },
     {
       "bus": "scsi",
-      "format": "raw",
+      "format": "qcow2",
       "sizeGB": "10",
       "vm_uuids": [
         "a0000000-0000-4000-8000-000000000007"
@@ -177,7 +181,7 @@
       "volume_id": "vol-synth-007"
     },
     {
-      "bus": "ide",
+      "bus": "scsi",
       "format": "vmdk",
       "sizeGB": "20",
       "vm_uuids": [
@@ -186,8 +190,8 @@
       "volume_id": "vol-synth-008"
     },
     {
-      "bus": "virtio",
-      "format": "qcow2",
+      "bus": "scsi",
+      "format": "vmdk",
       "sizeGB": "50",
       "vm_uuids": [
         "a0000000-0000-4000-8000-000000000009"
@@ -195,15 +199,15 @@
       "volume_id": "vol-synth-009"
     },
     {
-      "bus": "virtio",
-      "format": "qcow2",
+      "bus": "scsi",
+      "format": "vmdk",
       "sizeGB": "100",
       "vm_uuids": [],
       "volume_id": "vol-synth-010"
     },
     {
       "bus": "scsi",
-      "format": "raw",
+      "format": "vmdk",
       "sizeGB": "250",
       "vm_uuids": [
         "a0000000-0000-4000-8000-00000000000b"
@@ -211,7 +215,7 @@
       "volume_id": "vol-synth-011"
     },
     {
-      "bus": "ide",
+      "bus": "scsi",
       "format": "vmdk",
       "sizeGB": "500",
       "vm_uuids": [
@@ -220,8 +224,8 @@
       "volume_id": "vol-synth-012"
     },
     {
-      "bus": "virtio",
-      "format": "qcow2",
+      "bus": "scsi",
+      "format": "vmdk",
       "sizeGB": "10",
       "vm_uuids": [
         "a0000000-0000-4000-8000-00000000000d"
@@ -246,7 +250,7 @@
     },
     {
       "bus": "ide",
-      "format": "vmdk",
+      "format": "qcow2",
       "sizeGB": "100",
       "vm_uuids": [
         "a0000000-0000-4000-8000-000000000009"
@@ -264,16 +268,16 @@
     },
     {
       "bus": "virtio",
-      "format": "qcow2",
+      "format": "raw",
       "sizeGB": "500",
       "vm_uuids": [],
       "volume_id": "vol-synth-018"
     }
   ],
-  "total_allocated_ram_mib": 387072,
+  "total_allocated_ram_mib": 435200,
   "total_allocated_storage_size_gb": 2790,
   "total_cores_count": 32,
   "total_slots_count": 128,
-  "total_used_ram_mib": 43008,
-  "vm_count": 18
+  "total_used_ram_mib": 63488,
+  "vm_count": 24
 }

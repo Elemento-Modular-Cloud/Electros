@@ -63,6 +63,11 @@ curl -s http://127.0.0.1:37777/api/v1.0/client/network/list
 
 # Port forwards (VM expanded row)
 curl -s http://127.0.0.1:37777/api/v1.0/client/network/portforwards
+
+# VNC tunnel placeholder (opens embedded viewer / popup handshake)
+curl -s -X POST http://127.0.0.1:17777/api/v1.0/client/vm/porttunnel/vncWebSocket \
+  -H 'Content-Type: application/json' \
+  -d '{"vm_uuid":"a0000000-0000-4000-8000-000000000001","server_host":"192.168.1.10"}'
 ```
 
 Then open Dashboard, My Clouds, VMs, Storage, and Networking in Electros.
@@ -72,7 +77,7 @@ Then open Dashboard, My Clouds, VMs, Storage, and Networking in Electros.
 The `fixtures/default/` set includes:
 
 - AtomOS, Meson (OVH / Scaleway demo names), Proxmox targets
-- **18 VMs** — mixed states, OS families/flavours, AtomOS (two hosts), Proxmox, and ESXi; each VM has a `serverurl` that matches a My Clouds target so the **Hypervisor** column renders correct tagchips
+- **18 VMs** — mixed states, OS families/flavours, spread ~evenly across VMware ESXi (6), Proxmox (5), and AtomOS (7, two hosts); each VM has a `serverurl` that matches a My Clouds target so the **Hypervisor** column renders correct tagchips
 - **18 volumes** — formats, buses, sizes, privacy/bootable flags; ~half of VMs mount 1–2 disks
 - **18 networks** — libvirt bridge/NAT, tailscale, shared (DHCP hosts on NAT rows)
 - **18 port forwards** — TCP/UDP, tailscale/force flags, wired to synthetic VM UUIDs
@@ -87,6 +92,8 @@ npm run generate:iaas-fixtures   # VMs, storage, networking only
 ```
 
 Network API coverage: list, info, create (libvirt/tailscale JSON from `NetworkModel.toJson()`), delete, port-forward CRUD, export stubs. Mutations update in-memory state for the process lifetime.
+
+**VNC viewer:** `POST /porttunnel/vncWebSocket` and `DELETE /porttunnel/vncWebSocket/stop` return synthetic tunnel metadata (`synthetic: true`, port `59441`). The embedded VM viewer shows a desktop placeholder instead of opening a WebSocket; popup VNC explains that live consoles need real compute daemons. No RFB/WebSocket server is started on `59441`.
 
 **Atomosphere / PaaS:** `GET /api/v1.0/client/target/configs/supported_providers` serves the real [`ecd/supported_providers.json`](../elemento-gui-new/electros/ecd/supported_providers.json) catalog. Default targets include a **`meson_public` target per production provider** (google, azure, ovh, upcloud, wasabi, scaleway, impossiblecloud, oracle).
 

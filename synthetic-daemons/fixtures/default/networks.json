@@ -3,6 +3,7 @@
     "servers": [
       "192.168.1.10"
     ],
+    "provider": "atomos",
     "network_name": "net-libvirt-001",
     "type": "libvirt",
     "mode": "bridge",
@@ -21,6 +22,7 @@
     "servers": [
       "10.0.0.5"
     ],
+    "provider": "ovh",
     "network_name": "net-libvirt-002",
     "type": "libvirt",
     "mode": "nat",
@@ -54,9 +56,10 @@
   },
   {
     "servers": [
-      "192.168.1.20",
-      "192.168.1.30"
+      "192.168.1.10",
+      "10.0.0.5"
     ],
+    "provider": "atomos",
     "network_name": "net-tailscale-003",
     "type": "tailscale",
     "mode": null,
@@ -78,8 +81,9 @@
   },
   {
     "servers": [
-      "192.168.1.30"
+      "10.0.0.5"
     ],
+    "provider": "ovh",
     "network_name": "net-shared-004",
     "type": "shared",
     "mode": "open",
@@ -102,6 +106,7 @@
     "servers": [
       "192.168.1.10"
     ],
+    "provider": "atomos",
     "network_name": "net-libvirt-005",
     "type": "libvirt",
     "mode": "bridge",
@@ -120,6 +125,7 @@
     "servers": [
       "10.0.0.5"
     ],
+    "provider": "ovh",
     "network_name": "net-libvirt-006",
     "type": "libvirt",
     "mode": "nat",
@@ -153,9 +159,10 @@
   },
   {
     "servers": [
-      "192.168.1.20",
+      "192.168.1.10",
       "192.168.1.30"
     ],
+    "provider": "atomos",
     "network_name": "net-tailscale-007",
     "type": "tailscale",
     "mode": null,
@@ -179,6 +186,7 @@
     "servers": [
       "192.168.1.30"
     ],
+    "provider": "esxi",
     "network_name": "net-shared-008",
     "type": "shared",
     "mode": "isolated",
@@ -199,8 +207,9 @@
   },
   {
     "servers": [
-      "192.168.1.10"
+      "192.168.1.30"
     ],
+    "provider": "esxi",
     "network_name": "net-libvirt-009",
     "type": "libvirt",
     "mode": "bridge",
@@ -217,8 +226,9 @@
   },
   {
     "servers": [
-      "10.0.0.5"
+      "192.168.1.30"
     ],
+    "provider": "esxi",
     "network_name": "net-libvirt-010",
     "type": "libvirt",
     "mode": "nat",
@@ -252,9 +262,10 @@
   },
   {
     "servers": [
-      "192.168.1.20",
+      "192.168.1.30",
       "192.168.1.30"
     ],
+    "provider": "esxi",
     "network_name": "net-tailscale-011",
     "type": "tailscale",
     "mode": null,
@@ -278,6 +289,7 @@
     "servers": [
       "192.168.1.30"
     ],
+    "provider": "esxi",
     "network_name": "net-shared-012",
     "type": "shared",
     "mode": "open",
@@ -298,8 +310,9 @@
   },
   {
     "servers": [
-      "192.168.1.10"
+      "192.168.1.30"
     ],
+    "provider": "esxi",
     "network_name": "net-libvirt-013",
     "type": "libvirt",
     "mode": "bridge",
@@ -316,8 +329,9 @@
   },
   {
     "servers": [
-      "10.0.0.5"
+      "192.168.1.20"
     ],
+    "provider": "proxmox",
     "network_name": "net-libvirt-014",
     "type": "libvirt",
     "mode": "nat",
@@ -352,8 +366,9 @@
   {
     "servers": [
       "192.168.1.20",
-      "192.168.1.30"
+      "192.168.1.20"
     ],
+    "provider": "proxmox",
     "network_name": "net-tailscale-015",
     "type": "tailscale",
     "mode": null,
@@ -375,8 +390,9 @@
   },
   {
     "servers": [
-      "192.168.1.30"
+      "192.168.1.20"
     ],
+    "provider": "proxmox",
     "network_name": "net-shared-016",
     "type": "shared",
     "mode": "open",
@@ -397,8 +413,9 @@
   },
   {
     "servers": [
-      "192.168.1.10"
+      "192.168.1.20"
     ],
+    "provider": "proxmox",
     "network_name": "net-libvirt-017",
     "type": "libvirt",
     "mode": "bridge",
@@ -415,8 +432,9 @@
   },
   {
     "servers": [
-      "10.0.0.5"
+      "192.168.1.20"
     ],
+    "provider": "proxmox",
     "network_name": "net-libvirt-018",
     "type": "libvirt",
     "mode": "nat",

@@ -5,6 +5,7 @@ import { rk } from "../config.js";
 import type { MemoryStore } from "../MemoryStore.js";
 import { json, ok } from "../createServer.js";
 import { createCatchAllRouter } from "../catchAll.js";
+import { cloudVmNetworkConfig, enrichEphemeralVmRecord } from "../cloudVmDefaults.js";
 
 export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   const router = Router();
@@ -30,10 +31,12 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   router.post(rk(keys, "REGISTER_API_KEY"), (req: Request, res: Response) => {
     const body = req.body ?? {};
     const vmName = (body.vm_name as string) ?? `vm-${randomUUID().slice(0, 8)}`;
+    const targetType = (body.target_type as string) ?? "atomos_local_ip";
+    const isCloudTarget = targetType === "meson_public" || targetType === "meson_private";
     const vm = {
       uniqueID: randomUUID(),
-      serverurl: null,
-      target_type: body.target_type ?? "atomos_local_ip",
+      serverurl: body.serverurl ?? null,
+      target_type: targetType,
       req_json: {
         vm_name: vmName,
         allowSMT: false,
@@ -43,6 +46,13 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
         netdevs: [],
         os_family: body.os_family ?? "linux",
         os_flavour: body.os_flavour ?? "ubuntu",
+        instance_flavour_catalog: body.instance_flavour_catalog ?? null,
+        instance_flavour: body.instance_flavour ?? null,
+        block_storage_gb: body.block_storage_gb ?? null,
+        deployment_region: body.deployment_region ?? null,
+        network_config: isCloudTarget
+          ? (body.network_config ?? cloudVmNetworkConfig(store.vms.length % 150))
+          : null,
         firmware: "bios",
         overprovision: 1,
         qemu_agent: true,
@@ -56,6 +66,7 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
         volumes: body.volumes ?? [],
       },
     };
+    enrichEphemeralVmRecord(vm);
     store.addVm(vm);
     json(res, vm);
   });
@@ -81,7 +92,7 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   });
 
   router.get(rk(keys, "PORTTUNNEL_STATUS"), (_req: Request, res: Response) => {
-    json(res, store.portTunnels);
+    json(res, { status: store.portTunnels });
   });
 
   router.post(rk(keys, "PORTTUNNEL_START"), (req: Request, res: Response) => {
@@ -92,6 +103,21 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   });
 
   router.post(rk(keys, "PORTTUNNEL_STOP"), (_req: Request, res: Response) => {
+    ok(res);
+  });
+
+  router.post(rk(keys, "PORTTUNNEL_VNC_WITH_WS"), (req: Request, res: Response) => {
+    const body = (req.body ?? {}) as Record<string, unknown>;
+    const tunnel = store.createVncTunnel({
+      vm_uuid: typeof body.vm_uuid === "string" ? body.vm_uuid : undefined,
+      server_host: typeof body.server_host === "string" ? body.server_host : undefined,
+    });
+    json(res, tunnel);
+  });
+
+  router.delete(rk(keys, "PORTTUNNEL_STOP_VNC_WITH_WS"), (req: Request, res: Response) => {
+    const instanceId = (req.body?.instance_id as string) ?? "";
+    store.removeVncTunnel(instanceId);
     ok(res);
   });
 

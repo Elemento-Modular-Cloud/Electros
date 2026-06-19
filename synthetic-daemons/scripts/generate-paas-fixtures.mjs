@@ -97,6 +97,7 @@ for (let i = 0; i < PER_TYPE; i++) {
     service_uuid: `kaas-synth-${n}`,
     billing_uuid: billingUuid,
     cluster_name: `${provider}-${region}-k8s-${n}`,
+    provider,
     status: pick(KAAS_STATUSES, i),
     version: pick(KAAS_VERSIONS, i + Math.floor(i / 3)),
     network_cidr: `10.${40 + (i % 200)}.${i % 256}.0/16`,
@@ -119,6 +120,7 @@ for (let i = 0; i < PER_TYPE; i++) {
     service_uuid: `os-synth-${n}`,
     billing_uuid: billingUuid,
     name: `${provider}-${region}-bucket-${n}`,
+    provider,
     endpoint: objectStorageEndpoint(provider, region),
     region,
     active_storage: sizeGb * 1024 ** 3,
@@ -133,11 +135,13 @@ for (let i = 0; i < PER_TYPE; i++) {
   const engine = pick(DB_ENGINES, i);
   const nodes = String((i % 3) + 1);
   const diskGb = [10, 25, 50, 100, 200, 500][i % 6];
+  const provider = pick(["google", "ovh", "upcloud", "scaleway", "azure", "oracle"], i);
   services.push({
     service_type: "dbaas",
     service_uuid: `dbaas-synth-${n}`,
     billing_uuid: billingUuid,
     name: `${engine}-${region}-${n}`,
+    provider,
     region,
     engine,
     backup_time: 1704067200 + i * 86400,
@@ -157,6 +161,7 @@ for (let i = 0; i < PER_TYPE; i++) {
     service_uuid: `n8n-synth-${n}`,
     billing_uuid: billingUuid,
     vm_name: `n8n-${provider}-${region}-${n}`,
+    provider,
     status: pick(VM_STATUSES, i),
     region,
   });
@@ -173,6 +178,7 @@ for (let i = 0; i < PER_TYPE; i++) {
     service_uuid: `openclaw-synth-${n}`,
     billing_uuid: billingUuid,
     vm_name: `claw-${provider}-${region}-${n}`,
+    provider,
     status: pick(VM_STATUSES, i + 2),
     region,
   });

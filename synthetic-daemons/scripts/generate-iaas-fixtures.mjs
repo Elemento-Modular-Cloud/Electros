@@ -26,11 +26,53 @@ const ESXI_HOST = {
   serverurl: "https://192.168.1.30",
   target_type: "hypervisor_esxi",
 };
-const SERVERS = [
-  ATOMOS_HOSTS[0].ip,
-  ATOMOS_HOSTS[1].ip,
-  PROXMOX_HOST.ip,
-  ESXI_HOST.ip,
+/** Meson cloud providers for ephemeral VM fixtures (must match targets.json providers). */
+const CLOUD_PROVIDERS = [
+  { provider: "google", serverurl: "https://cloud.google", target_type: "meson_public" },
+  { provider: "azure", serverurl: "https://cloud.azure", target_type: "meson_public" },
+  { provider: "ovh", serverurl: "https://cloud.ovh", target_type: "meson_public" },
+  { provider: "scaleway", serverurl: "https://cloud.scaleway", target_type: "meson_public" },
+  { provider: "oracle", serverurl: "https://cloud.oracle", target_type: "meson_public" },
+  { provider: "ovh", serverurl: "https://10.0.0.5", target_type: "meson_private" },
+];
+const CLOUD_COUNT = CLOUD_PROVIDERS.length;
+/** Instance flavours for ephemeral VM fixtures (catalog + sizing). */
+const EPHEMERAL_FLAVOURS = [
+  { catalog: "aws", name: "t3.medium", block: 30, slots: 2, ram: 4 },
+  { catalog: "aws", name: "t3.large", block: 50, slots: 2, ram: 8 },
+  { catalog: "azure", name: "D2s_v5", block: 30, slots: 2, ram: 8 },
+  { catalog: "google", name: "e2-medium", block: 30, slots: 2, ram: 4 },
+  { catalog: "scaleway", name: "GP1-S", block: 40, slots: 2, ram: 8 },
+  { catalog: "ovh", name: "b2-15", block: 50, slots: 4, ram: 15 },
+];
+const EPHEMERAL_REGIONS = [
+  "fr-par",
+  "gra7",
+  "rbx",
+  "europe-west1",
+  "europe-west4",
+  "nl-ams",
+];
+/** 18 slots: ~even VMware / Proxmox, AtomOS slightly larger (7 / 5 / 6). */
+const PLATFORM_SCHEDULE = [
+  "atomos",
+  "atomos",
+  "atomos",
+  "atomos",
+  "atomos",
+  "atomos",
+  "atomos",
+  "esxi",
+  "esxi",
+  "esxi",
+  "esxi",
+  "esxi",
+  "esxi",
+  "proxmox",
+  "proxmox",
+  "proxmox",
+  "proxmox",
+  "proxmox",
 ];
 const VM_STATES = ["running", "running", "running", "shut off", "paused", "shut off"];
 const OS_FAMILIES = ["linux", "linux", "linux", "windows"];
@@ -43,7 +85,7 @@ const GPU_MODELS = [
   { vendor: "NVIDIA", model: "T4" },
   { vendor: "AMD", model: "MI300" },
 ];
-const VOLUME_FORMATS = ["qcow2", "qcow2", "raw", "vmdk"];
+const NON_VMWARE_VOLUME_FORMATS = ["qcow2", "qcow2", "raw"];
 const VOLUME_BUSES = ["virtio", "virtio", "scsi", "ide"];
 const PROTOCOLS = ["tcp", "tcp", "udp"];
 const TARGET_PORTS = [22, 80, 443, 3306, 5432, 6379, 8080, 9000];
@@ -61,16 +103,93 @@ function vmUuid(i) {
   return `a0000000-0000-4000-8000-${hex}`;
 }
 
+function cloudVmUuid(i) {
+  const hex = (i + 1).toString(16).padStart(12, "0");
+  return `b0000000-0000-4000-8000-${hex}`;
+}
+
+function cloudNetworkConfig(ci) {
+  const hostOctet = 100 + ci;
+  return {
+    interface: "eth0",
+    ipv4: `10.64.1.${hostOctet}`,
+    mac: `52:54:00:b0:00:${String(ci + 1).padStart(2, "0")}`,
+    model: "virtio",
+    name: "default",
+    source: "default",
+    type: "bridge",
+    is_reachable_from_host: true,
+  };
+}
+
+const HOST_PROVIDER_BY_IP = {
+  "192.168.1.10": "atomos",
+  "10.0.0.5": "ovh",
+  "192.168.1.20": "proxmox",
+  "192.168.1.30": "esxi",
+};
+
+function providerFromServerUrl(serverurl) {
+  if (!serverurl) return null;
+  const host = serverurl.replace(/^https?:\/\//, "").split(":")[0];
+  if (host.startsWith("cloud.")) {
+    return host.slice("cloud.".length);
+  }
+  return HOST_PROVIDER_BY_IP[host] ?? null;
+}
+
+function providerFromServerIp(ip) {
+  if (!ip) return null;
+  const plain = ip.replace(/^https?:\/\//, "").split(":")[0];
+  return HOST_PROVIDER_BY_IP[plain] ?? null;
+}
+
+function providerForHost(host) {
+  if (host.provider) {
+    return host.provider;
+  }
+  if (host.target_type === "hypervisor_proxmox") {
+    return "proxmox";
+  }
+  if (host.target_type === "hypervisor_esxi") {
+    return "esxi";
+  }
+  if (host.target_type === "atomos_local_ip") {
+    return providerFromServerUrl(host.serverurl) ?? "atomos";
+  }
+  return providerFromServerUrl(host.serverurl);
+}
+
 /** Resolve host so VmModel.host / getHypervisorDisplayLabel() match My Clouds targets. */
 function resolveVmHost(i) {
-  if (i % 15 === 9) {
+  const platform = PLATFORM_SCHEDULE[i % PLATFORM_SCHEDULE.length];
+  if (platform === "proxmox") {
     return PROXMOX_HOST;
   }
-  if (i % 15 === 14) {
+  if (platform === "esxi") {
     return ESXI_HOST;
   }
-  const atomos = pick(ATOMOS_HOSTS, i);
+  const atomosIndex = PLATFORM_SCHEDULE.slice(0, (i % PLATFORM_SCHEDULE.length) + 1).filter(
+    (p) => p === "atomos"
+  ).length;
+  const atomos = ATOMOS_HOSTS[(atomosIndex - 1) % ATOMOS_HOSTS.length];
   return { ...atomos, target_type: "atomos_local_ip" };
+}
+
+function resolveServerIp(i) {
+  return resolveVmHost(i).ip;
+}
+
+function applyVolumeProfile(volume, i = 0) {
+  if (volume.server === ESXI_HOST.ip) {
+    volume.bus = "scsi";
+    volume.format = "vmdk";
+    return volume;
+  }
+  if (volume.format === "vmdk") {
+    volume.format = pick(NON_VMWARE_VOLUME_FORMATS, i);
+  }
+  return volume;
 }
 
 /** @type {Record<string, unknown>[]} */
@@ -100,6 +219,7 @@ for (let i = 0; i < COUNT; i++) {
     uniqueID: id,
     serverurl: host.serverurl,
     target_type: host.target_type,
+    provider: providerForHost(host),
     _hostIp: host.ip,
     req_json: {
       vm_name: vmName,
@@ -127,48 +247,102 @@ for (let i = 0; i < COUNT; i++) {
   });
 }
 
+for (let ci = 0; ci < CLOUD_COUNT; ci++) {
+  const cloud = CLOUD_PROVIDERS[ci];
+  const flavour = EPHEMERAL_FLAVOURS[ci % EPHEMERAL_FLAVOURS.length];
+  const n = pad3(ci + 1);
+  const id = cloudVmUuid(ci);
+  const osFamily = pick(OS_FAMILIES, ci);
+  const osFlavour =
+    osFamily === "windows" ? pick(WINDOWS_FLAVOURS, ci) : pick(LINUX_FLAVOURS, ci);
+  const slots = flavour.slots;
+  const ramsize = flavour.ram;
+  const vmName = `ephemeral-${osFlavour}-${n}`;
+
+  vms.push({
+    uniqueID: id,
+    serverurl: cloud.serverurl,
+    target_type: cloud.target_type,
+    provider: cloud.provider,
+    _hostIp: cloud.serverurl.replace(/^https?:\/\//, "").split(":")[0],
+    req_json: {
+      vm_name: vmName,
+      allowSMT: ci % 2 === 0,
+      arch: "x86_64",
+      creation_date: `2025-${String((ci % 12) + 1).padStart(2, "0")}-${String((ci % 28) + 1).padStart(2, "0")}T14:00:00Z`,
+      flags: [],
+      netdevs: [],
+      os_family: osFamily,
+      os_flavour: osFlavour,
+      instance_flavour_catalog: flavour.catalog,
+      instance_flavour: flavour.name,
+      block_storage_gb: flavour.block,
+      deployment_region: EPHEMERAL_REGIONS[ci % EPHEMERAL_REGIONS.length],
+      provider: cloud.provider,
+      network_config: cloudNetworkConfig(ci),
+      firmware: pick(FIRMWARE, ci),
+      overprovision: 1,
+      qemu_agent: true,
+      ramsize,
+      reqECC: false,
+      slots,
+      autostart: false,
+      states: pick(VM_STATES, ci),
+      networks: [],
+      pcidevs: [],
+      volumes: [],
+    },
+  });
+}
+
 for (let i = 0; i < COUNT; i++) {
   const n = pad3(i + 1);
   const sizeGb = [10, 20, 50, 100, 250, 500][i % 6];
   const size = sizeGb * 1024 ** 3;
-  const server = pick(SERVERS, i);
-  volumes.push({
-    alg: pick(["no", "lzo", "zlib"], i),
-    bootable: i % 5 === 0,
-    bus: pick(VOLUME_BUSES, i),
-    cache: null,
-    ceph: i % 12 === 0,
-    clonable: i % 3 !== 0,
-    cloudinit: i % 8 === 0,
-    creatorID: "synthetic",
-    exported: i % 11 === 0,
-    format: pick(VOLUME_FORMATS, i),
-    iscsi_name: i % 9 === 0 ? `iqn.2025.synthetic.vol-${n}` : "",
-    lastUpdated: `2025-05-${String((i % 28) + 1).padStart(2, "0")} 12:00:00.000`,
-    name: `disk-${n}`,
-    nservers: 1 + (i % 3),
-    own: i % 4 !== 0,
-    private: i % 3 === 0,
-    readonly: i % 13 === 0,
-    server,
-    servers: [server, ...(i % 3 === 0 ? [pick(SERVERS, i + 1)] : [])].filter(
-      (v, idx, a) => a.indexOf(v) === idx
-    ),
-    serverurl: null,
-    shareable: i % 6 === 0,
-    size,
-    sizeOnDisk: Math.round(size * (0.3 + (i % 5) * 0.1)),
-    volumeID: `vol-synth-${n}`,
-    read_MB_bw: 100 + (i % 10) * 25,
-    write_MB_bw: 80 + (i % 10) * 20,
-    read_iops: 2000 + i * 100,
-    write_iops: 1800 + i * 90,
-    hw_device: null,
-    fs: i % 7 === 0 ? "ext4" : null,
-    kind: null,
-    priority: i % 4,
-    target_type: null,
-  });
+  const server = resolveServerIp(i);
+  volumes.push(
+    applyVolumeProfile(
+      {
+        alg: pick(["no", "lzo", "zlib"], i),
+        bootable: i % 5 === 0,
+        bus: pick(VOLUME_BUSES, i),
+        cache: null,
+        ceph: i % 12 === 0,
+        clonable: i % 3 !== 0,
+        cloudinit: i % 8 === 0,
+        creatorID: "synthetic",
+        exported: i % 11 === 0,
+        format: pick(NON_VMWARE_VOLUME_FORMATS, i),
+      iscsi_name: i % 9 === 0 ? `iqn.2025.synthetic.vol-${n}` : "",
+      lastUpdated: `2025-05-${String((i % 28) + 1).padStart(2, "0")} 12:00:00.000`,
+      name: `disk-${n}`,
+      nservers: 1 + (i % 3),
+      own: i % 4 !== 0,
+      private: i % 3 === 0,
+      readonly: i % 13 === 0,
+      server,
+      servers: [server, ...(i % 3 === 0 ? [resolveServerIp(i + 1)] : [])].filter(
+        (v, idx, a) => a.indexOf(v) === idx
+      ),
+      serverurl: null,
+      shareable: i % 6 === 0,
+      size,
+      sizeOnDisk: Math.round(size * (0.3 + (i % 5) * 0.1)),
+      volumeID: `vol-synth-${n}`,
+      read_MB_bw: 100 + (i % 10) * 25,
+      write_MB_bw: 80 + (i % 10) * 20,
+      read_iops: 2000 + i * 100,
+      write_iops: 1800 + i * 90,
+      hw_device: null,
+      fs: i % 7 === 0 ? "ext4" : null,
+      kind: null,
+      priority: i % 4,
+      target_type: null,
+      provider: providerFromServerIp(server) ?? "atomos",
+      },
+      i
+    )
+  );
 }
 
 // Attach volumes to ~half of VMs (1–2 disks each); disk server must match VM host IP
@@ -176,12 +350,15 @@ for (let i = 0; i < COUNT; i++) {
   if (i % 2 !== 0) continue;
   const vm = vms[i];
   const hostIp = vm._hostIp;
-  const volA = { ...volumes[i], server: hostIp, servers: [hostIp] };
-  const volB = {
-    ...volumes[(i + 7) % COUNT],
-    server: hostIp,
-    servers: [hostIp],
-  };
+  const volA = applyVolumeProfile({ ...volumes[i], server: hostIp, servers: [hostIp] }, i);
+  const volB = applyVolumeProfile(
+    {
+      ...volumes[(i + 7) % COUNT],
+      server: hostIp,
+      servers: [hostIp],
+    },
+    i + 7
+  );
   vm.req_json.volumes = [volA, ...(i % 4 === 0 ? [volB] : [])];
 }
 
@@ -194,13 +371,14 @@ const NETWORK_KINDS = ["libvirt-bridge", "libvirt-nat", "tailscale", "shared"];
 for (let i = 0; i < COUNT; i++) {
   const n = pad3(i + 1);
   const kind = pick(NETWORK_KINDS, i);
-  const server = pick(SERVERS, i);
+  const server = resolveServerIp(i);
   const uid = `net-synth-${n}`;
   const name = `net-${kind.split("-")[0]}-${n}`;
 
   if (kind === "libvirt-bridge") {
     networks.push({
       servers: [server],
+      provider: providerFromServerIp(server) ?? "atomos",
       network_name: name,
       type: "libvirt",
       mode: "bridge",
@@ -216,6 +394,7 @@ for (let i = 0; i < COUNT; i++) {
     const vmRef = vms[i % COUNT];
     networks.push({
       servers: [server],
+      provider: providerFromServerIp(server) ?? "atomos",
       network_name: name,
       type: "libvirt",
       mode: "nat",
@@ -249,7 +428,8 @@ for (let i = 0; i < COUNT; i++) {
     });
   } else if (kind === "tailscale") {
     networks.push({
-      servers: [server, pick(SERVERS, i + 1)],
+      servers: [server, resolveServerIp(i + 1)],
+      provider: providerFromServerIp(server) ?? "atomos",
       network_name: name,
       type: "tailscale",
       mode: null,
@@ -273,6 +453,7 @@ for (let i = 0; i < COUNT; i++) {
     const octet = 10 + (i % 200);
     networks.push({
       servers: [server],
+      provider: providerFromServerIp(server) ?? "atomos",
       network_name: name,
       type: "shared",
       mode: pick(["open", "isolated", "open"], i),
@@ -299,7 +480,8 @@ for (let i = 0; i < COUNT; i++) {
   const vm = vms[i % COUNT];
   const vmName = vm.req_json.vm_name;
   portforwards.push({
-    serverurl: pick(SERVERS, i),
+    serverurl: vm.serverurl,
+    provider: providerFromServerUrl(vm.serverurl) ?? vm.provider,
     protocol: pick(PROTOCOLS, i),
     port: 20000 + i,
     target: vmName,
@@ -418,5 +600,5 @@ writeJson("portforwards.json", portforwards);
 writeJson("templates.json", templates);
 writeJson("host-status.json", hostStatus);
 
-console.log(`Wrote ${COUNT} VMs, volumes, networks, port-forwards, templates`);
+console.log(`Wrote ${COUNT + CLOUD_COUNT} VMs (${CLOUD_COUNT} cloud), volumes, networks, port-forwards, templates`);
 console.log(`Wrote host-status.json (vm_count=${hostStatus.vm_count})`);

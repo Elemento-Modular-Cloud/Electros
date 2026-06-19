@@ -6,7 +6,8 @@
       "target_config": {
         "ips": [
           "192.168.1.10"
-        ]
+        ],
+        "provider": "atomos"
       },
       "ping_status": {
         "target_id": "atomos-lab",
@@ -21,7 +22,8 @@
       "target_config": {
         "ips": [
           "10.0.0.5"
-        ]
+        ],
+        "provider": "atomos"
       },
       "ping_status": {
         "target_id": "atomos-meson-edge",
@@ -55,7 +57,8 @@
         "host": "https://192.168.1.20:8006",
         "user": "root@pam",
         "password": "synthetic",
-        "verify_ssl": false
+        "verify_ssl": false,
+        "provider": "proxmox"
       },
       "ping_status": {
         "target_id": "proxmox-hv",
@@ -70,7 +73,8 @@
         "host": "https://192.168.1.30",
         "user": "root",
         "password": "synthetic",
-        "verify_ssl": false
+        "verify_ssl": false,
+        "provider": "esxi"
       },
       "ping_status": {
         "target_id": "esxi-hv",

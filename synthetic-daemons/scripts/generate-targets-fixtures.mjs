@@ -27,7 +27,7 @@ const data = [
   {
     target_id: "atomos-lab",
     target_type: "atomos_local_ip",
-    target_config: { ips: ["192.168.1.10"] },
+    target_config: { ips: ["192.168.1.10"], provider: "atomos" },
     ping_status: {
       target_id: "atomos-lab",
       target_type: "atomos_local_ip",
@@ -38,7 +38,7 @@ const data = [
   {
     target_id: "atomos-meson-edge",
     target_type: "atomos_local_ip",
-    target_config: { ips: ["10.0.0.5"] },
+    target_config: { ips: ["10.0.0.5"], provider: "atomos" },
     ping_status: {
       target_id: "atomos-meson-edge",
       target_type: "atomos_local_ip",
@@ -69,6 +69,7 @@ const data = [
       user: "root@pam",
       password: "synthetic",
       verify_ssl: false,
+      provider: "proxmox",
     },
     ping_status: {
       target_id: "proxmox-hv",
@@ -84,6 +85,7 @@ const data = [
       user: "root",
       password: "synthetic",
       verify_ssl: false,
+      provider: "esxi",
     },
     ping_status: {
       target_id: "esxi-hv",

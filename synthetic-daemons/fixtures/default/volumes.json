@@ -35,7 +35,8 @@
     "fs": "ext4",
     "kind": null,
     "priority": 0,
-    "target_type": null
+    "target_type": null,
+    "provider": "atomos"
   },
   {
     "alg": "lzo",
@@ -72,7 +73,8 @@
     "fs": null,
     "kind": null,
     "priority": 1,
-    "target_type": null
+    "target_type": null,
+    "provider": "ovh"
   },
   {
     "alg": "zlib",
@@ -92,9 +94,9 @@
     "own": true,
     "private": false,
     "readonly": false,
-    "server": "192.168.1.20",
+    "server": "192.168.1.10",
     "servers": [
-      "192.168.1.20"
+      "192.168.1.10"
     ],
     "serverurl": null,
     "shareable": false,
@@ -109,7 +111,8 @@
     "fs": null,
     "kind": null,
     "priority": 2,
-    "target_type": null
+    "target_type": null,
+    "provider": "atomos"
   },
   {
     "alg": "no",
@@ -121,7 +124,7 @@
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "vmdk",
+    "format": "qcow2",
     "iscsi_name": "",
     "lastUpdated": "2025-05-04 12:00:00.000",
     "name": "disk-004",
@@ -129,9 +132,9 @@
     "own": true,
     "private": true,
     "readonly": false,
-    "server": "192.168.1.30",
+    "server": "10.0.0.5",
     "servers": [
-      "192.168.1.30",
+      "10.0.0.5",
       "192.168.1.10"
     ],
     "serverurl": null,
@@ -147,7 +150,8 @@
     "fs": null,
     "kind": null,
     "priority": 3,
-    "target_type": null
+    "target_type": null,
+    "provider": "ovh"
   },
   {
     "alg": "lzo",
@@ -184,7 +188,8 @@
     "fs": null,
     "kind": null,
     "priority": 0,
-    "target_type": null
+    "target_type": null,
+    "provider": "atomos"
   },
   {
     "alg": "zlib",
@@ -196,7 +201,7 @@
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "qcow2",
+    "format": "raw",
     "iscsi_name": "",
     "lastUpdated": "2025-05-06 12:00:00.000",
     "name": "disk-006",
@@ -221,7 +226,8 @@
     "fs": null,
     "kind": null,
     "priority": 1,
-    "target_type": null
+    "target_type": null,
+    "provider": "ovh"
   },
   {
     "alg": "no",
@@ -233,7 +239,7 @@
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "raw",
+    "format": "qcow2",
     "iscsi_name": "",
     "lastUpdated": "2025-05-07 12:00:00.000",
     "name": "disk-007",
@@ -241,9 +247,9 @@
     "own": true,
     "private": true,
     "readonly": false,
-    "server": "192.168.1.20",
+    "server": "192.168.1.10",
     "servers": [
-      "192.168.1.20",
+      "192.168.1.10",
       "192.168.1.30"
     ],
     "serverurl": null,
@@ -259,12 +265,13 @@
     "fs": null,
     "kind": null,
     "priority": 2,
-    "target_type": null
+    "target_type": null,
+    "provider": "atomos"
   },
   {
     "alg": "lzo",
     "bootable": false,
-    "bus": "ide",
+    "bus": "scsi",
     "cache": null,
     "ceph": false,
     "clonable": true,
@@ -296,19 +303,20 @@
     "fs": "ext4",
     "kind": null,
     "priority": 3,
-    "target_type": null
+    "target_type": null,
+    "provider": "esxi"
   },
   {
     "alg": "zlib",
     "bootable": false,
-    "bus": "virtio",
+    "bus": "scsi",
     "cache": null,
     "ceph": false,
     "clonable": true,
     "cloudinit": true,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "qcow2",
+    "format": "vmdk",
     "iscsi_name": "",
     "lastUpdated": "2025-05-09 12:00:00.000",
     "name": "disk-009",
@@ -316,9 +324,9 @@
     "own": false,
     "private": false,
     "readonly": false,
-    "server": "192.168.1.10",
+    "server": "192.168.1.30",
     "servers": [
-      "192.168.1.10"
+      "192.168.1.30"
     ],
     "serverurl": null,
     "shareable": false,
@@ -333,19 +341,20 @@
     "fs": null,
     "kind": null,
     "priority": 0,
-    "target_type": null
+    "target_type": null,
+    "provider": "esxi"
   },
   {
     "alg": "no",
     "bootable": false,
-    "bus": "virtio",
+    "bus": "scsi",
     "cache": null,
     "ceph": false,
     "clonable": false,
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "qcow2",
+    "format": "vmdk",
     "iscsi_name": "iqn.2025.synthetic.vol-010",
     "lastUpdated": "2025-05-10 12:00:00.000",
     "name": "disk-010",
@@ -353,10 +362,9 @@
     "own": true,
     "private": true,
     "readonly": false,
-    "server": "10.0.0.5",
+    "server": "192.168.1.30",
     "servers": [
-      "10.0.0.5",
-      "192.168.1.20"
+      "192.168.1.30"
     ],
     "serverurl": null,
     "shareable": false,
@@ -371,7 +379,8 @@
     "fs": null,
     "kind": null,
     "priority": 1,
-    "target_type": null
+    "target_type": null,
+    "provider": "esxi"
   },
   {
     "alg": "lzo",
@@ -383,7 +392,7 @@
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "raw",
+    "format": "vmdk",
     "iscsi_name": "",
     "lastUpdated": "2025-05-11 12:00:00.000",
     "name": "disk-011",
@@ -391,9 +400,9 @@
     "own": true,
     "private": false,
     "readonly": false,
-    "server": "192.168.1.20",
+    "server": "192.168.1.30",
     "servers": [
-      "192.168.1.20"
+      "192.168.1.30"
     ],
     "serverurl": null,
     "shareable": false,
@@ -408,12 +417,13 @@
     "fs": null,
     "kind": null,
     "priority": 2,
-    "target_type": null
+    "target_type": null,
+    "provider": "esxi"
   },
   {
     "alg": "zlib",
     "bootable": false,
-    "bus": "ide",
+    "bus": "scsi",
     "cache": null,
     "ceph": false,
     "clonable": true,
@@ -445,19 +455,20 @@
     "fs": null,
     "kind": null,
     "priority": 3,
-    "target_type": null
+    "target_type": null,
+    "provider": "esxi"
   },
   {
     "alg": "no",
     "bootable": false,
-    "bus": "virtio",
+    "bus": "scsi",
     "cache": null,
     "ceph": true,
     "clonable": false,
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "qcow2",
+    "format": "vmdk",
     "iscsi_name": "",
     "lastUpdated": "2025-05-13 12:00:00.000",
     "name": "disk-013",
@@ -465,10 +476,10 @@
     "own": false,
     "private": true,
     "readonly": false,
-    "server": "192.168.1.10",
+    "server": "192.168.1.30",
     "servers": [
-      "192.168.1.10",
-      "10.0.0.5"
+      "192.168.1.30",
+      "192.168.1.20"
     ],
     "serverurl": null,
     "shareable": true,
@@ -483,7 +494,8 @@
     "fs": null,
     "kind": null,
     "priority": 0,
-    "target_type": null
+    "target_type": null,
+    "provider": "esxi"
   },
   {
     "alg": "lzo",
@@ -503,9 +515,9 @@
     "own": true,
     "private": false,
     "readonly": true,
-    "server": "10.0.0.5",
+    "server": "192.168.1.20",
     "servers": [
-      "10.0.0.5"
+      "192.168.1.20"
     ],
     "serverurl": null,
     "shareable": false,
@@ -520,7 +532,8 @@
     "fs": null,
     "kind": null,
     "priority": 1,
-    "target_type": null
+    "target_type": null,
+    "provider": "proxmox"
   },
   {
     "alg": "zlib",
@@ -557,7 +570,8 @@
     "fs": "ext4",
     "kind": null,
     "priority": 2,
-    "target_type": null
+    "target_type": null,
+    "provider": "proxmox"
   },
   {
     "alg": "no",
@@ -569,7 +583,7 @@
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "vmdk",
+    "format": "qcow2",
     "iscsi_name": "",
     "lastUpdated": "2025-05-16 12:00:00.000",
     "name": "disk-016",
@@ -577,10 +591,9 @@
     "own": true,
     "private": true,
     "readonly": false,
-    "server": "192.168.1.30",
+    "server": "192.168.1.20",
     "servers": [
-      "192.168.1.30",
-      "192.168.1.10"
+      "192.168.1.20"
     ],
     "serverurl": null,
     "shareable": false,
@@ -595,7 +608,8 @@
     "fs": null,
     "kind": null,
     "priority": 3,
-    "target_type": null
+    "target_type": null,
+    "provider": "proxmox"
   },
   {
     "alg": "lzo",
@@ -615,9 +629,9 @@
     "own": false,
     "private": false,
     "readonly": false,
-    "server": "192.168.1.10",
+    "server": "192.168.1.20",
     "servers": [
-      "192.168.1.10"
+      "192.168.1.20"
     ],
     "serverurl": null,
     "shareable": false,
@@ -632,7 +646,8 @@
     "fs": null,
     "kind": null,
     "priority": 0,
-    "target_type": null
+    "target_type": null,
+    "provider": "proxmox"
   },
   {
     "alg": "zlib",
@@ -644,7 +659,7 @@
     "cloudinit": false,
     "creatorID": "synthetic",
     "exported": false,
-    "format": "qcow2",
+    "format": "raw",
     "iscsi_name": "",
     "lastUpdated": "2025-05-18 12:00:00.000",
     "name": "disk-018",
@@ -652,9 +667,9 @@
     "own": true,
     "private": false,
     "readonly": false,
-    "server": "10.0.0.5",
+    "server": "192.168.1.20",
     "servers": [
-      "10.0.0.5"
+      "192.168.1.20"
     ],
     "serverurl": null,
     "shareable": false,
@@ -669,6 +684,7 @@
     "fs": null,
     "kind": null,
     "priority": 1,
-    "target_type": null
+    "target_type": null,
+    "provider": "proxmox"
   }
 ]
