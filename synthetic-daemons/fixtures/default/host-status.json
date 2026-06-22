@@ -117,7 +117,7 @@
     }
   },
   "slot_allocation_percentage": 89,
-  "storage_count": 18,
+  "storage_count": 30,
   "storages": [
     {
       "bus": "virtio",
@@ -272,10 +272,94 @@
       "sizeGB": "500",
       "vm_uuids": [],
       "volume_id": "vol-synth-018"
+    },
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "3",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-019"
+    },
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "3",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-020"
+    },
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "4",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-021"
+    },
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "4",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-022"
+    },
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "3",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-023"
+    },
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "1",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-024"
+    },
+    {
+      "bus": "ide",
+      "format": "raw",
+      "sizeGB": "0",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-025"
+    },
+    {
+      "bus": "ide",
+      "format": "raw",
+      "sizeGB": "0",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-026"
+    },
+    {
+      "bus": "ide",
+      "format": "raw",
+      "sizeGB": "0",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-027"
+    },
+    {
+      "bus": "ide",
+      "format": "raw",
+      "sizeGB": "0",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-028"
+    },
+    {
+      "bus": "ide",
+      "format": "raw",
+      "sizeGB": "0",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-029"
+    },
+    {
+      "bus": "ide",
+      "format": "raw",
+      "sizeGB": "0",
+      "vm_uuids": [],
+      "volume_id": "vol-synth-030"
     }
   ],
   "total_allocated_ram_mib": 435200,
-  "total_allocated_storage_size_gb": 2790,
+  "total_allocated_storage_size_gb": 2816,
   "total_cores_count": 32,
   "total_slots_count": 128,
   "total_used_ram_mib": 63488,

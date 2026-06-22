@@ -309,7 +309,7 @@ for (let i = 0; i < COUNT; i++) {
         cache: null,
         ceph: i % 12 === 0,
         clonable: i % 3 !== 0,
-        cloudinit: i % 8 === 0,
+        cloudinit: false,
         creatorID: "synthetic",
         exported: i % 11 === 0,
         format: pick(NON_VMWARE_VOLUME_FORMATS, i),
@@ -344,6 +344,163 @@ for (let i = 0; i < COUNT; i++) {
     )
   );
 }
+
+const CLOUD_IMAGE_FIXTURES = [
+  {
+    name: "ubuntu-2404-cloudimg",
+    server: "192.168.1.10",
+    target_type: "atomos_local_ip",
+    size: 3221225472,
+    os_family: "linux",
+    os_flavour: "ubuntu",
+    url: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img",
+  },
+  {
+    name: "debian-12-cloudimg",
+    server: "10.0.0.5",
+    target_type: "atomos_local_ip",
+    size: 3221225472,
+    os_family: "linux",
+    os_flavour: "debian",
+    url: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2",
+  },
+  {
+    name: "rocky-9-cloudimg",
+    server: "192.168.1.20",
+    target_type: "hypervisor_proxmox",
+    size: 4294967296,
+    os_family: "linux",
+    os_flavour: "rocky",
+    url: "https://download.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2",
+  },
+  {
+    name: "fedora-40-cloudimg",
+    server: "192.168.1.10",
+    target_type: "atomos_local_ip",
+    size: 4294967296,
+    os_family: "linux",
+    os_flavour: "fedora",
+    url: "https://download.fedoraproject.org/pub/fedora/linux/releases/40/Cloud/x86_64/images/Fedora-Cloud-Base-40-1.6.x86_64.qcow2",
+  },
+  {
+    name: "ubuntu-2204-cloudimg",
+    server: "192.168.1.20",
+    target_type: "hypervisor_proxmox",
+    size: 3221225472,
+    os_family: "linux",
+    os_flavour: "ubuntu",
+    url: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img",
+  },
+  {
+    name: "alpine-320-cloudimg",
+    server: "10.0.0.5",
+    target_type: "atomos_local_ip",
+    size: 1073741824,
+    os_family: "linux",
+    os_flavour: "alpine",
+    url: "https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/cloud/nocloud_alpine-3.20.0-x86_64-bios-cloudinit-r0.qcow2",
+  },
+];
+
+const CLOUD_INIT_ISO_FIXTURES = [
+  { name: "ci-web-server-init", server: "192.168.1.10", target_type: "atomos_local_ip", size: 4194304 },
+  { name: "ci-k8s-node-init", server: "10.0.0.5", target_type: "atomos_local_ip", size: 3145728 },
+  { name: "ci-devbox-init", server: "192.168.1.20", target_type: "hypervisor_proxmox", size: 2097152 },
+  { name: "ci-db-cluster-init", server: "192.168.1.20", target_type: "hypervisor_proxmox", size: 5242880 },
+  { name: "ci-ci-runner-init", server: "192.168.1.10", target_type: "atomos_local_ip", size: 2621440 },
+  { name: "ci-edge-gateway-init", server: "10.0.0.5", target_type: "atomos_local_ip", size: 3670016 },
+];
+
+function pushCloudInitVolumeFixtures() {
+  let index = COUNT + 1;
+
+  for (const fixture of CLOUD_IMAGE_FIXTURES) {
+    const n = pad3(index);
+    volumes.push({
+      alg: "no",
+      bootable: true,
+      bus: "virtio",
+      cache: null,
+      ceph: false,
+      clonable: true,
+      cloudinit: false,
+      creatorID: "synthetic",
+      exported: false,
+      format: "qcow2",
+      iscsi_name: "",
+      lastUpdated: `2025-06-01 ${String(10 + (index - COUNT - 1) * 15).padStart(2, "0")}:00:00.000`,
+      name: fixture.name,
+      nservers: 1,
+      own: true,
+      private: index % 3 === 0,
+      readonly: true,
+      server: fixture.server,
+      servers: [fixture.server],
+      serverurl: null,
+      shareable: false,
+      size: fixture.size,
+      sizeOnDisk: Math.round(fixture.size * 0.65),
+      volumeID: `vol-synth-${n}`,
+      read_MB_bw: 130 + index * 5,
+      write_MB_bw: 100 + index * 5,
+      read_iops: 1800 + index * 50,
+      write_iops: 1600 + index * 50,
+      hw_device: null,
+      fs: null,
+      kind: "bootable cloud image",
+      priority: 0,
+      target_type: fixture.target_type,
+      provider: providerFromServerIp(fixture.server) ?? "atomos",
+      os_family: fixture.os_family,
+      os_flavour: fixture.os_flavour,
+      url: fixture.url,
+    });
+    index += 1;
+  }
+
+  for (const fixture of CLOUD_INIT_ISO_FIXTURES) {
+    const n = pad3(index);
+    volumes.push({
+      alg: "no",
+      bootable: false,
+      bus: "ide",
+      cache: null,
+      ceph: false,
+      clonable: false,
+      cloudinit: true,
+      creatorID: "synthetic",
+      exported: false,
+      format: "raw",
+      iscsi_name: "",
+      lastUpdated: `2025-06-02 ${String(9 + (index - COUNT - CLOUD_IMAGE_FIXTURES.length - 1) * 15).padStart(2, "0")}:00:00.000`,
+      name: fixture.name,
+      nservers: 1,
+      own: true,
+      private: index % 4 === 0,
+      readonly: true,
+      server: fixture.server,
+      servers: [fixture.server],
+      serverurl: null,
+      shareable: false,
+      size: fixture.size,
+      sizeOnDisk: fixture.size,
+      volumeID: `vol-synth-${n}`,
+      read_MB_bw: 50,
+      write_MB_bw: 50,
+      read_iops: 500,
+      write_iops: 500,
+      hw_device: null,
+      fs: null,
+      kind: "cloudinit ISO image",
+      priority: 0,
+      target_type: fixture.target_type,
+      provider: providerFromServerIp(fixture.server) ?? "atomos",
+    });
+    index += 1;
+  }
+}
+
+pushCloudInitVolumeFixtures();
 
 // Attach volumes to ~half of VMs (1–2 disks each); disk server must match VM host IP
 for (let i = 0; i < COUNT; i++) {
@@ -568,7 +725,7 @@ const hostStatus = {
     Math.round((vms.reduce((s, v) => s + v.req_json.slots, 0) / 128) * 100)
   ),
   storage_count: volumes.length,
-  storages: volumes.slice(0, 20).map((vol, idx) => ({
+  storages: volumes.slice(0, 30).map((vol, idx) => ({
     bus: vol.bus,
     format: vol.format,
     sizeGB: String(Math.round(vol.size / 1024 ** 3)),

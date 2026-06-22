@@ -108,12 +108,24 @@ export function enrichVmProvider(vm: Record<string, unknown>): void {
 
 
 export function enrichVolumeProvider(volume: Record<string, unknown>): void {
+  const server = (volume.server as string | undefined)
+    ?? ((volume.servers as string[] | undefined)?.[0]);
+  const plain = server?.replace(/^https?:\/\//, "").split(":")[0];
+
+  if (!volume.target_type && plain) {
+    if (plain === "192.168.1.30") {
+      volume.target_type = "hypervisor_esxi";
+    } else if (plain === "192.168.1.20") {
+      volume.target_type = "hypervisor_proxmox";
+    } else if (plain === "192.168.1.10" || plain === "10.0.0.5") {
+      volume.target_type = "atomos_local_ip";
+    }
+  }
+
   if (volume.provider) {
     return;
   }
 
-  const server = (volume.server as string | undefined)
-    ?? ((volume.servers as string[] | undefined)?.[0]);
   const provider = providerFromServerIp(server)
     ?? providerFromTargetType(volume.target_type as string);
 
