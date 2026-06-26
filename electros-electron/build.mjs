@@ -4,6 +4,9 @@ import { cpSync, rmSync, existsSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
+
+process.env.SHARP_IGNORE_GLOBAL_LIBVIPS = '1';
+
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

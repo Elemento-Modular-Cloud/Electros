@@ -1,0 +1,76 @@
+# #******************************************************************************#
+# # Copyright(c) 2019-2026, Elemento srl, All rights reserved                    #
+# # Author: Elemento srl                                                         #
+# # Contributors are mentioned in the code where appropriate.                    #
+# # Permission to use and modify this software and its documentation strictly    #
+# # for personal purposes is hereby granted without fee,                         #
+# # provided that the above copyright notice appears in all copies               #
+# # and that both the copyright notice and this permission notice appear in the  #
+# # supporting documentation.                                                    #
+# # Modifications to this work are allowed for personal use.                     #
+# # Such modifications have to be licensed under a                               #
+# # Creative Commons BY-NC-ND 4.0 International License available at             #
+# # http://creativecommons.org/licenses/by-nc-nd/4.0/ and have to be made        #
+# # available to the Elemento user community                                     #
+# # through the original distribution channels.                                  #
+# # The authors make no claims about the suitability                             #
+# # of this software for any purpose.                                            #
+# # It is provided "as is" without express or implied warranty.                  #
+# #******************************************************************************#
+#
+# #------------------------------------------------------------------------------#
+# #Electros                                                                      #
+# #Authors:                                                                      #
+# #- Filippo Ferrando Damillano (fferrando at elemento.cloud)                    #
+# #- Simone Robaldo (srobaldo at elemento.cloud)                                 #
+# #------------------------------------------------------------------------------#
+#
+
+FROM node:24.9.0 AS bundler
+
+WORKDIR /build
+COPY /elemento-gui-new /build
+
+RUN npm i
+RUN npm run build:atomos-gui
+
+RUN mv dist-atomos-gui/electros/electrosOnAtomos.html dist-atomos-gui/electros/electros.html
+RUN mv dist-atomos-gui/electros/configs/atomosFlags.json dist-atomos-gui/electros/configs/flags.json
+
+
+FROM nginx:trixie
+
+# Stage 1: Copy data
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY electros-daemons/linux/x64/* /opt/daemons/
+COPY --from=bundler /build/dist-atomos-gui/ /usr/share/nginx/html/
+COPY docker/startup.sh /opt/app/startup.sh
+COPY docker/session_guard.py /opt/app/session_guard.py
+COPY ./docker/follow_log.sh /opt/app/follow_log.sh
+COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
+
+# Stage 2: Install dependencies
+RUN apt-get update -y
+RUN apt-get install -y socat=1.8.0.3-1 \
+  python3=3.13.5-1
+
+RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+
+# Stage 3: permissions for scripts
+RUN chmod +x /opt/daemons/*
+RUN chmod +x /opt/app/startup.sh
+
+# Stage 4: prepared forlders
+RUN mkdir -p /var/log/elemento
+
+RUN ls -lah /usr/share/nginx/html/
+
+EXPOSE 443
+
+ENTRYPOINT [ "/opt/app/startup.sh" ]
+
+
+
+
+
+
