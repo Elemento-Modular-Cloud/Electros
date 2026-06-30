@@ -162,6 +162,11 @@ jobs:
             security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
             rm -fr *.p12
           fi
+          
+          if [ ${{ matrix.os }} == "win" ]; then
+            echo "Running on windows, pulling correct lib"
+            npm install --os=win32 --cpu=x64 sharp
+          fi
 
           # Clean up
           cd ./electros-electron
