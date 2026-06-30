@@ -53,7 +53,8 @@
             "!**/*.sh"
         ],
         "asarUnpack": [
-            "node_modules/sharp/**/*",
+            "**/node_modules/sharp/**/*",
+            "**/node_modules/@img/**/*",
             "electros/remotes/**/*",
             "configs/**"
         ],

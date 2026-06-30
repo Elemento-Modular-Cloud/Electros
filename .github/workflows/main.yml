@@ -157,6 +157,16 @@ jobs:
             rm -fr *.p12
           fi
 
+          if [ ${{ matrix.os }} == "win" ]; then
+            echo "Running on windows, pulling correct lib"
+            npm install --os=win32 --cpu=x64 sharp@0.33.5
+          fi
+          
+          if [ "${{ matrix.os }}" == "linux" ] && [ "${{ matrix.arch }}" == "arm64" ]; then
+            echo "Running on Linux arm64, pulling correct lib"
+            npm install --os=linux --cpu=arm64 --libc=glibc sharp@0.33.5
+          fi
+
           # Clean up
           cd ./electros-electron
           chmod +x ./autobuild.sh
@@ -471,7 +481,7 @@ jobs:
           - name: Populate daemons folder
             run: |
               export CI_TOKEN=${{ secrets.CI_TOKEN }}
-              ./populate_daemons.sh --platform linux --arch x64 --develop
+              ./populate_daemons.sh --platform linux --arch x64
 
           - name: Login to GHCR
             uses: docker/login-action@v2
