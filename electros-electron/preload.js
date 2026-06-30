@@ -3,19 +3,19 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electron', {
     invoke: (channel, ...args) => {
         const validChannels = [
-            'read-config', 
-            'write-config', 
-            'read-hosts', 
+            'read-config',
+            'write-config',
+            'read-hosts',
             'write-hosts',
             'list-backgrounds',
             'get-background-data',
             'import-background',
             'save-background-from-url',
             'delete-background',
-            'minimize-window', 
+            'minimize-window',
             'open-ssh',
-            'maximize-window', 
-            'close-window', 
+            'maximize-window',
+            'close-window',
             'toggle-full-screen',
             'open-rdp',
             'launch-rdp-process',
@@ -49,7 +49,7 @@ contextBridge.exposeInMainWorld('electron', {
                 ipcRenderer.on(channel, callback);
             }
         }
-    }
-
-}); 
+    },
+    onDeepLink: (callback) => ipcRenderer.on('deep-link', (event, url) => callback(url))
+});
 

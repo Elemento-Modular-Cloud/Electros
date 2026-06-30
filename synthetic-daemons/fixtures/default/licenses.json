@@ -1,0 +1,193 @@
+{
+  "licenses": [
+    {
+      "license_key": "SYNTH-0001-ELEC-1001-2001",
+      "is_armed": true,
+      "hmac": "synthetic-hmac-00000000000000000000000000000001",
+      "duration": 30,
+      "support_json": {
+        "tier": "standard",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1795039311,
+      "reseller_entity": "Elemento Direct"
+    },
+    {
+      "license_key": "SYNTH-0002-ELEC-1002-2002",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000002",
+      "duration": 90,
+      "support_json": {
+        "tier": "professional",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1778536911,
+      "reseller_entity": "Acme Cloud Reseller"
+    },
+    {
+      "license_key": "SYNTH-0003-ELEC-1003-2003",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000003",
+      "duration": 180,
+      "support_json": {
+        "tier": "enterprise",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1780264911,
+      "reseller_entity": "Meson Partner EU"
+    },
+    {
+      "license_key": "SYNTH-0004-ELEC-1004-2004",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000004",
+      "duration": 365,
+      "support_json": {
+        "tier": "standard",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1819231311
+    },
+    {
+      "license_key": "SYNTH-0005-ELEC-1005-2005",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000005",
+      "duration": 730,
+      "support_json": {
+        "tier": "professional",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "reseller_entity": "Elemento Direct"
+    },
+    {
+      "license_key": "SYNTH-0006-ELEC-1006-2006",
+      "is_armed": true,
+      "hmac": "synthetic-hmac-00000000000000000000000000000006",
+      "duration": 1095,
+      "support_json": {
+        "tier": "enterprise",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1797631311,
+      "reseller_entity": "Acme Cloud Reseller"
+    },
+    {
+      "license_key": "SYNTH-0007-ELEC-1007-2007",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000007",
+      "duration": 30,
+      "support_json": {
+        "tier": "standard",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1778104911,
+      "reseller_entity": "Meson Partner EU"
+    },
+    {
+      "license_key": "SYNTH-0008-ELEC-1008-2008",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000008",
+      "duration": 90,
+      "support_json": {
+        "tier": "professional",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1780696911
+    },
+    {
+      "license_key": "SYNTH-0009-ELEC-1009-2009",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-00000000000000000000000000000009",
+      "duration": 180,
+      "support_json": {
+        "tier": "enterprise",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1827871311,
+      "reseller_entity": "Elemento Direct"
+    },
+    {
+      "license_key": "SYNTH-0010-ELEC-1010-2010",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-0000000000000000000000000000000a",
+      "duration": 365,
+      "support_json": {
+        "tier": "standard",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "reseller_entity": "Acme Cloud Reseller"
+    },
+    {
+      "license_key": "SYNTH-0011-ELEC-1011-2011",
+      "is_armed": true,
+      "hmac": "synthetic-hmac-0000000000000000000000000000000b",
+      "duration": 730,
+      "support_json": {
+        "tier": "professional",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1800223311,
+      "reseller_entity": "Meson Partner EU"
+    },
+    {
+      "license_key": "SYNTH-0012-ELEC-1012-2012",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-0000000000000000000000000000000c",
+      "duration": 1095,
+      "support_json": {
+        "tier": "enterprise",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1777672911
+    },
+    {
+      "license_key": "SYNTH-0013-ELEC-1013-2013",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-0000000000000000000000000000000d",
+      "duration": 30,
+      "support_json": {
+        "tier": "standard",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1781128911,
+      "reseller_entity": "Elemento Direct"
+    },
+    {
+      "license_key": "SYNTH-0014-ELEC-1014-2014",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-0000000000000000000000000000000e",
+      "duration": 90,
+      "support_json": {
+        "tier": "professional",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1836511311,
+      "reseller_entity": "Acme Cloud Reseller"
+    },
+    {
+      "license_key": "SYNTH-0015-ELEC-1015-2015",
+      "is_armed": false,
+      "hmac": "synthetic-hmac-0000000000000000000000000000000f",
+      "duration": 180,
+      "support_json": {
+        "tier": "enterprise",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "reseller_entity": "Meson Partner EU"
+    }
+  ]
+}

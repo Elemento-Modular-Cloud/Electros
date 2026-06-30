@@ -1,0 +1,451 @@
+[
+  {
+    "servers": [
+      "192.168.1.10"
+    ],
+    "network_name": "net-libvirt-001",
+    "type": "libvirt",
+    "mode": "bridge",
+    "private": true,
+    "network_uid": "net-synth-001",
+    "creator_uid": "synthetic",
+    "device_name": "br-001",
+    "libvirt_network": "net-libvirt-001",
+    "ip": {
+      "address": "",
+      "dhcp": null,
+      "net_bits": null
+    }
+  },
+  {
+    "servers": [
+      "10.0.0.5"
+    ],
+    "network_name": "net-libvirt-002",
+    "type": "libvirt",
+    "mode": "nat",
+    "private": true,
+    "network_uid": "net-synth-002",
+    "creator_uid": "synthetic",
+    "device_name": "virbr-002",
+    "libvirt_network": "net-libvirt-002",
+    "ip": {
+      "address": "192.168.101.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "192.168.101.100",
+        "end": "192.168.101.200",
+        "hosts": [
+          {
+            "mac": "52:54:00:00:02:01",
+            "address": "192.168.101.101",
+            "name": "debian-vm-002"
+          }
+        ]
+      }
+    },
+    "routes": [
+      {
+        "address": "0.0.0.0/0",
+        "gateway": "192.168.101.1",
+        "prefix": "0"
+      }
+    ]
+  },
+  {
+    "servers": [
+      "192.168.1.20",
+      "192.168.1.30"
+    ],
+    "network_name": "net-tailscale-003",
+    "type": "tailscale",
+    "mode": null,
+    "private": true,
+    "network_uid": "net-synth-003",
+    "creator_uid": "synthetic",
+    "device_name": "ts-003",
+    "libvirt_network": "",
+    "ip": {
+      "address": "100.66.2.1/16",
+      "net_bits": 16,
+      "dhcp": null
+    },
+    "headscale": {
+      "address": "https://headscale-003.synthetic.local",
+      "headscale_user": "user-003",
+      "api_key": "key-003"
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.30"
+    ],
+    "network_name": "net-shared-004",
+    "type": "shared",
+    "mode": "open",
+    "private": true,
+    "network_uid": "net-synth-004",
+    "creator_uid": "synthetic",
+    "device_name": "",
+    "libvirt_network": "",
+    "ip": {
+      "address": "10.13.0.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "10.13.0.50",
+        "end": "10.13.0.150",
+        "hosts": []
+      }
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.10"
+    ],
+    "network_name": "net-libvirt-005",
+    "type": "libvirt",
+    "mode": "bridge",
+    "private": true,
+    "network_uid": "net-synth-005",
+    "creator_uid": "synthetic",
+    "device_name": "br-005",
+    "libvirt_network": "net-libvirt-005",
+    "ip": {
+      "address": "",
+      "dhcp": null,
+      "net_bits": null
+    }
+  },
+  {
+    "servers": [
+      "10.0.0.5"
+    ],
+    "network_name": "net-libvirt-006",
+    "type": "libvirt",
+    "mode": "nat",
+    "private": true,
+    "network_uid": "net-synth-006",
+    "creator_uid": "synthetic",
+    "device_name": "virbr-006",
+    "libvirt_network": "net-libvirt-006",
+    "ip": {
+      "address": "192.168.105.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "192.168.105.100",
+        "end": "192.168.105.200",
+        "hosts": [
+          {
+            "mac": "52:54:00:00:06:01",
+            "address": "192.168.105.101",
+            "name": "centos-vm-006"
+          }
+        ]
+      }
+    },
+    "routes": [
+      {
+        "address": "0.0.0.0/0",
+        "gateway": "192.168.105.1",
+        "prefix": "0"
+      }
+    ]
+  },
+  {
+    "servers": [
+      "192.168.1.20",
+      "192.168.1.30"
+    ],
+    "network_name": "net-tailscale-007",
+    "type": "tailscale",
+    "mode": null,
+    "private": true,
+    "network_uid": "net-synth-007",
+    "creator_uid": "synthetic",
+    "device_name": "ts-007",
+    "libvirt_network": "",
+    "ip": {
+      "address": "100.70.6.1/16",
+      "net_bits": 16,
+      "dhcp": null
+    },
+    "headscale": {
+      "address": "https://headscale-007.synthetic.local",
+      "headscale_user": "user-007",
+      "api_key": "key-007"
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.30"
+    ],
+    "network_name": "net-shared-008",
+    "type": "shared",
+    "mode": "isolated",
+    "private": false,
+    "network_uid": "net-synth-008",
+    "creator_uid": "synthetic",
+    "device_name": "",
+    "libvirt_network": "",
+    "ip": {
+      "address": "10.17.0.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "10.17.0.50",
+        "end": "10.17.0.150",
+        "hosts": []
+      }
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.10"
+    ],
+    "network_name": "net-libvirt-009",
+    "type": "libvirt",
+    "mode": "bridge",
+    "private": true,
+    "network_uid": "net-synth-009",
+    "creator_uid": "synthetic",
+    "device_name": "br-009",
+    "libvirt_network": "net-libvirt-009",
+    "ip": {
+      "address": "",
+      "dhcp": null,
+      "net_bits": null
+    }
+  },
+  {
+    "servers": [
+      "10.0.0.5"
+    ],
+    "network_name": "net-libvirt-010",
+    "type": "libvirt",
+    "mode": "nat",
+    "private": true,
+    "network_uid": "net-synth-010",
+    "creator_uid": "synthetic",
+    "device_name": "virbr-010",
+    "libvirt_network": "net-libvirt-010",
+    "ip": {
+      "address": "192.168.109.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "192.168.109.100",
+        "end": "192.168.109.200",
+        "hosts": [
+          {
+            "mac": "52:54:00:01:10:01",
+            "address": "192.168.109.101",
+            "name": "fedora-vm-010"
+          }
+        ]
+      }
+    },
+    "routes": [
+      {
+        "address": "0.0.0.0/0",
+        "gateway": "192.168.109.1",
+        "prefix": "0"
+      }
+    ]
+  },
+  {
+    "servers": [
+      "192.168.1.20",
+      "192.168.1.30"
+    ],
+    "network_name": "net-tailscale-011",
+    "type": "tailscale",
+    "mode": null,
+    "private": true,
+    "network_uid": "net-synth-011",
+    "creator_uid": "synthetic",
+    "device_name": "ts-011",
+    "libvirt_network": "",
+    "ip": {
+      "address": "100.74.10.1/16",
+      "net_bits": 16,
+      "dhcp": null
+    },
+    "headscale": {
+      "address": "https://headscale-011.synthetic.local",
+      "headscale_user": "user-011",
+      "api_key": "key-011"
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.30"
+    ],
+    "network_name": "net-shared-012",
+    "type": "shared",
+    "mode": "open",
+    "private": false,
+    "network_uid": "net-synth-012",
+    "creator_uid": "synthetic",
+    "device_name": "",
+    "libvirt_network": "",
+    "ip": {
+      "address": "10.21.0.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "10.21.0.50",
+        "end": "10.21.0.150",
+        "hosts": []
+      }
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.10"
+    ],
+    "network_name": "net-libvirt-013",
+    "type": "libvirt",
+    "mode": "bridge",
+    "private": true,
+    "network_uid": "net-synth-013",
+    "creator_uid": "synthetic",
+    "device_name": "br-013",
+    "libvirt_network": "net-libvirt-013",
+    "ip": {
+      "address": "",
+      "dhcp": null,
+      "net_bits": null
+    }
+  },
+  {
+    "servers": [
+      "10.0.0.5"
+    ],
+    "network_name": "net-libvirt-014",
+    "type": "libvirt",
+    "mode": "nat",
+    "private": true,
+    "network_uid": "net-synth-014",
+    "creator_uid": "synthetic",
+    "device_name": "virbr-014",
+    "libvirt_network": "net-libvirt-014",
+    "ip": {
+      "address": "192.168.113.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "192.168.113.100",
+        "end": "192.168.113.200",
+        "hosts": [
+          {
+            "mac": "52:54:00:01:14:01",
+            "address": "192.168.113.101",
+            "name": "debian-vm-014"
+          }
+        ]
+      }
+    },
+    "routes": [
+      {
+        "address": "0.0.0.0/0",
+        "gateway": "192.168.113.1",
+        "prefix": "0"
+      }
+    ]
+  },
+  {
+    "servers": [
+      "192.168.1.20",
+      "192.168.1.30"
+    ],
+    "network_name": "net-tailscale-015",
+    "type": "tailscale",
+    "mode": null,
+    "private": true,
+    "network_uid": "net-synth-015",
+    "creator_uid": "synthetic",
+    "device_name": "ts-015",
+    "libvirt_network": "",
+    "ip": {
+      "address": "100.78.14.1/16",
+      "net_bits": 16,
+      "dhcp": null
+    },
+    "headscale": {
+      "address": "https://headscale-015.synthetic.local",
+      "headscale_user": "user-015",
+      "api_key": "key-015"
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.30"
+    ],
+    "network_name": "net-shared-016",
+    "type": "shared",
+    "mode": "open",
+    "private": true,
+    "network_uid": "net-synth-016",
+    "creator_uid": "synthetic",
+    "device_name": "",
+    "libvirt_network": "",
+    "ip": {
+      "address": "10.25.0.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "10.25.0.50",
+        "end": "10.25.0.150",
+        "hosts": []
+      }
+    }
+  },
+  {
+    "servers": [
+      "192.168.1.10"
+    ],
+    "network_name": "net-libvirt-017",
+    "type": "libvirt",
+    "mode": "bridge",
+    "private": true,
+    "network_uid": "net-synth-017",
+    "creator_uid": "synthetic",
+    "device_name": "br-017",
+    "libvirt_network": "net-libvirt-017",
+    "ip": {
+      "address": "",
+      "dhcp": null,
+      "net_bits": null
+    }
+  },
+  {
+    "servers": [
+      "10.0.0.5"
+    ],
+    "network_name": "net-libvirt-018",
+    "type": "libvirt",
+    "mode": "nat",
+    "private": true,
+    "network_uid": "net-synth-018",
+    "creator_uid": "synthetic",
+    "device_name": "virbr-018",
+    "libvirt_network": "net-libvirt-018",
+    "ip": {
+      "address": "192.168.117.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "192.168.117.100",
+        "end": "192.168.117.200",
+        "hosts": [
+          {
+            "mac": "52:54:00:01:18:01",
+            "address": "192.168.117.101",
+            "name": "centos-vm-018"
+          }
+        ]
+      }
+    },
+    "routes": [
+      {
+        "address": "0.0.0.0/0",
+        "gateway": "192.168.117.1",
+        "prefix": "0"
+      }
+    ]
+  }
+]

@@ -1,0 +1,830 @@
+[
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-001",
+    "billing_uuid": "billing-kaas-001",
+    "cluster_name": "google-fr-par-k8s-001",
+    "status": "running",
+    "version": "1.32",
+    "network_cidr": "10.40.0.0/16",
+    "location": "fr-par"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-002",
+    "billing_uuid": "billing-kaas-002",
+    "cluster_name": "ovh-gra7-k8s-002",
+    "status": "running",
+    "version": "1.33",
+    "network_cidr": "10.41.1.0/16",
+    "location": "gra7"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-003",
+    "billing_uuid": "billing-kaas-003",
+    "cluster_name": "upcloud-rbx-k8s-003",
+    "status": "running",
+    "version": "1.34",
+    "network_cidr": "10.42.2.0/16",
+    "location": "rbx"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-004",
+    "billing_uuid": "billing-kaas-004",
+    "cluster_name": "scaleway-europe-west1-k8s-004",
+    "status": "stopped",
+    "version": "1.33",
+    "network_cidr": "10.43.3.0/16",
+    "location": "europe-west1"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-005",
+    "billing_uuid": "billing-kaas-005",
+    "cluster_name": "google-europe-west4-k8s-005",
+    "status": "updating",
+    "version": "1.34",
+    "network_cidr": "10.44.4.0/16",
+    "location": "europe-west4"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-006",
+    "billing_uuid": "billing-kaas-006",
+    "cluster_name": "ovh-nl-ams-k8s-006",
+    "status": "error",
+    "version": "1.32",
+    "network_cidr": "10.45.5.0/16",
+    "location": "nl-ams"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-007",
+    "billing_uuid": "billing-kaas-007",
+    "cluster_name": "upcloud-fi-hel2-k8s-007",
+    "status": "provisioning",
+    "version": "1.34",
+    "network_cidr": "10.46.6.0/16",
+    "location": "fi-hel2"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-008",
+    "billing_uuid": "billing-kaas-008",
+    "cluster_name": "scaleway-de-fra1-k8s-008",
+    "status": "running",
+    "version": "1.32",
+    "network_cidr": "10.47.7.0/16",
+    "location": "de-fra1"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-009",
+    "billing_uuid": "billing-kaas-009",
+    "cluster_name": "google-pl-waw1-k8s-009",
+    "status": "running",
+    "version": "1.33",
+    "network_cidr": "10.48.8.0/16",
+    "location": "pl-waw1"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-010",
+    "billing_uuid": "billing-kaas-010",
+    "cluster_name": "ovh-us-east1-k8s-010",
+    "status": "running",
+    "version": "1.32",
+    "network_cidr": "10.49.9.0/16",
+    "location": "us-east1"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-011",
+    "billing_uuid": "billing-kaas-011",
+    "cluster_name": "upcloud-eastus-k8s-011",
+    "status": "stopped",
+    "version": "1.33",
+    "network_cidr": "10.50.10.0/16",
+    "location": "eastus"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-012",
+    "billing_uuid": "billing-kaas-012",
+    "cluster_name": "scaleway-westeurope-k8s-012",
+    "status": "updating",
+    "version": "1.34",
+    "network_cidr": "10.51.11.0/16",
+    "location": "westeurope"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-013",
+    "billing_uuid": "billing-kaas-013",
+    "cluster_name": "google-eu-central-1-k8s-013",
+    "status": "error",
+    "version": "1.33",
+    "network_cidr": "10.52.12.0/16",
+    "location": "eu-central-1"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-014",
+    "billing_uuid": "billing-kaas-014",
+    "cluster_name": "ovh-eu-central-2-k8s-014",
+    "status": "provisioning",
+    "version": "1.34",
+    "network_cidr": "10.53.13.0/16",
+    "location": "eu-central-2"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-015",
+    "billing_uuid": "billing-kaas-015",
+    "cluster_name": "upcloud-uk-lon1-k8s-015",
+    "status": "running",
+    "version": "1.32",
+    "network_cidr": "10.54.14.0/16",
+    "location": "uk-lon1"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-016",
+    "billing_uuid": "billing-kaas-016",
+    "cluster_name": "scaleway-fr-par-k8s-016",
+    "status": "running",
+    "version": "1.34",
+    "network_cidr": "10.55.15.0/16",
+    "location": "fr-par"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-017",
+    "billing_uuid": "billing-kaas-017",
+    "cluster_name": "google-gra7-k8s-017",
+    "status": "running",
+    "version": "1.32",
+    "network_cidr": "10.56.16.0/16",
+    "location": "gra7"
+  },
+  {
+    "service_type": "kaas",
+    "service_uuid": "kaas-synth-018",
+    "billing_uuid": "billing-kaas-018",
+    "cluster_name": "ovh-rbx-k8s-018",
+    "status": "stopped",
+    "version": "1.33",
+    "network_cidr": "10.57.17.0/16",
+    "location": "rbx"
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-001",
+    "billing_uuid": "billing-os-001",
+    "name": "ovh-rbx-bucket-001",
+    "endpoint": "https://s3.rbx.io.cloud.ovh.net",
+    "region": "rbx",
+    "active_storage": 1073741824
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-002",
+    "billing_uuid": "billing-os-002",
+    "name": "scaleway-europe-west1-bucket-002",
+    "endpoint": "https://s3.europe-west1.scw.cloud",
+    "region": "europe-west1",
+    "active_storage": 5368709120
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-003",
+    "billing_uuid": "billing-os-003",
+    "name": "google-europe-west4-bucket-003",
+    "endpoint": "https://storage.googleapis.com/europe-west4-bucket",
+    "region": "europe-west4",
+    "active_storage": 10737418240
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-004",
+    "billing_uuid": "billing-os-004",
+    "name": "azure-nl-ams-bucket-004",
+    "endpoint": "https://nl-ams.blob.core.windows.net",
+    "region": "nl-ams",
+    "active_storage": 53687091200
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-005",
+    "billing_uuid": "billing-os-005",
+    "name": "wasabi-fi-hel2-bucket-005",
+    "endpoint": "https://s3.fi-hel2.wasabisys.com",
+    "region": "fi-hel2",
+    "active_storage": 107374182400
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-006",
+    "billing_uuid": "billing-os-006",
+    "name": "impossiblecloud-de-fra1-bucket-006",
+    "endpoint": "https://storage.de-fra1.impossiblecloud.io",
+    "region": "de-fra1",
+    "active_storage": 268435456000
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-007",
+    "billing_uuid": "billing-os-007",
+    "name": "upcloud-pl-waw1-bucket-007",
+    "endpoint": "https://object.pl-waw1.upcloudobjects.com",
+    "region": "pl-waw1",
+    "active_storage": 536870912000
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-008",
+    "billing_uuid": "billing-os-008",
+    "name": "ovh-us-east1-bucket-008",
+    "endpoint": "https://s3.us-east1.io.cloud.ovh.net",
+    "region": "us-east1",
+    "active_storage": 1099511627776
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-009",
+    "billing_uuid": "billing-os-009",
+    "name": "scaleway-eastus-bucket-009",
+    "endpoint": "https://s3.eastus.scw.cloud",
+    "region": "eastus",
+    "active_storage": 2199023255552
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-010",
+    "billing_uuid": "billing-os-010",
+    "name": "google-westeurope-bucket-010",
+    "endpoint": "https://storage.googleapis.com/westeurope-bucket",
+    "region": "westeurope",
+    "active_storage": 4398046511104
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-011",
+    "billing_uuid": "billing-os-011",
+    "name": "azure-eu-central-1-bucket-011",
+    "endpoint": "https://eu-central-1.blob.core.windows.net",
+    "region": "eu-central-1",
+    "active_storage": 1073741824
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-012",
+    "billing_uuid": "billing-os-012",
+    "name": "wasabi-eu-central-2-bucket-012",
+    "endpoint": "https://s3.eu-central-2.wasabisys.com",
+    "region": "eu-central-2",
+    "active_storage": 5368709120
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-013",
+    "billing_uuid": "billing-os-013",
+    "name": "impossiblecloud-uk-lon1-bucket-013",
+    "endpoint": "https://storage.uk-lon1.impossiblecloud.io",
+    "region": "uk-lon1",
+    "active_storage": 10737418240
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-014",
+    "billing_uuid": "billing-os-014",
+    "name": "upcloud-fr-par-bucket-014",
+    "endpoint": "https://object.fr-par.upcloudobjects.com",
+    "region": "fr-par",
+    "active_storage": 53687091200
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-015",
+    "billing_uuid": "billing-os-015",
+    "name": "ovh-gra7-bucket-015",
+    "endpoint": "https://s3.gra7.io.cloud.ovh.net",
+    "region": "gra7",
+    "active_storage": 107374182400
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-016",
+    "billing_uuid": "billing-os-016",
+    "name": "scaleway-rbx-bucket-016",
+    "endpoint": "https://s3.rbx.scw.cloud",
+    "region": "rbx",
+    "active_storage": 268435456000
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-017",
+    "billing_uuid": "billing-os-017",
+    "name": "google-europe-west1-bucket-017",
+    "endpoint": "https://storage.googleapis.com/europe-west1-bucket",
+    "region": "europe-west1",
+    "active_storage": 536870912000
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-synth-018",
+    "billing_uuid": "billing-os-018",
+    "name": "azure-europe-west4-bucket-018",
+    "endpoint": "https://europe-west4.blob.core.windows.net",
+    "region": "europe-west4",
+    "active_storage": 1099511627776
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-001",
+    "billing_uuid": "billing-dbaas-001",
+    "name": "postgres-nl-ams-001",
+    "region": "nl-ams",
+    "engine": "postgres",
+    "backup_time": 1704067200,
+    "disk_size": 10737418240,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-002",
+    "billing_uuid": "billing-dbaas-002",
+    "name": "mysql-fi-hel2-002",
+    "region": "fi-hel2",
+    "engine": "mysql",
+    "backup_time": 1704153600,
+    "disk_size": 26843545600,
+    "nodes_number": "2"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-003",
+    "billing_uuid": "billing-dbaas-003",
+    "name": "redis-de-fra1-003",
+    "region": "de-fra1",
+    "engine": "redis",
+    "backup_time": 1704240000,
+    "disk_size": 53687091200,
+    "nodes_number": "3"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-004",
+    "billing_uuid": "billing-dbaas-004",
+    "name": "sqlserver-pl-waw1-004",
+    "region": "pl-waw1",
+    "engine": "sqlserver",
+    "backup_time": 1704326400,
+    "disk_size": 107374182400,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-005",
+    "billing_uuid": "billing-dbaas-005",
+    "name": "postgres-us-east1-005",
+    "region": "us-east1",
+    "engine": "postgres",
+    "backup_time": 1704412800,
+    "disk_size": 214748364800,
+    "nodes_number": "2"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-006",
+    "billing_uuid": "billing-dbaas-006",
+    "name": "mysql-eastus-006",
+    "region": "eastus",
+    "engine": "mysql",
+    "backup_time": 1704499200,
+    "disk_size": 536870912000,
+    "nodes_number": "3"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-007",
+    "billing_uuid": "billing-dbaas-007",
+    "name": "redis-westeurope-007",
+    "region": "westeurope",
+    "engine": "redis",
+    "backup_time": 1704585600,
+    "disk_size": 10737418240,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-008",
+    "billing_uuid": "billing-dbaas-008",
+    "name": "sqlserver-eu-central-1-008",
+    "region": "eu-central-1",
+    "engine": "sqlserver",
+    "backup_time": 1704672000,
+    "disk_size": 26843545600,
+    "nodes_number": "2"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-009",
+    "billing_uuid": "billing-dbaas-009",
+    "name": "postgres-eu-central-2-009",
+    "region": "eu-central-2",
+    "engine": "postgres",
+    "backup_time": 1704758400,
+    "disk_size": 53687091200,
+    "nodes_number": "3"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-010",
+    "billing_uuid": "billing-dbaas-010",
+    "name": "mysql-uk-lon1-010",
+    "region": "uk-lon1",
+    "engine": "mysql",
+    "backup_time": 1704844800,
+    "disk_size": 107374182400,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-011",
+    "billing_uuid": "billing-dbaas-011",
+    "name": "redis-fr-par-011",
+    "region": "fr-par",
+    "engine": "redis",
+    "backup_time": 1704931200,
+    "disk_size": 214748364800,
+    "nodes_number": "2"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-012",
+    "billing_uuid": "billing-dbaas-012",
+    "name": "sqlserver-gra7-012",
+    "region": "gra7",
+    "engine": "sqlserver",
+    "backup_time": 1705017600,
+    "disk_size": 536870912000,
+    "nodes_number": "3"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-013",
+    "billing_uuid": "billing-dbaas-013",
+    "name": "postgres-rbx-013",
+    "region": "rbx",
+    "engine": "postgres",
+    "backup_time": 1705104000,
+    "disk_size": 10737418240,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-014",
+    "billing_uuid": "billing-dbaas-014",
+    "name": "mysql-europe-west1-014",
+    "region": "europe-west1",
+    "engine": "mysql",
+    "backup_time": 1705190400,
+    "disk_size": 26843545600,
+    "nodes_number": "2"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-015",
+    "billing_uuid": "billing-dbaas-015",
+    "name": "redis-europe-west4-015",
+    "region": "europe-west4",
+    "engine": "redis",
+    "backup_time": 1705276800,
+    "disk_size": 53687091200,
+    "nodes_number": "3"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-016",
+    "billing_uuid": "billing-dbaas-016",
+    "name": "sqlserver-nl-ams-016",
+    "region": "nl-ams",
+    "engine": "sqlserver",
+    "backup_time": 1705363200,
+    "disk_size": 107374182400,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-017",
+    "billing_uuid": "billing-dbaas-017",
+    "name": "postgres-fi-hel2-017",
+    "region": "fi-hel2",
+    "engine": "postgres",
+    "backup_time": 1705449600,
+    "disk_size": 214748364800,
+    "nodes_number": "2"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-synth-018",
+    "billing_uuid": "billing-dbaas-018",
+    "name": "mysql-de-fra1-018",
+    "region": "de-fra1",
+    "engine": "mysql",
+    "backup_time": 1705536000,
+    "disk_size": 536870912000,
+    "nodes_number": "3"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-001",
+    "billing_uuid": "billing-n8n-001",
+    "vm_name": "n8n-google-de-fra1-001",
+    "status": "running",
+    "region": "de-fra1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-002",
+    "billing_uuid": "billing-n8n-002",
+    "vm_name": "n8n-upcloud-pl-waw1-002",
+    "status": "running",
+    "region": "pl-waw1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-003",
+    "billing_uuid": "billing-n8n-003",
+    "vm_name": "n8n-google-us-east1-003",
+    "status": "stopped",
+    "region": "us-east1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-004",
+    "billing_uuid": "billing-n8n-004",
+    "vm_name": "n8n-upcloud-eastus-004",
+    "status": "updating",
+    "region": "eastus"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-005",
+    "billing_uuid": "billing-n8n-005",
+    "vm_name": "n8n-google-westeurope-005",
+    "status": "error",
+    "region": "westeurope"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-006",
+    "billing_uuid": "billing-n8n-006",
+    "vm_name": "n8n-upcloud-eu-central-1-006",
+    "status": "provisioning",
+    "region": "eu-central-1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-007",
+    "billing_uuid": "billing-n8n-007",
+    "vm_name": "n8n-google-eu-central-2-007",
+    "status": "running",
+    "region": "eu-central-2"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-008",
+    "billing_uuid": "billing-n8n-008",
+    "vm_name": "n8n-upcloud-uk-lon1-008",
+    "status": "running",
+    "region": "uk-lon1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-009",
+    "billing_uuid": "billing-n8n-009",
+    "vm_name": "n8n-google-fr-par-009",
+    "status": "stopped",
+    "region": "fr-par"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-010",
+    "billing_uuid": "billing-n8n-010",
+    "vm_name": "n8n-upcloud-gra7-010",
+    "status": "updating",
+    "region": "gra7"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-011",
+    "billing_uuid": "billing-n8n-011",
+    "vm_name": "n8n-google-rbx-011",
+    "status": "error",
+    "region": "rbx"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-012",
+    "billing_uuid": "billing-n8n-012",
+    "vm_name": "n8n-upcloud-europe-west1-012",
+    "status": "provisioning",
+    "region": "europe-west1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-013",
+    "billing_uuid": "billing-n8n-013",
+    "vm_name": "n8n-google-europe-west4-013",
+    "status": "running",
+    "region": "europe-west4"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-014",
+    "billing_uuid": "billing-n8n-014",
+    "vm_name": "n8n-upcloud-nl-ams-014",
+    "status": "running",
+    "region": "nl-ams"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-015",
+    "billing_uuid": "billing-n8n-015",
+    "vm_name": "n8n-google-fi-hel2-015",
+    "status": "stopped",
+    "region": "fi-hel2"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-016",
+    "billing_uuid": "billing-n8n-016",
+    "vm_name": "n8n-upcloud-de-fra1-016",
+    "status": "updating",
+    "region": "de-fra1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-017",
+    "billing_uuid": "billing-n8n-017",
+    "vm_name": "n8n-google-pl-waw1-017",
+    "status": "error",
+    "region": "pl-waw1"
+  },
+  {
+    "service_type": "n8n",
+    "service_uuid": "n8n-synth-018",
+    "billing_uuid": "billing-n8n-018",
+    "vm_name": "n8n-upcloud-us-east1-018",
+    "status": "provisioning",
+    "region": "us-east1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-001",
+    "billing_uuid": "billing-openclaw-001",
+    "vm_name": "claw-google-westeurope-001",
+    "status": "stopped",
+    "region": "westeurope"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-002",
+    "billing_uuid": "billing-openclaw-002",
+    "vm_name": "claw-azure-eu-central-1-002",
+    "status": "updating",
+    "region": "eu-central-1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-003",
+    "billing_uuid": "billing-openclaw-003",
+    "vm_name": "claw-google-eu-central-2-003",
+    "status": "error",
+    "region": "eu-central-2"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-004",
+    "billing_uuid": "billing-openclaw-004",
+    "vm_name": "claw-azure-uk-lon1-004",
+    "status": "provisioning",
+    "region": "uk-lon1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-005",
+    "billing_uuid": "billing-openclaw-005",
+    "vm_name": "claw-google-fr-par-005",
+    "status": "running",
+    "region": "fr-par"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-006",
+    "billing_uuid": "billing-openclaw-006",
+    "vm_name": "claw-azure-gra7-006",
+    "status": "running",
+    "region": "gra7"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-007",
+    "billing_uuid": "billing-openclaw-007",
+    "vm_name": "claw-google-rbx-007",
+    "status": "stopped",
+    "region": "rbx"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-008",
+    "billing_uuid": "billing-openclaw-008",
+    "vm_name": "claw-azure-europe-west1-008",
+    "status": "updating",
+    "region": "europe-west1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-009",
+    "billing_uuid": "billing-openclaw-009",
+    "vm_name": "claw-google-europe-west4-009",
+    "status": "error",
+    "region": "europe-west4"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-010",
+    "billing_uuid": "billing-openclaw-010",
+    "vm_name": "claw-azure-nl-ams-010",
+    "status": "provisioning",
+    "region": "nl-ams"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-011",
+    "billing_uuid": "billing-openclaw-011",
+    "vm_name": "claw-google-fi-hel2-011",
+    "status": "running",
+    "region": "fi-hel2"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-012",
+    "billing_uuid": "billing-openclaw-012",
+    "vm_name": "claw-azure-de-fra1-012",
+    "status": "running",
+    "region": "de-fra1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-013",
+    "billing_uuid": "billing-openclaw-013",
+    "vm_name": "claw-google-pl-waw1-013",
+    "status": "stopped",
+    "region": "pl-waw1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-014",
+    "billing_uuid": "billing-openclaw-014",
+    "vm_name": "claw-azure-us-east1-014",
+    "status": "updating",
+    "region": "us-east1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-015",
+    "billing_uuid": "billing-openclaw-015",
+    "vm_name": "claw-google-eastus-015",
+    "status": "error",
+    "region": "eastus"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-016",
+    "billing_uuid": "billing-openclaw-016",
+    "vm_name": "claw-azure-westeurope-016",
+    "status": "provisioning",
+    "region": "westeurope"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-017",
+    "billing_uuid": "billing-openclaw-017",
+    "vm_name": "claw-google-eu-central-1-017",
+    "status": "running",
+    "region": "eu-central-1"
+  },
+  {
+    "service_type": "openclaw",
+    "service_uuid": "openclaw-synth-018",
+    "billing_uuid": "billing-openclaw-018",
+    "vm_name": "claw-azure-eu-central-2-018",
+    "status": "running",
+    "region": "eu-central-2"
+  }
+]
