@@ -22,8 +22,20 @@
 # #Electros                                                                      #
 # #Authors:                                                                      #
 # #- Filippo Ferrando Damillano (fferrando at elemento.cloud)                    #
+# #- Simone Robaldo (srobaldo at elemento.cloud)                                 #
 # #------------------------------------------------------------------------------#
 #
+
+FROM node:24.9.0 AS bundler
+
+WORKDIR /build
+COPY /elemento-gui-new /build
+
+RUN npm i
+RUN npm run build:atomos-gui
+
+RUN mv dist-atomos-gui/electros/electrosOnAtomos.html dist-atomos-gui/electros/electros.html
+RUN mv dist-atomos-gui/electros/configs/atomosFlags.json dist-atomos-gui/electros/configs/flags.json
 
 
 FROM nginx:trixie
@@ -31,9 +43,7 @@ FROM nginx:trixie
 # Stage 1: Copy data
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY electros-daemons/linux/x64/* /opt/daemons/
-COPY elemento-gui-new/ /usr/share/nginx/html/
-COPY elemento-gui-new/electros/configs/atomosFlags.json /usr/share/nginx/html/electros/configs/flags.json
-COPY elemento-gui-new/electros/electrosOnAtomos.html /usr/share/nginx/html/electros/electros.html
+COPY --from=bundler /build/dist-atomos-gui/ /usr/share/nginx/html/
 COPY docker/startup.sh /opt/app/startup.sh
 COPY docker/session_guard.py /opt/app/session_guard.py
 COPY ./docker/follow_log.sh /opt/app/follow_log.sh
