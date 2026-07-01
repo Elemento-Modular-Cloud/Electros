@@ -61,7 +61,7 @@ function createMainWindow() {
     }
 
     // Inject custom titlebar after the page loads
-    win.webContents.once('did-finish-load', () => {
+    win.webContents.on('did-finish-load', () => {
         try {
             const safeJS = typeof PreloadedContent.Js.Titlebar === 'string'
               ? PreloadedContent.Js.Titlebar
@@ -172,7 +172,7 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
     try {
         // Inject custom titlebar CSS and HTML before loading the URL
         if (!options.defaultTitlebar) {
-            popup.webContents.once('did-finish-load', () => {
+            popup.webContents.on('did-finish-load', () => {
                 const popupTitlebarJS = PreloadedContent.Js.Titlebar.replace(
                   'titleElement.textContent = document.title;',
                   `titleElement.textContent = ${JSON.stringify(options.title)};`
@@ -405,7 +405,7 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
 
         event.sender.ssh_port = ssh_port;
 
-        sshWindow.webContents.once('did-finish-load', () => {
+        sshWindow.webContents.on('did-finish-load', () => {
             const sshTitlebarJS = PreloadedContent.Js.Titlebar.replace(
               'titleElement.textContent = document.title;',
               `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
