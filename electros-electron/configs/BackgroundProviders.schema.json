@@ -18,6 +18,10 @@
           "type": "string",
           "description": "Icon identifier/path for the provider."
         },
+        "colour": {
+          "type": "string",
+          "description": "Colour of box in UI"
+        },
         "name": {
           "type": "string",
           "description": "Display name of the provider."
