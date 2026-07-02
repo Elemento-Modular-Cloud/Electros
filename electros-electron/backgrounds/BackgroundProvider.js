@@ -27,6 +27,8 @@ const {XMLParser} = require("fast-xml-parser");
 /**
  * @typedef {Object} BackgroundProviderData
  *  @property {BackgroundProviderFeedData} feed
+ *  @property {string} name
+ *  @property {string} icon
  */
 
 /**
@@ -40,11 +42,17 @@ const {XMLParser} = require("fast-xml-parser");
 
 
 class BackgroundProvider {
-    static ProvidersFile = path.join(process.resourcesPath ?? "./", 'configs','BackgroundProviders.json');
+    static ProvidersFile = path.resolve(path.join('configs','BackgroundProviders.json'));
     static Providers = [];
 
     /** @type {!string} **/
     name;
+
+    /** @type {!string} **/
+    uiName;
+
+    /** @type {!string} **/
+    icon;
 
     /** @type {!string} */
     feedUrl;
@@ -61,7 +69,7 @@ class BackgroundProvider {
     /** @type {?string} **/
     copyright;
 
-    constructor(name, {
+    constructor(name, uiName, icon, {
         url,
         format,
         itemStructure,
@@ -69,6 +77,8 @@ class BackgroundProvider {
         copyright = null,
     }) {
         this.name = name;
+        this.uiName = uiName;
+        this.icon = icon;
         this.feedUrl = url;
         this.format = format;
         this.itemStructure = itemStructure;
@@ -138,7 +148,10 @@ class BackgroundProvider {
     _parseXmlFeed(feedData) {
         const parser = new XMLParser({
             ignoreAttributes: false,
-            attributeNamePrefix: "attr_"
+            attributeNamePrefix: "attr_",
+            processEntities: {
+                maxEntityCount: 10_000
+            }
         });
 
         /** @type {Object} */
@@ -166,10 +179,16 @@ class BackgroundProvider {
      * @private
      */
     _mapXml(feedObject) {
+        let imgUrl = this._handleXmlKey(feedObject, this.itemStructure.imgUrl);
+
+        if (this.name === "wikimedia") {
+            imgUrl = imgUrl.replace('/thumb', '').replace(/[^/]*$/, '').replace(/\/$/, '');
+        }
+
         return {
             title: this._handleXmlKey(feedObject, this.itemStructure.title),
             description: this._handleXmlKey(feedObject, this.itemStructure.description),
-            imgUrl: this._handleXmlKey(feedObject, this.itemStructure.imgUrl),
+            imgUrl: imgUrl,
             thumbUrl: this._handleXmlKey(feedObject, this.itemStructure.thumbUrl),
             pubDate: this._handleXmlKey(feedObject, this.itemStructure.pubDate),
             copyright: this._handleXmlKey(feedObject, this.itemStructure.copyright)
@@ -205,14 +224,22 @@ class BackgroundProvider {
         return (attr !== null) ? item[attr] : item;
     }
 
+    toFrontendJson() {
+        return {
+            name: this.uiName,
+            icon: this.icon,
+            reference: this.name
+        };
+    }
+
     static initialize() {
         try {
-            /** @type {Object<!string, !BackgroundProviderData>} */
+            /** @type {Record<!string, !BackgroundProviderData>} */
             const data = JSON.parse(fs.readFileSync(BackgroundProvider.ProvidersFile, 'utf-8'));
 
             Object.entries(data).forEach(([providerName, config]) => {
                 BackgroundProvider.Providers.push(
-                  new BackgroundProvider(providerName, config.feed),
+                  new BackgroundProvider(providerName, config.name, config.icon, config.feed),
                 );
             });
         } catch (e) {
@@ -220,3 +247,5 @@ class BackgroundProvider {
         }
     }
 }
+
+module.exports = BackgroundProvider;

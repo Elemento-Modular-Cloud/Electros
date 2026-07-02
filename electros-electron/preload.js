@@ -7,11 +7,6 @@ contextBridge.exposeInMainWorld('electron', {
             'write-config',
             'read-hosts',
             'write-hosts',
-            'list-backgrounds',
-            'get-background-data',
-            'import-background',
-            'save-background-from-url',
-            'delete-background',
             'minimize-window',
             'open-ssh',
             'maximize-window',
@@ -28,7 +23,12 @@ contextBridge.exposeInMainWorld('electron', {
             'app-version',
             'safestorage-encrypt',
             'safestorage-decrypt',
-            'get-daemons-log'
+            'get-daemons-log',
+            'background-list',
+            'background-delete',
+            'background-fetch',
+            'background-import',
+            'background-providers'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

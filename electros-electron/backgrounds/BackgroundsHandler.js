@@ -1,7 +1,11 @@
-import path from "path";
-import fs from "fs";
-import sharp from "sharp";
-import os from "node:os";
+const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
+const os = require('node:os');
+const BackgroundProvider = require('./BackgroundProvider');
+const {ipcMain, dialog} = require("electron");
+const {resolve} = require("path");
+const buffer = require("node:buffer");
 
 
 /**
@@ -9,11 +13,12 @@ import os from "node:os";
  *  @property {string} name
  *  @property {string} path
  *  @property {string} fileUrl
+ *  @property {BackgroundImageData|undefined} metadata
  */
 
 
 /**
- * @static Handler for local wallpapers
+ * Handler for local wallpapers
  *
  */
 class BackgroundsHandler {
@@ -28,53 +33,111 @@ class BackgroundsHandler {
      * @description
      *
      *
-     * @param {!string} sourcePath Path to the image file
+     * @param {!Buffer} data Path to the image file
      * @param {!number} quality Quality of the outputted WebP, defaults to 80%
-     * @returns {?string} Path to the converted WebP image. Null when an error occurs
+     * @param {object|string} exifData Data to embed
+     * @returns {Promise<Buffer>} Buffer of new image in webp
      * @static
      */
-    static async ConvertImageToWebp({sourcePath, quality = 80}) {
-        try {
-            const extension = path.extname(sourcePath).toLowerCase();
-            if (extension === '.webp') {
-                return sourcePath;
+    static ConvertImageToWebp({data, quality = 80, exifData = ""}) {
+        return new Promise((resolve, reject) => {
+            try {
+                const bufPromise = sharp(data)
+                    .webp({quality: quality})
+                    .withExifMerge({
+                        IFD0: { ImageDescription: (typeof exifData === 'string') ? exifData : Buffer.from(JSON.stringify(exifData)).toString('base64') }
+                    })
+                    .toBuffer()
+
+                bufPromise.then(resolve).catch(reject);
+            } catch (error) {
+                console.error(error);
+                reject(error);
             }
-
-            const dir = path.dirname(sourcePath);
-            const baseName = path.basename(sourcePath, extension);
-            const webpPath = path.join(dir, `${baseName}.webp`);
-
-            if (fs.existsSync(webpPath)) {
-                return webpPath;
-            }
-
-            await sharp(sourcePath)
-              .webp({quality: quality})
-              .toFile(webpPath);
-
-            return webpPath;
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
+        });
     }
 
     /**
      *
+     * @param {string} targetFile Path to file to import
      * @static
      */
     static ImportBackground() {
         BackgroundsHandler._CheckOrCreateBackgroundsFolder();
 
+        return new Promise((resolve, reject) => {
+            dialog.showOpenDialog({
+                title: "Select Background Image",
+                filters: [
+                    {name: 'Images', extenions: this.SupportedFormats}
+                ],
+                properties: ['openFile']
+            }).then(result => {
+                if (result.canceled || result.filePaths.length === 0) { reject(); }
+
+                const sourcePath = result.filePaths[0];
+                fs.readFile(sourcePath, (err, data) => {
+                    const filename = path.basename(sourcePath).replace(/[^\.]*$/, 'webp');
+                    const destinationPath = path.join(this.BackgroundDir, filename)
+                    this.ConvertImageToWebp({
+                        data: data,
+                        exifData: {  }
+                    }).then(resultBuffer => {
+                        fs.writeFile(destinationPath, resultBuffer, () => {
+                            resolve({
+                                name: filename,
+                                path: destinationPath,
+                                fileUrl: `file://${destinationPath}`,
+                                metadata: {}
+                            });
+                        });
+                    }).catch(reject);
+                });
+            }).catch(error => {
+                console.error(error);
+                reject(error);
+            })
+        });
     }
 
     /**
      *
+     * @param {string} url Direct path of the Image; will be converted to Webp once downloaded
+     * @param {string|undefined} filename A filename to store the image in; if undefined, a random string will be used
+     * @param {object} metadata metadata
+     * @return {Promise<Background>}
      * @static
      */
-    static DownloadBackground() {
+    static DownloadBackground(url, filename = "temptemptemp", metadata) {
         BackgroundsHandler._CheckOrCreateBackgroundsFolder();
 
+        return new Promise((resolve, reject) => {
+            try {
+                fetch(url).then(res => {
+                    return res.arrayBuffer()
+                }).then(imgBuf => {
+                    const buffer = Buffer.from(imgBuf);
+                    const destPath = path.join(this.BackgroundDir, `${filename}.webp`);
+
+                    this.ConvertImageToWebp({ data: buffer, exifData: metadata }).then(webpBuf => {
+                        fs.writeFile(destPath, webpBuf, () => {
+                            resolve({
+                                name: filename,
+                                path: destPath,
+                                fileUrl: `file://${destPath}`,
+                                metadata: metadata
+                            });
+                        });
+                    }).catch(err => {
+                        console.error(err);
+                        reject(err);
+                    });
+                });
+            } catch (error) {
+                console.error(error);
+                reject(error);
+            }
+        });
     }
 
     /**
@@ -84,7 +147,7 @@ class BackgroundsHandler {
      * Reads the files inside `BackgroundsHandler.BackgroundDir` and returns a list of Background objects, prioritising
      * webp files.
      *
-     * @returns {Array<Background>} List of Backgrounds
+     * @returns {Background[]} List of Backgrounds
      * @static
      */
     static ListBackgrounds() {
@@ -92,13 +155,16 @@ class BackgroundsHandler {
 
         try {
             const files = fs.readdirSync(BackgroundsHandler.BackgroundDir);
+            console.dir(BackgroundsHandler.BackgroundDir);
 
             /** @type {Map<string, Background>} */
             const backgrounds = new Map();
 
             files.forEach(image => {
-                const ext = path.extname(image).toLowerCase();
-                if (!BackgroundsHandler.SupportedFormats.includes(ext)) { return; }
+                const ext = path.extname(image).toLowerCase().replace(/^\./, '');
+                if (!BackgroundsHandler.SupportedFormats.includes(ext)) {
+                    return;
+                }
 
                 const baseName = path.basename(image, ext);
 
@@ -113,7 +179,7 @@ class BackgroundsHandler {
                 }
             });
 
-            return Array.from(backgrounds.values());
+            return backgrounds.values().toArray();
         } catch (e) {
             console.error(e);
             return [];
@@ -122,20 +188,37 @@ class BackgroundsHandler {
 
     /**
      *
-     * @static
+     * @param {BackgroundProvider} provider
+     * @return {Promise<BackgroundImageData[]>}
+     * @constructor
      */
-    static GetBackgroundData() {
-        BackgroundsHandler._CheckOrCreateBackgroundsFolder();
-
+    static FetchProviderImages(provider) {
+        return new Promise((resolve, reject) => {
+            provider.fetchFeedData().then(feedData => {
+                resolve(feedData);
+            }).catch(error => {
+                console.error(error);
+                reject(error);
+            });
+        });
     }
 
     /**
      *
      * @static
      */
-    static DeleteBackground() {
+    static DeleteBackground(filename) {
         BackgroundsHandler._CheckOrCreateBackgroundsFolder();
 
+        return new Promise((resolve, reject) => {
+            try {
+                fs.unlinkSync(filename);
+                resolve();
+            } catch (error) {
+                console.error(error);
+                reject(error);
+            }
+        })
     }
 
     static _CheckOrCreateBackgroundsFolder() {
@@ -143,4 +226,51 @@ class BackgroundsHandler {
             fs.mkdirSync(BackgroundsHandler.BackgroundDir, { recursive: true });
         }
     }
+
+    static GetProviders() {
+        return BackgroundProvider.Providers.map(p => p.toFrontendJson());
+    }
+
+    /**
+     * Creates folders; loads providers and
+     */
+    static init() {
+        BackgroundProvider.initialize();
+        this._CheckOrCreateBackgroundsFolder();
+
+        ipcMain.handle('background-providers', () => {
+            return this.GetProviders();
+        });
+
+        ipcMain.handle('background-list', () => {
+            return this.ListBackgrounds();
+        });
+
+        ipcMain.handle('background-import', () => {
+            return this.ImportBackground();
+        });
+
+        ipcMain.handle('background-delete', (evt, img) => {
+            return this.DeleteBackground(img);
+        });
+
+        ipcMain.handle('background-fetch', (event, providerName) => {
+            return new Promise(async (res, rej) => {
+                const provider = BackgroundProvider.Providers.find(p => p.name === providerName);
+                if (!provider) { rej(`Invalid provider ${providerName}`); }
+                const imgs = await this.FetchProviderImages(provider);
+                if (imgs.length === 0) { rej("No images returned"); }
+                const img = imgs[imgs.length - 1];
+                const imgDownload = await this.DownloadBackground(
+                    img.imgUrl,
+                    `${provider.name}-${Date.now()}`,
+                    img
+                );
+
+                resolve(imgDownload);
+            });
+        });
+    }
 }
+
+module.exports = BackgroundsHandler;

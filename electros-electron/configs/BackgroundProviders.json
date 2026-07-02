@@ -1,5 +1,7 @@
 {
   "wikimedia": {
+    "name": "Wikimedia POTD",
+    "icon": "",
     "feed": {
       "url": "https://commons.wikimedia.org/w/api.php?action=featuredfeed&feed=potd&feedformat=atom&language=en",
       "format": "application/xml",
@@ -13,6 +15,8 @@
     }
   },
   "bing": {
+    "name": "Bing POTD",
+    "icon": "",
     "feed": {
       "url": "https://peapix.com/bing/feed?country=us&n=1",
       "format": "application/json",
@@ -26,6 +30,8 @@
     }
   },
   "nasa": {
+    "name": "NASA POTD",
+    "icon": "",
     "feed": {
       "url": "https://apod.com/feed.rss",
       "format": "application/xml",

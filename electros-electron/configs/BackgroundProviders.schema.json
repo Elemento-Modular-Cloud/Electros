@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/BackgroundProvider.schema.json",
+  "title": "BackgroundProvider",
+  "description": "Schema for BackgroundProvider.json, a map of provider name -> provider definition.",
+  "type": "object",
+  "minProperties": 1,
+  "additionalProperties": {
+    "$ref": "#/definitions/provider"
+  },
+  "definitions": {
+    "provider": {
+      "type": "object",
+      "required": ["icon", "name", "feed"],
+      "additionalProperties": false,
+      "properties": {
+        "icon": {
+          "type": "string",
+          "description": "Icon identifier/path for the provider."
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the provider."
+        },
+        "feed": {
+          "oneOf": [
+            { "$ref": "#/definitions/xmlFeed" },
+            { "$ref": "#/definitions/jsonFeed" }
+          ]
+        }
+      }
+    },
+
+    "xmlFeed": {
+      "type": "object",
+      "required": ["url", "format", "itemLocation", "itemStructure"],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the XML/RSS feed."
+        },
+        "format": {
+          "const": "application/xml"
+        },
+        "itemLocation": {
+          "type": "string",
+          "description": "Slash-separated path of XML tags leading to (and including) the item tag, e.g. 'rss/channel/item'."
+        },
+        "copyright": {
+          "type": "string",
+          "description": "Optional slash-separated path to a feed-level copyright tag, e.g. 'rss/channel/copyright'."
+        },
+        "itemStructure": {
+          "$ref": "#/definitions/xmlItemStructure"
+        }
+      }
+    },
+
+    "xmlItemStructure": {
+      "type": "object",
+      "description": "Maps output attributes to slash-separated XML tag paths (relative to the item). Use a dot to access an attribute of the final tag, e.g. 'enclosure.url'. imgUrl is the only required attribute.",
+      "required": ["imgUrl"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "pubDate": { "type": "string" },
+        "description": { "type": "string" },
+        "imgUrl": { "type": "string" },
+        "thumbUrl": { "type": "string" },
+        "copyright": {
+          "type": "string",
+          "description": "Path to a repeatable tag; if multiple identical tags are present, values are concatenated."
+        }
+      }
+    },
+
+    "jsonFeed": {
+      "type": "object",
+      "required": ["url", "format", "itemStructure"],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the JSON feed."
+        },
+        "format": {
+          "const": "application/json"
+        },
+        "itemLocation": {
+          "type": "string",
+          "description": "Optional path to the array/location of items within the JSON payload (e.g. for feeds not already a flat array of items)."
+        },
+        "itemStructure": {
+          "$ref": "#/definitions/jsonItemStructure"
+        }
+      }
+    },
+
+    "jsonItemStructure": {
+      "type": "object",
+      "description": "Maps output attributes to JSON field names/paths (relative to the item). imgUrl is the only required attribute.",
+      "required": ["imgUrl"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "pubDate": { "type": "string" },
+        "description": { "type": "string" },
+        "imgUrl": { "type": "string" },
+        "thumbUrl": { "type": "string" },
+        "copyright": {
+          "type": "string",
+          "description": "Field name; if it refers to a repeatable value, entries are concatenated."
+        }
+      }
+    }
+  }
+}

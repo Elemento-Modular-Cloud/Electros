@@ -21,6 +21,7 @@ const {DaemonsNotEnabledError} = require("./common/Daemons.js");
 const fs = require("fs");
 const {homedir} = require("node:os");
 const {WindowProvider} = require("./windows/WindowProvider.js");
+const BackgroundsHandler = require("./backgrounds/BackgroundsHandler.js");
 
 
 let mainWindow = null;
@@ -28,6 +29,7 @@ let mainWindow = null;
 const PreloadedContent = new Loaders(__dirname);
 const platform = new Platform();
 const Rdp = new RdpWindow(PreloadedContent, platform, __dirname);
+BackgroundsHandler.init();
 
 if (process.env.XDG_SESSION_TYPE === 'wayland') {
     app.commandLine.appendSwitch('ozone-platform', 'wayland');
@@ -307,17 +309,6 @@ app.whenReady().then(() => {
     }
 
     createWindows();
-
-    // Convert existing background images to WebP on startup (async, non-blocking)
-    configHandlers.convertExistingBackgrounds().then(result => {
-        if (result.success) {
-            console.log(`Background conversion complete: ${result.converted} converted, ${result.failed} failed, ${result.skipped} skipped`);
-        } else {
-            console.error('Background conversion failed:', result.error);
-        }
-    }).catch(error => {
-        console.error('Error during background conversion:', error);
-    });
 });
 
 app.on('window-all-closed', () => {
