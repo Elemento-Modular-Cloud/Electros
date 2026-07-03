@@ -26,6 +26,10 @@
           "type": "string",
           "description": "Display name of the provider."
         },
+        "dateFormat": {
+          "type": "string",
+          "description": "Format of the date; can be "
+        },
         "feed": {
           "oneOf": [
             { "$ref": "#/definitions/xmlFeed" },

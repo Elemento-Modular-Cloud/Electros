@@ -189,13 +189,18 @@ class BackgroundsHandler {
     /**
      *
      * @param {BackgroundProvider} provider
-     * @return {Promise<BackgroundImageData[]>}
+     * @return {Promise<BackgroundImageData[]>} Sorted by date set of images
      * @constructor
      */
     static FetchProviderImages(provider) {
         return new Promise((resolve, reject) => {
             provider.fetchFeedData().then(feedData => {
-                resolve(feedData);
+                const sortedFeedData = feedData.sort((a, b) => {
+                    if (a.pubDate > b.pubDate) { return -1; }
+                    if (a.pubDate < b.pubDate) { return 1; }
+                    return 0;
+                })
+                resolve(sortedFeedData);
             }).catch(error => {
                 console.error(error);
                 reject(error);
@@ -242,6 +247,43 @@ class BackgroundsHandler {
             return this.GetProviders();
         });
 
+        ipcMain.handle('background-provider-images', (evt, { mode, providerName }) => {
+            return new Promise((resolve, reject) => {
+                if (!mode) { mode = "latest"; }
+                if (!["random", "latest", "entire-set"].includes(mode)) {
+                    reject(new Error("Invalid mode; must be `random`; `latest`; `entire-set"));
+                    return;
+                }
+
+                console.dir(BackgroundProvider.Providers);
+                console.dir(providerName);
+                /** @type {BackgroundProvider | undefined} */
+                const provider = BackgroundProvider.Providers.find(p => p.name === providerName);
+                if (!provider) {
+                    reject(new Error("Invalid provider name"));
+                    return;
+                }
+
+                this.FetchProviderImages(provider).then(images => {
+                    switch (mode) {
+                        case "entire-set":
+                            resolve(images);
+                            break;
+                        case "latest":
+                            resolve(images[0]);
+                            break;
+                        case "random":
+                            const randomImage = images[Math.floor(Math.random() * images.length)];
+                            resolve(randomImage);
+                            break;
+                    }
+                }).catch(error => {
+                    console.error(error);
+                    reject(error);
+                });
+            });
+        });
+
         ipcMain.handle('background-list', () => {
             return this.ListBackgrounds();
         });
@@ -254,6 +296,7 @@ class BackgroundsHandler {
             return this.DeleteBackground(img);
         });
 
+        // TODO)) Improve
         ipcMain.handle('background-fetch', (event, providerName) => {
             return new Promise(async (res, rej) => {
                 const provider = BackgroundProvider.Providers.find(p => p.name === providerName);
@@ -266,6 +309,8 @@ class BackgroundsHandler {
                     `${provider.name}-${Date.now()}`,
                     img
                 );
+
+                console.dir(imgDownload);
 
                 resolve(imgDownload);
             });

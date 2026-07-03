@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const {XMLParser} = require("fast-xml-parser");
+const {DateParser} = require("./DateParser");
 
 
 /**
@@ -11,7 +12,7 @@ const {XMLParser} = require("fast-xml-parser");
  *  @property {?string} thumbUrl URL to the Thumbnail Image
  *  @property {?string} description Description of the image
  *  @property {?Array<string>} copyright List of copyright holders
- *  @property {?string} pubDate Publication date, in any format
+ *  @property {?date} pubDate Publication date, as a Date instance if available
  */
 
 /**
@@ -29,6 +30,7 @@ const {XMLParser} = require("fast-xml-parser");
  *  @property {BackgroundProviderFeedData} feed
  *  @property {string} name
  *  @property {string} icon
+ *  @property {string} dateFormat
  */
 
 /**
@@ -69,7 +71,10 @@ class BackgroundProvider {
     /** @type {?string} **/
     copyright;
 
-    constructor(name, uiName, icon, {
+    /** @type {DateParser} */
+    dateParser;
+
+    constructor(name, uiName, icon, dateFormat, {
         url,
         format,
         itemStructure,
@@ -84,6 +89,7 @@ class BackgroundProvider {
         this.itemStructure = itemStructure;
         this.itemLocation = itemLocation;
         this.copyright = copyright;
+        this.dateParser = new DateParser(dateFormat);
     }
 
     /**
@@ -141,7 +147,7 @@ class BackgroundProvider {
             imgUrl: feedObject[this.itemStructure.imgUrl],
             thumbUrl: feedObject[this.itemStructure.thumbUrl],
             copyright: feedObject[this.itemStructure.copyright],
-            pubDate: feedObject[this.itemStructure.pubDate]
+            pubDate: this.dateParser.parse(feedObject[this.itemStructure.pubDate])
         };
     }
 
@@ -190,7 +196,7 @@ class BackgroundProvider {
             description: this._handleXmlKey(feedObject, this.itemStructure.description),
             imgUrl: imgUrl,
             thumbUrl: this._handleXmlKey(feedObject, this.itemStructure.thumbUrl),
-            pubDate: this._handleXmlKey(feedObject, this.itemStructure.pubDate),
+            pubDate: this.dateParser.parse(this._handleXmlKey(feedObject, this.itemStructure.pubDate)),
             copyright: this._handleXmlKey(feedObject, this.itemStructure.copyright)
         };
     }
@@ -239,7 +245,7 @@ class BackgroundProvider {
 
             Object.entries(data).forEach(([providerName, config]) => {
                 BackgroundProvider.Providers.push(
-                  new BackgroundProvider(providerName, config.name, config.icon, config.feed),
+                  new BackgroundProvider(providerName, config.name, config.icon, config.dateFormat, config.feed),
                 );
             });
         } catch (e) {

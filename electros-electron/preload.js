@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('electron', {
             'background-list',
             'background-delete',
             'background-fetch',
+            'background-provider-images',
             'background-import',
             'background-providers'
         ];
