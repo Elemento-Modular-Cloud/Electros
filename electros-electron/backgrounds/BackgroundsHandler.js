@@ -296,23 +296,27 @@ class BackgroundsHandler {
             return this.DeleteBackground(img);
         });
 
-        // TODO)) Improve
-        ipcMain.handle('background-fetch', (event, providerName) => {
+        ipcMain.handle('background-fetch', (event, { providerName, imgUrl }) => {
+            let imgMeta = {};
             return new Promise(async (res, rej) => {
                 const provider = BackgroundProvider.Providers.find(p => p.name === providerName);
                 if (!provider) { rej(`Invalid provider ${providerName}`); }
-                const imgs = await this.FetchProviderImages(provider);
-                if (imgs.length === 0) { rej("No images returned"); }
-                const img = imgs[imgs.length - 1];
+                if (!imgUrl) {
+                    const imgs = await this.FetchProviderImages(provider);
+                    if (imgs.length === 0) { rej("No images returned"); }
+                    const img = imgs[imgs.length - 1];
+                    imgUrl = img.imgUrl;
+                    imgMeta = img;
+                }
                 const imgDownload = await this.DownloadBackground(
-                    img.imgUrl,
+                    imgUrl,
                     `${provider.name}-${Date.now()}`,
-                    img
+                    imgMeta
                 );
 
                 console.dir(imgDownload);
 
-                resolve(imgDownload);
+                res(imgDownload);
             });
         });
     }
