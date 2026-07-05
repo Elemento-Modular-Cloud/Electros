@@ -30,6 +30,16 @@ cd synthetic-daemons && npm install && npm start
 cd electros-electron && npm start -- --no-daemons
 ```
 
+## Electros TUI (SSH / terminal)
+
+A full terminal UI equivalent lives in [`electros-tui/`](electros-tui/). Use it with synthetic-daemons the same way as the GUI:
+
+```bash
+cd electros-tui && ./scripts/dev-with-mocks.sh
+```
+
+See [electros-tui/README.md](electros-tui/README.md) for flags, navigation, and remote-access behavior.
+
 ## Command line switches
 Electros has a set of custom command line switches other than the Electron switches:
 
