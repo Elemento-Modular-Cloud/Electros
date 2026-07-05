@@ -6,6 +6,8 @@ import (
 
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
+
+	"electros-tui/internal/session"
 )
 
 func TestAlignCellPreservesStyledContent(t *testing.T) {
@@ -42,14 +44,17 @@ func TestPrepareTableRowsFitsAllColumns(t *testing.T) {
 	}
 }
 
-func TestDataTableRendersNoExtraBlankRows(t *testing.T) {
+func TestDataTableFillsHeightWithBottomBorder(t *testing.T) {
 	cols := []table.Column{{Title: "Name", Width: 12}, {Title: "State", Width: 10}}
 	rows := []table.Row{{"vm-a", "running"}, {"vm-b", "stopped"}}
-	dt := dataTable{cols: cols, rows: rows, cursor: 0, width: 30, height: 3}
+	dt := dataTable{cols: cols, rows: rows, cursor: 0, width: 30, height: 6}
 	out := dt.render()
 	lines := strings.Split(out, "\n")
-	if len(lines) != 3 {
-		t.Fatalf("lines = %d, want 3 (header + 2 rows); %q", len(lines), out)
+	if len(lines) != 6 {
+		t.Fatalf("lines = %d, want 6 (header + padded rows + bottom rule); %q", len(lines), out)
+	}
+	if !strings.Contains(lines[5], "─") {
+		t.Fatalf("expected bottom border on last line, got %q", lines[5])
 	}
 }
 
@@ -92,6 +97,35 @@ func TestDataTableRowFillsViewportWidth(t *testing.T) {
 	line := strings.Split(out, "\n")[1]
 	if lipgloss.Width(line) != 40 {
 		t.Fatalf("row width = %d, want 40", lipgloss.Width(line))
+	}
+}
+
+func TestListViewFillsPanelHeight(t *testing.T) {
+	v := &listView{
+		deps: &Deps{Session: &session.Store{}},
+		cfg: listConfig{
+			title: "Test",
+			summary: func(*session.Store) string { return "3 resources" },
+			loader: func(*session.Store) ([]table.Row, []table.Column, error) {
+				return []table.Row{{"a", "b"}}, []table.Column{{Title: "Name", Width: 10}, {Title: "State", Width: 8}}, nil
+			},
+		},
+		w:      40,
+		h:      12,
+		cols:   []table.Column{{Title: "Name", Width: 10}, {Title: "State", Width: 8}},
+		rows:   []table.Row{{"a", "b"}},
+		focused: true,
+	}
+	out := v.View()
+	lines := strings.Split(out, "\n")
+	if len(lines) != 12 {
+		t.Fatalf("view height = %d, want 12", len(lines))
+	}
+	if !strings.Contains(lines[len(lines)-2], "─") {
+		t.Fatalf("expected table bottom border above footer, got %q", lines[len(lines)-2])
+	}
+	if !strings.Contains(lines[len(lines)-1], "items") {
+		t.Fatalf("expected item count on footer line, got %q", lines[len(lines)-1])
 	}
 }
 

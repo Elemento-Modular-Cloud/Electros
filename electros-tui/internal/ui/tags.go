@@ -217,9 +217,9 @@ func targetTypeClass(targetType string) string {
 		return "provider"
 	case "meson_private":
 		return "provider-private"
-	case "proxmox":
+	case "proxmox", "hypervisor_proxmox":
 		return "hypervisor-proxmox"
-	case "esxi", "vmware":
+	case "esxi", "vmware", "hypervisor_esxi":
 		return "hypervisor-esxi"
 	case "remote_atomos":
 		return "remote-atomos"
@@ -241,9 +241,9 @@ func targetTypeLabel(targetType string) string {
 		return "Public Cloud"
 	case "meson_private":
 		return "Private Cloud"
-	case "proxmox":
+	case "proxmox", "hypervisor_proxmox":
 		return "Proxmox"
-	case "esxi", "vmware":
+	case "esxi", "vmware", "hypervisor_esxi":
 		return "ESXi"
 	default:
 		if targetType == "" {

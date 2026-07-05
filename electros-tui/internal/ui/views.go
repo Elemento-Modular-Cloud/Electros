@@ -53,7 +53,7 @@ func NewViewForRoute(path string, deps *Deps, w, h int) View {
 		return newDashboardView(deps, w, h)
 	case base == "my-clouds":
 		return newListView(deps, w, h, listConfig{
-			title:        "My Clouds",
+			title:        "Cloud Targets",
 			loader:       listTargets,
 			summary:      targetListSummary,
 			rowDetail:    targetRowDetail,
@@ -61,7 +61,7 @@ func NewViewForRoute(path string, deps *Deps, w, h int) View {
 			delete:       targetDeleteAction,
 			detailPath:   "my-clouds/detail",
 			contextKey:   "target_id",
-			newPath:      "my-clouds/add-private",
+			newPath:      "my-clouds/add",
 			help:         "Enter/d detail · p ping · x delete · n add · j/k rows",
 		})
 	case strings.HasPrefix(base, "my-clouds/detail"):
@@ -411,12 +411,19 @@ func (v *listView) setContext(idx int) {
 }
 
 func (v *listView) View() string {
-	var b strings.Builder
+	lines := make([]string, 0, v.h)
 	if v.errMsg != "" {
-		b.WriteString(StyleError.Render(v.errMsg) + "\n")
+		lines = append(lines, StyleError.Render(v.errMsg))
 	}
 	if v.cfg.summary != nil {
-		b.WriteString(StyleStatLabel.Render(v.cfg.summary(v.deps.Session)) + "\n\n")
+		lines = append(lines, StyleStatLabel.Render(v.cfg.summary(v.deps.Session)))
+		lines = append(lines, "")
+	}
+
+	footer := v.footerLines()
+	tableH := v.h - len(lines) - len(footer)
+	if tableH < 2 {
+		tableH = 2
 	}
 	dt := dataTable{
 		cols:   v.cols,
@@ -424,43 +431,60 @@ func (v *listView) View() string {
 		cursor: v.cursor,
 		colOff: v.colOff,
 		width:  v.w,
-		height: v.tableHeight(),
+		height: tableH,
 	}
-	b.WriteString(dt.render())
-	b.WriteString("\n")
+	tableLines := strings.Split(dt.render(), "\n")
+	for len(tableLines) < tableH {
+		tableLines = append(tableLines, "")
+	}
+	if len(tableLines) > tableH {
+		tableLines = tableLines[:tableH]
+	}
+	lines = append(lines, tableLines...)
+	lines = append(lines, footer...)
+
+	for len(lines) < v.h {
+		lines = append(lines, "")
+	}
+	if len(lines) > v.h {
+		lines = lines[:v.h]
+	}
+	return strings.Join(lines, "\n")
+}
+
+func (v *listView) footerLines() []string {
+	return []string{v.footerLine()}
+}
+
+func (v *listView) footerLine() string {
 	count := StyleMuted.Render(fmt.Sprintf("%d items", len(v.rows)))
+	countW := lipgloss.Width(count)
+
+	left := ""
 	if v.cfg.rowDetail != nil && v.cursor < len(v.rows) {
 		if detail := v.cfg.rowDetail(v.deps.Session, v.cursor, v.rows); detail != "" {
-			maxDetail := v.w - lipgloss.Width(count) - 3
-			if maxDetail < 20 {
-				maxDetail = 20
+			maxDetail := v.w - countW - 1
+			if maxDetail < 1 {
+				maxDetail = 1
 			}
 			if lipgloss.Width(detail) > maxDetail {
 				detail = ansi.Truncate(detail, maxDetail, "…")
 			}
-			b.WriteString(StyleStat.Render(detail))
-			b.WriteString("\n")
+			left = StyleStat.Render(detail)
 		}
 	}
-	b.WriteString(count)
-	return b.String()
+
+	pad := v.w - lipgloss.Width(left) - countW
+	if pad < 1 {
+		pad = 1
+	}
+	return left + strings.Repeat(" ", pad) + count
 }
 
 func (v *listView) tableHeight() int {
-	used := 1 // footer line
-	if v.cfg.summary != nil {
-		used += 2
-	}
-	if v.errMsg != "" {
-		used++
-	}
-	h := v.h - used
-	if h < 3 {
-		h = 3
-	}
-	maxRows := len(v.rows) + 1 // header + data
-	if maxRows > 0 && h > maxRows {
-		h = maxRows
+	h := v.h - v.contentLeadLines() - len(v.footerLines())
+	if h < 2 {
+		h = 2
 	}
 	return h
 }
@@ -509,23 +533,17 @@ func (v *listView) rowIndexAt(innerY int) (int, bool) {
 		return -1, false
 	}
 	rowInView := tableRel - 1
-	maxRows := v.tableHeight() - 1
-	if maxRows < 1 {
-		maxRows = 1
-	}
-	visible := len(v.rows)
-	if visible > maxRows {
-		visible = maxRows
-	}
-	if rowInView >= visible {
-		return -1, false
-	}
+	maxRows := tableDataRowSlots(v.tableHeight())
 	top := 0
-	if v.cursor >= visible {
-		top = v.cursor - visible + 1
+	if v.cursor >= maxRows {
+		top = v.cursor - maxRows + 1
 	}
 	idx := top + rowInView
 	if idx < 0 || idx >= len(v.rows) {
+		return -1, false
+	}
+	// Ignore clicks on the table bottom rule.
+	if tableRel >= v.tableHeight() {
 		return -1, false
 	}
 	return idx, true

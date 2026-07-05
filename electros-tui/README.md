@@ -104,7 +104,7 @@ Single-letter shortcuts are suppressed while a form field is capturing text.
 ### Pages covered
 
 - **Dashboard** — six metric panels (overview, compute, storage, platform, targets, PaaS)
-- **My Clouds** — list, detail, add private/public/hypervisor
+- **Cloud Targets** — list, detail, guided add (hypervisor or tethered cloud provider)
 - **IaaS** — storage, cloud-init, networking, virtual machines, ephemeral VMs (lists + create forms)
 - **Credentials** — experimental vault placeholder
 - **Settings** — account, organisation, billing, licenses, preferences, appearance, info

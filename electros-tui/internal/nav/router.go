@@ -114,7 +114,7 @@ func localizeLabel(loc string) string {
 	// Known GUI label keys → readable titles
 	known := map[string]string{
 		"label/pageDashboard":        "Dashboard",
-		"label/pageMyClouds":         "My Clouds",
+		"label/pageMyClouds":         "Cloud Targets",
 		"label/pagesIaas/iaas":       "IaaS",
 		"label/pagesSettings/settings": "Settings",
 		"label/pageUiDemo":           "UI Demo",
@@ -157,15 +157,60 @@ func contains(items []string, want string) bool {
 
 // NavigateTo switches to a route by path.
 func (r *Router) NavigateTo(path string) error {
+	path = strings.Trim(path, "/")
 	rt, ok := r.ByPath[path]
 	if !ok {
-		return fmt.Errorf("unknown route: %s", path)
+		rt = r.ensureVirtualRoute(path)
+		if rt == nil {
+			return fmt.Errorf("unknown route: %s", path)
+		}
 	}
 	if r.Current != nil && r.Current.Path != rt.Path {
 		r.BackStack = append(r.BackStack, r.Current)
 	}
 	r.Current = rt
 	return nil
+}
+
+// ensureVirtualRoute registers view-only subpaths under a known parent route.
+func (r *Router) ensureVirtualRoute(path string) *Route {
+	if rt, ok := r.ByPath[path]; ok {
+		return rt
+	}
+	parts := strings.Split(path, "/")
+	for i := len(parts) - 1; i >= 1; i-- {
+		parentPath := strings.Join(parts[:i], "/")
+		parent, ok := r.ByPath[parentPath]
+		if !ok {
+			continue
+		}
+		name := parts[len(parts)-1]
+		rt := &Route{
+			Name:   name,
+			Path:   path,
+			Label:  virtualRouteLabel(name),
+			Type:   RouteSubpage,
+			parent: parent,
+		}
+		r.ByPath[path] = rt
+		return rt
+	}
+	return nil
+}
+
+func virtualRouteLabel(name string) string {
+	switch name {
+	case "add":
+		return "Add Cloud Target"
+	case "add-private":
+		return "Add AtomOS Host"
+	case "add-public":
+		return "Add Cloud Provider"
+	case "add-hypervisor":
+		return "Add Hypervisor"
+	default:
+		return titleCase(strings.ReplaceAll(name, "-", " "))
+	}
 }
 
 // GoBack pops the back stack.

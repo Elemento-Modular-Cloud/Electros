@@ -19,6 +19,7 @@ type FormOptions struct {
 	OSFamilies   []SelectOption
 	OSFlavours   map[string][]SelectOption
 	PCICatalog   map[string]*PCIVendor
+	Providers    *ProviderCatalog
 	volumeNames  map[string]string
 	networkNames map[string]string
 }
@@ -126,6 +127,9 @@ func LoadFormOptions(ecdDir string) (*FormOptions, error) {
 	}
 	if catalog, err := loadPCICatalog(filepath.Dir(ecdDir)); err == nil {
 		opts.PCICatalog = catalog
+	}
+	if providers, err := LoadProviderCatalog(ecdDir); err == nil {
+		opts.Providers = providers
 	}
 	return opts, nil
 }

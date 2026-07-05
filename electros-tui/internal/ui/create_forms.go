@@ -35,64 +35,58 @@ func fldJSON(key, label, def string) fieldDef {
 	return fieldDef{Key: key, Label: label, Placeholder: "JSON", Default: def, Multiline: true}
 }
 
+func withTargetWizard(spec formSpec, mode targetPickMode) formSpec {
+	spec.wizard = formWizardTargetPick
+	spec.targetPickMode = mode
+	return spec
+}
+
 func myCloudsForms(path string) formSpec {
 	switch {
-	case strings.HasSuffix(path, "add-private"):
+	case strings.HasSuffix(path, "add"), strings.HasSuffix(path, "add-private"),
+		strings.HasSuffix(path, "add-public"), strings.HasSuffix(path, "add-hypervisor"):
+		return addTargetFormSpec()
+	case strings.HasSuffix(path, "detail"):
 		return formSpec{
-			title: "Add Private Cloud",
-			fields: []fieldDef{
-				fld("name", "Target ID", "atomosphere-prod", ""),
-				fld("serverurl", "Server URL / IP", "https://10.0.0.5", ""),
-				fldSelect("provider", "Provider", "ovh", optCloudProvider),
-				fld("username", "Username", "", ""),
-				fld("password", "Password", "", ""),
-				fld("api_key", "API key (optional)", "", ""),
-			},
-			submit: createTargetSubmit("meson_private"),
-		}
-	case strings.HasSuffix(path, "add-public"):
-		return formSpec{
-			title: "Add Public Cloud",
-			fields: []fieldDef{
-				fld("name", "Target ID", "google-demo-public", ""),
-				fldSelect("provider", "Provider", "gcp", optCloudProvider),
-				fld("api_key", "API key", "", ""),
-				fld("region", "Default region", "europe-west1", ""),
-			},
-			submit: createTargetSubmit("meson_public"),
-		}
-	case strings.HasSuffix(path, "add-hypervisor"):
-		return formSpec{
-			title: "Add Hypervisor",
-			fields: []fieldDef{
-				fld("name", "Target ID", "proxmox-hv", ""),
-				fld("serverurl", "Server URL", "https://192.168.1.20:8006", ""),
-				fldSelect("type", "Hypervisor type", "hypervisor_proxmox", optHypervisorType),
-				fld("username", "Username", "root@pam", ""),
-				fld("password", "Password", "", ""),
-			},
-			submit: createTargetSubmit(""),
+			title: "Target",
+			fields: []fieldDef{fld("target_id", "Target ID", "", "")},
+			submit: pingTargetSubmit,
 		}
 	default:
 		return formSpec{
-			title: "Target",
+			title:  "Target",
 			fields: []fieldDef{fld("target_id", "Target ID", "", "")},
 			submit: pingTargetSubmit,
 		}
 	}
 }
 
+func addTargetFormSpec() formSpec {
+	return formSpec{
+		title:  "Add Cloud Target",
+		wizard: formWizardAddTarget,
+		fields: []fieldDef{
+			fldSelect("target_class", "What are you adding?", "hypervisor", []SelectOption{
+				{Value: "hypervisor", Label: "Hypervisor (AtomOS or third-party)"},
+				{Value: "cloud_provider", Label: "Cloud provider (Elemento tethered)"},
+			}),
+		},
+		submit: func(deps *Deps, vals map[string]string) tea.Cmd {
+			return submitAddTargetWizard(deps, vals)
+		},
+	}
+}
+
 func storageForms(path string) formSpec {
 	switch {
 	case strings.HasSuffix(path, "createVolume"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create Volume (Advanced)",
 			fields: []fieldDef{
 				fld("name", "Volume name", "data-vol-001", ""),
 				fld("size_gb", "Size (GB)", "100", "100"),
 				fldSelect("format", "Format", "qcow2", optVolumeFormat),
 				fldSelect("bus", "Bus", "virtio", optVolumeBus),
-				fld("ip", "Target server IP", "192.168.1.10", ""),
 				fld("priority", "Priority", "0", "0"),
 				fldBool("bootable", "Bootable", false),
 				fldBool("shareable", "Shareable", false),
@@ -100,18 +94,17 @@ func storageForms(path string) formSpec {
 				fldBool("private", "Private", false),
 			},
 			submit: createVolumeSubmit,
-		}
+		}, targetPickDefault)
 	case strings.HasSuffix(path, "createIsoTool"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create ISO Tool Volume",
 			fields: []fieldDef{
 				fld("name", "Volume name", "iso-tool", ""),
 				fld("url", "ISO URL", "https://...", ""),
 				fldSelect("format", "Format", "iso", optVolumeFormat),
-				fld("ip", "Target server IP", "192.168.1.10", ""),
 			},
 			submit: createVolumeSubmit,
-		}
+		}, targetPickDefault)
 	default:
 		return formSpec{title: "Volume Detail", fields: []fieldDef{fld("volumeID", "Volume ID", "", "")}}
 	}
@@ -120,16 +113,15 @@ func storageForms(path string) formSpec {
 func cloudInitForms(path string) formSpec {
 	switch {
 	case strings.HasSuffix(path, "createCloudImage"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create Cloud Image",
 			fields: []fieldDef{
 				fld("name", "Image name", "ubuntu-22.04-cloud", ""),
 				fld("source_url", "Source URL", "https://...", ""),
 				fldSelect("format", "Format", "qcow2", optVolumeFormat),
-				fld("ip", "Target server IP", "192.168.1.10", ""),
 			},
 			submit: cloudInitSubmit,
-		}
+		}, targetPickCloudInitHosts)
 	case strings.HasSuffix(path, "create"):
 		return formSpec{
 			title: "Create Cloud-init Config",
@@ -148,7 +140,7 @@ func cloudInitForms(path string) formSpec {
 func networkForms(path string) formSpec {
 	switch {
 	case strings.HasSuffix(path, "createLibvirt"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create Libvirt Network (Advanced)",
 			fields: []fieldDef{
 				fld("network_name", "Network name", "lab-br0", ""),
@@ -156,24 +148,22 @@ func networkForms(path string) formSpec {
 				fld("device_name", "Device name", "eth0", "eth0"),
 				fldSelect("mode", "Network type", "nat", optNetworkMode),
 				fld("type", "Type", "libvirt", "libvirt"),
-				fld("servers", "Servers (comma-separated IPs)", "192.168.1.10", ""),
 				fld("ip", "Network IP/CIDR", "192.168.50.0/24", ""),
 				fld("routes", "Routes (optional)", "", ""),
 				fldBool("private", "Private", false),
 			},
 			submit: createNetworkSubmit,
-		}
+		}, targetPickDefault)
 	case strings.HasSuffix(path, "createTailscale"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create Tailscale Network",
 			fields: []fieldDef{
 				fld("network_name", "Network name", "tailscale-mesh", ""),
 				fld("tailnet", "Tailnet", "example.com", ""),
 				fld("headscale", "Headscale URL", "https://headscale.example.com", ""),
-				fld("servers", "Servers (comma-separated)", "192.168.1.10", ""),
 			},
 			submit: createNetworkSubmit,
-		}
+		}, targetPickDefault)
 	default:
 		return formSpec{title: "Network", fields: nil}
 	}
@@ -186,8 +176,6 @@ func advancedVMFields() []fieldDef {
 		fld("ramsize_gb", "RAM (GB)", "4", "4"),
 		fldSelect("os_family", "OS family", "linux", nil),
 		fldSelect("os_flavour", "OS flavour", "ubuntu", nil),
-		fld("serverurl", "Target server URL (blank = autodiscovery)", "", ""),
-		fldSelect("target_type", "Target type", "atomos_local_ip", optTargetType),
 		fldSelect("architecture", "Architecture", "X86_64", optArch),
 		fldSelect("firmware", "Firmware", "bios", optFirmware),
 		fld("overprovision", "CPU overprovision %", "10", "10"),
@@ -207,12 +195,11 @@ func advancedVMFields() []fieldDef {
 func vmForms(path string) formSpec {
 	switch {
 	case strings.HasSuffix(path, "createTemplate"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create VM from Template (Advanced)",
 			fields: []fieldDef{
 				fld("template_id", "Template UUID", "", ""),
 				fld("vm_name", "VM name", "from-template-001", ""),
-				fld("serverurl", "Target server URL", "", ""),
 				fldSelect("os_family", "OS family override", "linux", nil),
 				fldSelect("os_flavour", "OS flavour override", "ubuntu", nil),
 				fld("slots", "CPU slots", "2", "2"),
@@ -220,21 +207,19 @@ func vmForms(path string) formSpec {
 				fldPicker("volumes_json", "Volumes", PickerVolumes, "[]"),
 			},
 			submit: registerVMSubmit,
-		}
+		}, targetPickDefault)
 	case strings.HasSuffix(path, "createXml"):
-		return formSpec{
+		return withTargetWizard(formSpec{
 			title: "Create VM from XML",
 			fields: []fieldDef{
-				fld("serverurl", "Target server URL", "", ""),
-				fldSelect("target_type", "Target type", "atomos_local_ip", optTargetType),
 				fld("xml", "Libvirt XML", "<domain>...</domain>", ""),
 			},
 			submit: registerVMSubmit,
-		}
+		}, targetPickDefault)
 	case strings.HasSuffix(path, "createAdvanced"):
-		return formSpec{title: "Create VM (Advanced)", fields: advancedVMFields(), submit: registerVMSubmit}
+		return withTargetWizard(formSpec{title: "Create VM (Advanced)", fields: advancedVMFields(), submit: registerVMSubmit}, targetPickDefault)
 	case strings.HasSuffix(path, "create"):
-		return formSpec{title: "Create VM (Advanced)", fields: advancedVMFields(), submit: registerVMSubmit}
+		return withTargetWizard(formSpec{title: "Create VM (Advanced)", fields: advancedVMFields(), submit: registerVMSubmit}, targetPickDefault)
 	default:
 		return formSpec{
 			title: "VM Detail",
@@ -247,26 +232,15 @@ func vmForms(path string) formSpec {
 func ephemeralForms(path string) formSpec {
 	if strings.HasSuffix(path, "create") {
 		return formSpec{
-			title: "Create Ephemeral VM (Advanced)",
+			title:  "Create Ephemeral VM",
+			wizard: formWizardEphemeralCreate,
 			fields: []fieldDef{
 				fld("vm_name", "VM name", "ephemeral-ubuntu-001", ""),
-				fld("slots", "CPU slots", "2", "2"),
-				fld("ramsize_gb", "RAM (GB)", "4", "4"),
 				fldSelect("os_family", "OS family", "linux", nil),
 				fldSelect("os_flavour", "OS flavour", "ubuntu", nil),
-				fldSelect("target_type", "Target type", "meson_public", optTargetType),
-				fld("serverurl", "Cloud target server URL", "", ""),
-				fldSelect("provider", "Provider", "scaleway", optCloudProvider),
-				fld("deployment_region", "Region", "fr-par", "fr-par"),
-				fld("instance_flavour_catalog", "Flavour catalog", "scaleway", "scaleway"),
-				fld("instance_flavour", "Instance flavour", "GP1-S", "GP1-S"),
-				fld("block_storage_gb", "Block storage (GB)", "40", "40"),
-				fldJSON("network_config_json", "Network config JSON", `{"interface":"eth0","type":"bridge"}`),
-				fld("auth_username", "Cloud auth username", "ubuntu", "ubuntu"),
-				fld("auth_password", "Cloud auth password", "", ""),
-				fld("auth_ssh_key", "Cloud auth SSH public key", "", ""),
 			},
-			submit: registerVMSubmit,
+			targetPickMode: targetPickCloudOnly,
+			submit:         registerVMSubmit,
 		}
 	}
 	return formSpec{title: "Ephemeral VM", fields: nil}
@@ -287,14 +261,15 @@ func serviceCreateSpec(def *services.ServiceDef) formSpec {
 	if len(fields) == 0 {
 		fields = []fieldDef{
 			fld("name", "Name", "my-"+def.APIServiceType, ""),
-			fld("region", "Region", "fr-par", ""),
-			fld("target", "Target UUID", "", ""),
 		}
 	}
 	return formSpec{
-		title:  "Create " + def.Label + " (Advanced)",
-		fields: fields,
-		submit: serviceCreateSubmit(def),
+		title:          "Create " + def.Label + " (Advanced)",
+		fields:         fields,
+		wizard:         formWizardTargetPick,
+		targetPickMode: targetPickService,
+		requireService: def.APIServiceType,
+		submit:         serviceCreateSubmit(def),
 	}
 }
 
@@ -421,7 +396,13 @@ func cloudInitSubmit(deps *Deps, vals map[string]string) tea.Cmd {
 		ctx := context.Background()
 		body := map[string]any{}
 		for k, v := range vals {
-			if v != "" {
+			if v == "" || k == "connect_mode" {
+				continue
+			}
+			switch k {
+			case "source_url":
+				body["url"] = v
+			default:
 				body[k] = v
 			}
 		}

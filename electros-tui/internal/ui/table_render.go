@@ -9,6 +9,7 @@ import (
 )
 
 const tableColGap = 1
+const tableBottomBorderLines = 1
 
 // alignCell fits content to an exact terminal column width without breaking ANSI.
 func alignCell(cell string, width int) string {
@@ -233,6 +234,17 @@ func (t *dataTable) visibleColumns() (start, end int, vis []table.Column) {
 	return start, end, vis
 }
 
+func tableDataRowSlots(height int) int {
+	if height <= 1 {
+		return 1
+	}
+	slots := height - 1 - tableBottomBorderLines // header + bottom rule
+	if slots < 1 {
+		slots = 1
+	}
+	return slots
+}
+
 func (t *dataTable) render() string {
 	if t.width <= 0 || t.height <= 0 || len(t.cols) == 0 {
 		return ""
@@ -245,37 +257,31 @@ func (t *dataTable) render() string {
 	headerStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FFC940"))
 	rowStyle := StyleSidebarItem
 	activeStyle := StyleSidebarActive
+	emptyStyle := lipgloss.NewStyle()
 
 	var b strings.Builder
 	b.WriteString(t.renderRow(headerStyle, nil, start, visCols, true))
 	b.WriteByte('\n')
 
-	maxRows := t.height - 1
-	if maxRows < 1 {
-		maxRows = 1
-	}
-	if len(t.rows) < maxRows {
-		maxRows = len(t.rows)
-	}
-
+	maxRows := tableDataRowSlots(t.height)
 	top := 0
 	if t.cursor >= maxRows {
 		top = t.cursor - maxRows + 1
 	}
 	for i := 0; i < maxRows; i++ {
 		idx := top + i
-		if idx >= len(t.rows) {
-			break
+		if idx < len(t.rows) {
+			style := rowStyle
+			if idx == t.cursor {
+				style = activeStyle
+			}
+			b.WriteString(t.renderRow(style, t.rows[idx], start, visCols, false))
+		} else {
+			b.WriteString(t.renderRow(emptyStyle, nil, start, visCols, false))
 		}
-		style := rowStyle
-		if idx == t.cursor {
-			style = activeStyle
-		}
-		b.WriteString(t.renderRow(style, t.rows[idx], start, visCols, false))
-		if i < maxRows-1 {
-			b.WriteByte('\n')
-		}
+		b.WriteByte('\n')
 	}
+	b.WriteString(StyleMuted.Render(strings.Repeat("─", t.width)))
 	return b.String()
 }
 

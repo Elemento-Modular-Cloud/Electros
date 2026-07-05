@@ -30,9 +30,13 @@ func (d fieldDef) isSelect() bool {
 }
 
 type formSpec struct {
-	title  string
-	fields []fieldDef
-	submit func(*Deps, map[string]string) tea.Cmd
+	title          string
+	fields         []fieldDef
+	step2Fields    map[string][]fieldDef
+	submit         func(*Deps, map[string]string) tea.Cmd
+	wizard         formWizard
+	requireService string
+	targetPickMode targetPickMode
 }
 
 type formField struct {
@@ -44,29 +48,49 @@ type formField struct {
 }
 
 type formView struct {
-	deps    *Deps
-	path    string
-	title   string
-	fields  []formField
-	focus   int
-	w, h    int
-	vp      viewport.Model
-	submit  func(*Deps, map[string]string) tea.Cmd
-	errMsg  string
-	notice  string
-	focused bool
-	modal   *pickerModal
+	deps           *Deps
+	path           string
+	title          string
+	fields         []formField
+	step1Fields    []fieldDef
+	stepMidFields  []fieldDef
+	step2Fields    map[string][]fieldDef
+	focus          int
+	w, h           int
+	vp             viewport.Model
+	submit         func(*Deps, map[string]string) tea.Cmd
+	errMsg         string
+	notice         string
+	focused        bool
+	modal          *pickerModal
+	wizard         formWizard
+	step           int
+	wizardMode     string
+	wizardSubMode  string
+	wizardVals     map[string]string
+	requireService string
+	targetPick     *targetPickerState
+	flavourPick    *flavourPickerState
+	optionPick     *optionPickerState
+	targetPickMode targetPickMode
 }
 
 func newFormView(deps *Deps, w, h int, path string, spec formSpec) *formView {
 	v := &formView{
-		deps:   deps,
-		path:   path,
-		title:  spec.title,
-		w:      w,
-		h:      h,
-		submit: spec.submit,
-		vp:     viewport.New(w, max(h-2, 4)),
+		deps:           deps,
+		path:           path,
+		title:          spec.title,
+		w:              w,
+		h:              h,
+		submit:         spec.submit,
+		wizard:         spec.wizard,
+		requireService: spec.requireService,
+		targetPickMode: spec.targetPickMode,
+		step2Fields:    spec.step2Fields,
+		vp:             viewport.New(w, max(h-2, 4)),
+	}
+	if spec.wizard == formWizardPublicTargetCreate || spec.wizard == formWizardAddTarget {
+		v.step1Fields = cloneFieldDefs(spec.fields)
 	}
 	for _, def := range spec.fields {
 		def = enrichFieldDef(deps, def)
@@ -215,11 +239,47 @@ func (v *formView) Hints() string {
 		}
 		return "Picker · Space toggle · Enter/Ctrl+S confirm · Esc cancel"
 	}
+	if flavourPickerActive(v) {
+		return "j/k flavour · ←/→ catalogue · Ctrl+S continue · Esc back"
+	}
+	if optionPickerActive(v) {
+		return "j/k choose · Ctrl+S continue · Esc back"
+	}
+	if targetPickerActive(v) {
+		hint := v.targetPickControlsHint()
+		if v.wizard == formWizardEphemeralCreate {
+			hint = strings.Replace(hint, "Esc back", "Esc previous step", 1)
+		}
+		return hint
+	}
+	if v.wizard == formWizardAddTarget {
+		switch v.step {
+		case 0:
+			return "←/→ choose · Ctrl+S continue · Esc back"
+		case 2:
+			return "Tab/Enter next field · Ctrl+S create · Esc previous step"
+		}
+	}
+	if v.wizard == formWizardEphemeralCreate && v.step == 0 {
+		return "Tab/Enter next field · Ctrl+S next step · Esc back"
+	}
+	if v.wizardEnabled() && v.step == 0 {
+		return "Tab/Enter next field · Ctrl+S next step · Esc back"
+	}
+	if v.wizardEnabled() && v.step == 1 {
+		return "Tab/Enter next · Ctrl+S submit · Esc previous step"
+	}
 	return "Tab/Enter next · ←/→ selects · Enter opens pickers · Ctrl+S submit · Esc back · j/k scroll"
 }
 
 func (v *formView) CapturingInput() bool {
-	return v.focused && (len(v.fields) > 0 || v.modal != nil)
+	if v.modal != nil {
+		return v.focused
+	}
+	if v.focused && (len(v.fields) > 0 || flavourPickerActive(v) || optionPickerActive(v) || targetPickerActive(v)) {
+		return true
+	}
+	return false
 }
 
 func (v *formView) SetFocused(f bool) {
@@ -297,7 +357,13 @@ func (v *formView) onSelectChanged(changedIdx int) {
 }
 
 func (v *formView) submitForm() tea.Cmd {
-	if v.submit == nil || len(v.fields) == 0 {
+	if v.submit == nil {
+		return nil
+	}
+	if v.wizardEnabled() {
+		return v.submitWithWizard()
+	}
+	if len(v.fields) == 0 {
 		return nil
 	}
 	return v.submit(v.deps, v.collectVals())
@@ -331,10 +397,48 @@ func (v *formView) Update(msg tea.Msg) (View, tea.Cmd) {
 		}
 		return v, nil
 	case tea.KeyMsg:
-		if !v.focused || len(v.fields) == 0 {
+		if !v.focused {
 			return v, nil
 		}
 		key := msg.String()
+		if optionPickerActive(v) && v.modal == nil {
+			v.updateOptionPicker(key)
+			if key == "esc" || key == "j" || key == "k" || key == "up" || key == "down" || key == "ctrl+s" {
+				v.syncViewport()
+				if key == "ctrl+s" {
+					return v, v.submitForm()
+				}
+				return v, nil
+			}
+		}
+		if flavourPickerActive(v) && v.modal == nil {
+			v.updateFlavourPicker(key)
+			if key == "esc" || key == "j" || key == "k" || key == "up" || key == "down" || key == "left" || key == "right" || key == "h" || key == "l" || key == "ctrl+s" {
+				v.syncViewport()
+				if key == "ctrl+s" {
+					return v, v.submitForm()
+				}
+				return v, nil
+			}
+		}
+		if targetPickerActive(v) && v.modal == nil {
+			if cmd := v.updateTargetPicker(key); cmd != nil || key == "esc" || key == "j" || key == "k" || key == "up" || key == "down" || key == "left" || key == "right" || key == "h" || key == "l" || key == "ctrl+s" {
+				v.syncViewport()
+				return v, cmd
+			}
+		}
+		if len(v.fields) == 0 {
+			if key == "ctrl+s" {
+				return v, v.submitForm()
+			}
+			return v, nil
+		}
+		if key == "esc" && v.wizardEnabled() && v.step > 0 {
+			v.retreatWizard()
+			v.errMsg = ""
+			v.syncViewport()
+			return v, textinput.Blink
+		}
 		if key == "ctrl+s" {
 			return v, v.submitForm()
 		}
@@ -438,9 +542,20 @@ func (v *formView) renderSelect(f *formField, focused bool) string {
 
 func (v *formView) View() string {
 	var b strings.Builder
-	if v.title != "" {
+	b.WriteString(v.renderWizardHeader())
+	if review := v.renderSpecReview(); review != "" {
+		b.WriteString(review + "\n")
+	}
+	if flavourPickerActive(v) {
+		b.WriteString(v.renderFlavourPicker())
+	} else if optionPickerActive(v) {
+		b.WriteString(v.renderOptionPicker())
+	} else if targetPickerActive(v) {
+		b.WriteString(v.renderTargetPicker())
+	} else if v.title != "" && !v.wizardEnabled() {
 		b.WriteString(StyleStatLabel.Render(v.title) + "\n\n")
 	}
+	if !hideFormFields(v) {
 	if len(v.fields) == 0 {
 		b.WriteString(StyleMuted.Render("No form fields for this route.\nPress Esc to go back."))
 	} else {
@@ -468,7 +583,8 @@ func (v *formView) View() string {
 				b.WriteString(f.input.View() + "\n\n")
 			}
 		}
-		b.WriteString(StyleHelp.Render("Ctrl+S — submit form") + "\n")
+		b.WriteString(StyleHelp.Render("Ctrl+S — "+v.submitHint()) + "\n")
+	}
 	}
 	if v.notice != "" {
 		b.WriteString(StyleSuccess.Render(v.notice) + "\n")
