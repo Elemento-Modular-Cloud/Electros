@@ -2,6 +2,24 @@
 
 Standalone mock servers that emulate Elemento **client daemons** on the ECD localhost ports. Use them to run the Electros UI without native `elemento_client_daemons` binaries.
 
+## Exhibition / demo (macOS)
+
+For trade shows and booth demos, use the macOS launcher scripts (double-click in Finder or run from Terminal):
+
+| File | What it does |
+|------|----------------|
+| `Run Exhibition Demo.command` | Installs deps if needed, starts daemons, opens Electros with `--no-daemons` |
+| `Run Synthetic Daemons.command` | Same setup, daemons only (launch Electros yourself) |
+| `run-exhibition.sh` | CLI equivalent with `--help`, `--setup`, `--launch-electros`, `--persist-state` |
+
+Requirements: **Node.js 20+** ([nodejs.org](https://nodejs.org/) or `brew install node`). Electros must be installed under `/Applications/Electros.app`, pointed to with `ELECTROS_APP`, or available from a local `electros-electron` dev checkout.
+
+```bash
+./run-exhibition.sh --launch-electros
+```
+
+Leave the Terminal window open while demoing. Press Ctrl+C to stop the daemons.
+
 ## Quick start
 
 ```bash
@@ -29,7 +47,6 @@ Ensure [`elemento-gui-new/electros/configs/flags.json`](../elemento-gui-new/elec
 | Network   | 37777 |
 | Targets   | 57777 |
 | Services  | 6777  |
-| MCP       | 7782  |
 
 API paths come from [`elemento-gui-new/electros/ecd/restkeys.json`](../elemento-gui-new/electros/ecd/restkeys.json).
 

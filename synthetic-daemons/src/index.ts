@@ -8,7 +8,6 @@ import { storageRouter } from "./routes/storage.js";
 import { networkRouter } from "./routes/network.js";
 import { targetRouter } from "./routes/target.js";
 import { servicesRouter } from "./routes/services.js";
-import { mcpRouter } from "./routes/mcp.js";
 
 const config = loadConfig();
 const store = new MemoryStore(config);
@@ -60,14 +59,6 @@ function start(): void {
         mountRouter(app, rk(restKeys, "SERVICE_CLIENT_API_URL_KEY"), servicesRouter(store, config));
       },
     })
-    // ,
-    // createDaemonServer({
-    //   name: "mcp",
-    //   port: networking.MCP_SERVER_PORT,
-    //   mountRouters: (app) => {
-    //     app.use(mcpRouter());
-    //   },
-    // })
   );
 
   console.log(`Synthetic daemons ready (scenario: ${config.scenario})`);
