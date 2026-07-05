@@ -19,6 +19,9 @@ type Store struct {
 	Networks    []models.NetworkRecord
 	Targets     []models.TargetRecord
 	PortForwards []models.PortForwardRecord
+	ServiceCounts map[string]int // API type or route path → instance count
+	PaaSInstances int
+	SaaSInstances int
 	LastRefresh time.Time
 	onUnauthorized func()
 }
@@ -89,6 +92,9 @@ func (s *Store) Logout(ctx context.Context) error {
 	s.Networks = nil
 	s.Targets = nil
 	s.PortForwards = nil
+	s.ServiceCounts = nil
+	s.PaaSInstances = 0
+	s.SaaSInstances = 0
 	s.mu.Unlock()
 	return nil
 }

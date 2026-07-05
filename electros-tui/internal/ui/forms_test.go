@@ -106,6 +106,10 @@ func TestPCIFilterDevices(t *testing.T) {
 	if len(got) != 2 {
 		t.Fatalf("filter geforce = %v, want 2", got)
 	}
+	got = pciFilteredDeviceIndices(catalog, vendors, 0, "rtx 4090")
+	if len(got) != 1 || catalog["10de"].Devices[got[0]].ID != "2684" {
+		t.Fatalf("filter rtx 4090 = %v", got)
+	}
 }
 
 func TestPCIPickerOpensWithoutLoading(t *testing.T) {

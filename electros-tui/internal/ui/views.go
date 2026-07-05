@@ -50,7 +50,7 @@ func NewViewForRoute(path string, deps *Deps, w, h int) View {
 	}
 	switch {
 	case base == "dashboard" || base == "dev/dashboard-modern":
-		return &dashboardView{deps: deps, w: w, h: h}
+		return newDashboardView(deps, w, h)
 	case base == "my-clouds":
 		return newListView(deps, w, h, listConfig{
 			title:        "My Clouds",
@@ -137,8 +137,6 @@ func NewViewForRoute(path string, deps *Deps, w, h int) View {
 
 // --- dashboard ---
 
-type dashboardLoadedMsg struct{}
-
 type dashboardView struct {
 	deps   *Deps
 	w, h   int
@@ -147,11 +145,17 @@ type dashboardView struct {
 	loaded bool
 }
 
-func (v *dashboardView) Init() tea.Cmd { return v.reload() }
+func newDashboardView(deps *Deps, w, h int) *dashboardView {
+	v := &dashboardView{deps: deps, w: w, h: h, loaded: true}
+	v.render()
+	return v
+}
+
+func (v *dashboardView) Init() tea.Cmd { return nil }
 func (v *dashboardView) SetSize(w, h int) { v.w, v.h = w, h }
 func (v *dashboardView) Update(msg tea.Msg) (View, tea.Cmd) {
 	switch msg.(type) {
-	case dashboardLoadedMsg, refreshDoneMsg:
+	case refreshDoneMsg:
 		v.render()
 		v.loaded = true
 	}
@@ -186,23 +190,40 @@ func (v *dashboardView) View() string {
 	}
 	return summary + "\n\n" + tabLine + "\n\n" + v.text
 }
-func (v *dashboardView) reload() tea.Cmd {
-	return func() tea.Msg {
-		return dashboardLoadedMsg{}
-	}
-}
+
 func (v *dashboardView) render() {
 	f := v.deps.Session.FleetSummary()
 	_, vms, vols, nets, targets := v.deps.Session.Snapshot()
 	panels := metrics.BuildDashboardPanels(vms, vols, nets, targets)
 	if len(panels) > 0 {
-		panels[0].Stats = append(panels[0].Stats, metrics.Stat{
-			Label: "Port Forwards", Value: fmt.Sprintf("%d", f.PortForwards),
-		})
+		panels[0].Stats = append(panels[0].Stats,
+			metrics.Stat{Label: "Port Forwards", Value: fmt.Sprintf("%d", f.PortForwards)},
+			metrics.Stat{Label: "PaaS instances", Value: fmt.Sprintf("%d", f.PaaSInstances)},
+			metrics.Stat{Label: "SaaS instances", Value: fmt.Sprintf("%d", f.SaaSInstances)},
+		)
+	}
+	if len(panels) > 5 {
+		panels[5] = metrics.BuildServicesPanel(f.PaaSInstances, f.SaaSInstances, serviceCountBars(v.deps, f))
 	}
 	if v.panel < len(panels) {
 		v.text = metrics.RenderPanel(panels[v.panel], v.w)
 	}
+}
+
+func serviceCountBars(deps *Deps, f session.FleetSummary) []metrics.Bar {
+	if deps.Services == nil {
+		return nil
+	}
+	total := f.PaaSInstances + f.SaaSInstances
+	if total == 0 {
+		total = 1
+	}
+	bars := make([]metrics.Bar, 0, len(deps.Services.Services))
+	for _, def := range deps.Services.Services {
+		n := f.ServiceCountByPath(def.Path)
+		bars = append(bars, metrics.Bar{Label: def.Label, Count: n, Total: total})
+	}
+	return bars
 }
 
 func (v *dashboardView) tabIndexAt(innerX int) (int, bool) {

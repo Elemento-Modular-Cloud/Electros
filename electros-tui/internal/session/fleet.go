@@ -16,8 +16,19 @@ type FleetSummary struct {
 	Networks     int
 	Targets      int
 	PortForwards int
+	PaaSInstances int
+	SaaSInstances int
 	VolumeBytes  int64
 	LastRefresh  time.Time
+	serviceCounts map[string]int
+}
+
+// ServiceCountByPath returns cached running instances for a service route path.
+func (f FleetSummary) ServiceCountByPath(path string) int {
+	if f.serviceCounts == nil {
+		return 0
+	}
+	return f.serviceCounts[path]
 }
 
 // FleetSummary returns aggregate counts from the session cache.
@@ -25,12 +36,20 @@ func (s *Store) FleetSummary() FleetSummary {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	out := FleetSummary{
-		VMs:          len(s.VMs),
-		Volumes:      len(s.Volumes),
-		Networks:     len(s.Networks),
-		Targets:      len(s.Targets),
-		PortForwards: len(s.PortForwards),
-		LastRefresh:  s.LastRefresh,
+		VMs:           len(s.VMs),
+		Volumes:       len(s.Volumes),
+		Networks:      len(s.Networks),
+		Targets:       len(s.Targets),
+		PortForwards:  len(s.PortForwards),
+		PaaSInstances: s.PaaSInstances,
+		SaaSInstances: s.SaaSInstances,
+		LastRefresh:   s.LastRefresh,
+	}
+	if len(s.ServiceCounts) > 0 {
+		out.serviceCounts = make(map[string]int, len(s.ServiceCounts))
+		for k, v := range s.ServiceCounts {
+			out.serviceCounts[k] = v
+		}
 	}
 	for _, vm := range s.VMs {
 		req, _ := vm.ParseReqJSON()

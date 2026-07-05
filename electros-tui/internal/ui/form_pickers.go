@@ -521,6 +521,10 @@ func (v *formView) updatePCIModal(msg tea.KeyMsg) tea.Cmd {
 			m.pciSearch = ""
 			m.pciDeviceIdx = 0
 			m.scroll = 0
+		case " ":
+			m.pciSearch += " "
+			m.pciDeviceIdx = 0
+			m.scroll = 0
 		default:
 			if msg.Type == tea.KeyRunes && len(msg.Runes) > 0 {
 				m.pciSearch += string(msg.Runes)

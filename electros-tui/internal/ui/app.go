@@ -144,7 +144,7 @@ func (a *App) checkAuth() tea.Cmd {
 			return authDoneMsg{err: err}
 		}
 		if status.IsLoggedIn() {
-			if err := a.deps.Session.RefreshAll(ctx); err != nil {
+			if err := a.refreshFleet(ctx); err != nil {
 				return dataLoadedMsg{err: err}
 			}
 			return authDoneMsg{}
@@ -188,8 +188,8 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			a.errMsg = ""
 			a.connOK = true
 			a.focusArea = FocusContent
-			a.loadCurrentView()
-			return a, tea.Batch(tickEvery(), a.refreshData())
+			initCmd := a.loadCurrentView()
+			return a, tea.Batch(tickEvery(), a.refreshData(), initCmd)
 		}
 		a.mode = "login"
 		a.connOK = false
@@ -246,8 +246,8 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			a.notice = msg.notice
 			a.errMsg = ""
 			a.deps.Router.GoBack()
-			a.loadCurrentView()
-			return a, tea.Batch(a.refreshData(), a.scheduleNoticeClear())
+			initCmd := a.loadCurrentView()
+			return a, tea.Batch(a.refreshData(), a.scheduleNoticeClear(), initCmd)
 		}
 		if a.content != nil {
 			var cmd tea.Cmd
@@ -256,7 +256,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return a, nil
 	case navigateMsg:
-		a.loadCurrentView()
+		return a, a.loadCurrentView()
 	case tickMsg:
 		return a, tea.Batch(tickEvery(), func() tea.Msg {
 			ctx := context.Background()
@@ -345,11 +345,27 @@ func (a *App) doLogin() tea.Cmd {
 		if err := a.deps.Session.Login(ctx, user, pass, org, a.deps.AtomOS); err != nil {
 			return authDoneMsg{err: err}
 		}
-		if err := a.deps.Session.RefreshAll(ctx); err != nil {
+		if err := a.refreshFleet(ctx); err != nil {
 			return dataLoadedMsg{err: err}
 		}
 		return authDoneMsg{}
 	}
+}
+
+func (a *App) refreshFleet(ctx context.Context) error {
+	err := a.deps.Session.RefreshAll(ctx)
+	if a.deps.Services != nil {
+		specs := make([]session.ServiceRefreshSpec, 0, len(a.deps.Services.Services))
+		for _, def := range a.deps.Services.Services {
+			specs = append(specs, session.ServiceRefreshSpec{
+				APIServiceType: def.APIServiceType,
+				Path:           def.Path,
+				Category:       def.Category,
+			})
+		}
+		a.deps.Session.RefreshServiceCounts(ctx, specs)
+	}
+	return err
 }
 
 // --- shell input ---
@@ -425,9 +441,9 @@ func (a *App) updateShell(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			routes := a.deps.Router.TopLevelRoutes()
 			if a.sidebarIdx < len(routes) {
 				_ = a.deps.Router.NavigateTo(routes[a.sidebarIdx].Path)
-				a.loadCurrentView()
 				a.focusArea = FocusContent
 				a.syncContentFocus()
+				return a, a.loadCurrentView()
 			}
 			return a, nil
 		}
@@ -439,7 +455,7 @@ func (a *App) updateShell(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch key {
 		case "b", "esc":
 			if a.deps.Router.GoBack() {
-				a.loadCurrentView()
+				return a, a.loadCurrentView()
 			}
 			return a, nil
 		}
@@ -478,7 +494,7 @@ func (a *App) updateSearch(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if len(a.searchHits) > 0 && a.searchIdx < len(a.searchHits) {
 			_ = a.deps.Router.NavigateTo(a.searchHits[a.searchIdx].Path)
 			a.overlay = ""
-			a.loadCurrentView()
+			return a, a.loadCurrentView()
 		}
 		return a, nil
 	case "up":
@@ -512,16 +528,17 @@ func (a *App) updateCmd(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if err == nil {
 				_ = a.deps.Router.NavigateTo(path)
 				a.overlay = ""
-				a.loadCurrentView()
+				initCmd := a.loadCurrentView()
 				if handler == "openVnc" && params["vmUuid"] != "" {
 					a.notice = "VNC deeplink for VM " + params["vmUuid"]
 				}
+				return a, initCmd
 			}
 			return a, nil
 		}
 		if err := a.deps.Router.NavigateTo(raw); err == nil {
 			a.overlay = ""
-			a.loadCurrentView()
+			return a, a.loadCurrentView()
 		} else {
 			a.errMsg = err.Error()
 		}
@@ -615,7 +632,7 @@ func (a *App) filterSearch(q string) {
 	a.searchIdx = 0
 }
 
-func (a *App) loadCurrentView() {
+func (a *App) loadCurrentView() tea.Cmd {
 	lay := computeLayout(a.width, a.height, a.chatOpen)
 	path := a.deps.Router.Current.Path
 	a.content = NewViewForRoute(path, a.deps, lay.contentW-2, lay.bodyH-2)
@@ -626,12 +643,15 @@ func (a *App) loadCurrentView() {
 			break
 		}
 	}
+	if a.content != nil {
+		return a.content.Init()
+	}
+	return nil
 }
 
 func (a *App) refreshData() tea.Cmd {
 	return func() tea.Msg {
-		ctx := context.Background()
-		err := a.deps.Session.RefreshAll(ctx)
+		err := a.refreshFleet(context.Background())
 		return refreshDoneMsg{err: err}
 	}
 }
@@ -817,9 +837,13 @@ func (a *App) sidebarCount(rt *nav.Route, f session.FleetSummary) string {
 		if n > 0 {
 			return fmt.Sprintf("(%d)", n)
 		}
-	case "paas", "saas":
-		if len(rt.Children) > 0 {
-			return fmt.Sprintf("(%d)", len(rt.Children))
+	case "paas":
+		if f.PaaSInstances > 0 {
+			return fmt.Sprintf("(%d)", f.PaaSInstances)
+		}
+	case "saas":
+		if f.SaaSInstances > 0 {
+			return fmt.Sprintf("(%d)", f.SaaSInstances)
 		}
 	}
 	return ""

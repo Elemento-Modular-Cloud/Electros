@@ -62,10 +62,9 @@ func (a *App) handleSidebarMouse(lay layout, msg tea.MouseMsg, bodyY int) (tea.M
 
 	a.sidebarIdx = idx
 	_ = a.deps.Router.NavigateTo(routes[idx].Path)
-	a.loadCurrentView()
 	a.focusArea = FocusContent
 	a.syncContentFocus()
-	return a, nil
+	return a, a.loadCurrentView()
 }
 
 func sidebarItemIndex(innerY int) int {

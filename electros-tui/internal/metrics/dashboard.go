@@ -5,6 +5,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/mattn/go-runewidth"
+
 	"electros-tui/internal/models"
 )
 
@@ -53,7 +55,7 @@ func BuildDashboardPanels(vms []models.VmRecord, vols []models.VolumeRecord, net
 		buildStorage(vols),
 		buildPlatform(vms, targets),
 		buildTargets(targets),
-		buildPaaSPlaceholder(),
+		BuildServicesPanel(0, 0, nil), // replaced at render time with live counts
 	}
 }
 
@@ -180,14 +182,31 @@ func buildTargets(targets []models.TargetRecord) Panel {
 	}
 }
 
-func buildPaaSPlaceholder() Panel {
+func BuildServicesPanel(paasTotal, saasTotal int, serviceBars []Bar) Panel {
+	total := paasTotal + saasTotal
+	stats := []Stat{
+		{Label: "PaaS instances", Value: fmt.Sprintf("%d", paasTotal)},
+		{Label: "SaaS instances", Value: fmt.Sprintf("%d", saasTotal)},
+		{Label: "Total instances", Value: fmt.Sprintf("%d", total)},
+	}
+	barTotal := total
+	if barTotal == 0 {
+		barTotal = 1
+	}
+	for i := range serviceBars {
+		if serviceBars[i].Total == 0 {
+			serviceBars[i].Total = barTotal
+		}
+	}
+	lines := []string(nil)
+	if total == 0 {
+		lines = []string{"No managed service instances running."}
+	}
 	return Panel{
 		Title: "PaaS / SaaS",
-		Lines: []string{
-			"Open PaaS or SaaS in the sidebar for managed services.",
-			"Managed Kubernetes, Database, Object Storage, n8n, OpenClaw, …",
-		},
-		Stats: []Stat{{Label: "API types", Value: strings.Join([]string{"kaas", "objectstorage", "dbaas", "n8n", "openclaw"}, ", ")}},
+		Stats: stats,
+		Bars:  serviceBars,
+		Lines: lines,
 	}
 }
 
@@ -222,11 +241,14 @@ func RenderPanel(p Panel, width int) string {
 	for _, s := range p.Stats {
 		b.WriteString(fmt.Sprintf("  %-22s %s\n", s.Label+":", s.Value))
 	}
-	for _, g := range p.Gauges {
-		b.WriteString(renderGauge(g, width) + "\n")
-	}
-	for _, bar := range p.Bars {
-		b.WriteString(renderBar(bar, width) + "\n")
+	if len(p.Gauges) > 0 || len(p.Bars) > 0 {
+		layout := chartLayoutForPanel(p, width)
+		for _, g := range p.Gauges {
+			b.WriteString(renderGauge(g, layout) + "\n")
+		}
+		for _, bar := range p.Bars {
+			b.WriteString(renderBar(bar, layout) + "\n")
+		}
 	}
 	for _, d := range p.Dots {
 		b.WriteString(renderDots(d) + "\n")
@@ -237,23 +259,103 @@ func RenderPanel(p Panel, width int) string {
 	return b.String()
 }
 
-func renderGauge(g Gauge, width int) string {
- pct := 0.0
-	if g.Max > 0 {
-		pct = g.Value / g.Max * 100
-	}
-	barW := min(width-30, 30)
-	filled := int(pct / 100 * float64(barW))
-	return fmt.Sprintf("  %-18s [%s%s] %.0f%%", g.Label, strings.Repeat("█", filled), strings.Repeat("░", barW-filled), pct)
+type chartLayout struct {
+	labelW int
+	barW   int
+	valueW int
 }
 
-func renderBar(bar Bar, width int) string {
-	barW := min(width-28, 24)
-	filled := 0
-	if bar.Total > 0 {
-		filled = bar.Count * barW / bar.Total
+func chartLayoutForPanel(p Panel, width int) chartLayout {
+	labels := make([]string, 0, len(p.Gauges)+len(p.Bars))
+	for _, g := range p.Gauges {
+		labels = append(labels, g.Label)
 	}
-	return fmt.Sprintf("  %-16s [%s%s] %d", bar.Label, strings.Repeat("█", filled), strings.Repeat("░", barW-filled), bar.Count)
+	for _, bar := range p.Bars {
+		labels = append(labels, bar.Label)
+	}
+
+	labelW := 8
+	for _, label := range labels {
+		labelW = max(labelW, runewidth.StringWidth(label))
+	}
+	// Leave room for bars; truncate long labels rather than shrinking bars too far.
+	maxLabel := max(12, min(width/3, 26))
+	if labelW > maxLabel {
+		labelW = maxLabel
+	}
+
+	valueW := 3
+	for _, bar := range p.Bars {
+		valueW = max(valueW, runewidth.StringWidth(fmt.Sprintf("%d", bar.Count)))
+	}
+	for _, g := range p.Gauges {
+		valueW = max(valueW, runewidth.StringWidth(fmt.Sprintf("%.0f%%", pctOf(g))))
+	}
+
+	const indent = 2
+	// indent + label + " " + "[" + bar + "]" + " " + value
+	barW := width - indent - labelW - 1 - 2 - 1 - valueW
+	barW = max(8, min(barW, 36))
+
+	return chartLayout{labelW: labelW, barW: barW, valueW: valueW}
+}
+
+func pctOf(g Gauge) float64 {
+	if g.Max <= 0 {
+		return 0
+	}
+	return g.Value / g.Max * 100
+}
+
+func padLabel(label string, width int) string {
+	if width <= 0 {
+		return label
+	}
+	if runewidth.StringWidth(label) > width {
+		for len(label) > 0 && runewidth.StringWidth(label) > width-1 {
+			label = label[:len(label)-1]
+		}
+		return label + "…"
+	}
+	return label + strings.Repeat(" ", width-runewidth.StringWidth(label))
+}
+
+func padValue(value string, width int) string {
+	if width <= 0 {
+		return value
+	}
+	pad := width - runewidth.StringWidth(value)
+	if pad < 0 {
+		return value
+	}
+	return strings.Repeat(" ", pad) + value
+}
+
+func renderGauge(g Gauge, layout chartLayout) string {
+	pct := pctOf(g)
+	filled := 0
+	if layout.barW > 0 {
+		filled = int(pct / 100 * float64(layout.barW))
+	}
+	if filled > layout.barW {
+		filled = layout.barW
+	}
+	bar := strings.Repeat("█", filled) + strings.Repeat("░", layout.barW-filled)
+	value := padValue(fmt.Sprintf("%.0f%%", pct), layout.valueW)
+	return fmt.Sprintf("  %s [%s] %s", padLabel(g.Label, layout.labelW), bar, value)
+}
+
+func renderBar(bar Bar, layout chartLayout) string {
+	filled := 0
+	if bar.Total > 0 && layout.barW > 0 {
+		filled = bar.Count * layout.barW / bar.Total
+	}
+	if filled > layout.barW {
+		filled = layout.barW
+	}
+	barStr := strings.Repeat("█", filled) + strings.Repeat("░", layout.barW-filled)
+	value := padValue(fmt.Sprintf("%d", bar.Count), layout.valueW)
+	return fmt.Sprintf("  %s [%s] %s", padLabel(bar.Label, layout.labelW), barStr, value)
 }
 
 func renderDots(d DotGrid) string {

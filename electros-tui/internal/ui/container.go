@@ -55,7 +55,17 @@ func (v *containerView) Hints() string { return "j/k navigate · click · Enter 
 func (v *containerView) View() string {
 	f := v.deps.Session.FleetSummary()
 	var b strings.Builder
-	b.WriteString(StyleStatLabel.Render(fmt.Sprintf("%d sections", len(v.route.Children))) + "\n\n")
+	header := fmt.Sprintf("%d sections", len(v.route.Children))
+	switch v.route.Name {
+	case "iaas":
+		n := f.VMs + f.Volumes + f.Networks
+		header = fmt.Sprintf("%d resources", n)
+	case "paas":
+		header = fmt.Sprintf("%d instances", f.PaaSInstances)
+	case "saas":
+		header = fmt.Sprintf("%d instances", f.SaaSInstances)
+	}
+	b.WriteString(StyleStatLabel.Render(header) + "\n\n")
 	for i, child := range v.route.Children {
 		label := child.Label
 		if count := containerChildCount(child.Path, f); count != "" {
@@ -112,6 +122,9 @@ func (v *containerView) HandleMouse(msg tea.MouseMsg, _, innerY int) tea.Cmd {
 }
 
 func containerChildCount(path string, f session.FleetSummary) string {
+	if n := f.ServiceCountByPath(path); n > 0 {
+		return fmt.Sprintf("%d instances", n)
+	}
 	switch path {
 	case "iaas/storage":
 		if f.Volumes > 0 {
