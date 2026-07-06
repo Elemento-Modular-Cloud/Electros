@@ -54,6 +54,7 @@ function createMainWindow() {
               backgroundThrottling: false,
               enableRemoteModule: false,
               experimentalFeatures: false,
+              webSecurity: app.isPackaged,
               devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
           }
       }, __dirname);

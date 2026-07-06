@@ -245,7 +245,7 @@ class BackgroundProvider {
 
             Object.entries(data).forEach(([providerName, config]) => {
                 BackgroundProvider.Providers.push(
-                  new BackgroundProvider(providerName, config.name, config.icon, config.dateFormat, config.feed),
+                    new BackgroundProvider(providerName, config.name, config.icon, config.dateFormat, config.feed),
                 );
             });
         } catch (e) {

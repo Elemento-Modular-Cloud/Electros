@@ -168,8 +168,8 @@ class BackgroundsHandler {
 
                 const baseName = path.basename(image, ext);
 
-                if (!backgrounds.has(baseName) || ext === '.webp') {
-                    const fp = path.join(BackgroundsHandler.BackgroundDir, baseName);
+                if (!backgrounds.has(baseName) && ext === 'webp') {
+                    const fp = path.join(BackgroundsHandler.BackgroundDir, image);
 
                     backgrounds.set(baseName, {
                         name: image,
