@@ -122,6 +122,10 @@
                 "filter": [
                     "**/*"
                 ]
+            },
+            {
+                "from": "configs/BackgroundProviders.json",
+                "to": "configs/BackgroundProviders.json"
             }
         ]
     },

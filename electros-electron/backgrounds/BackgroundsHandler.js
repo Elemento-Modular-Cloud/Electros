@@ -155,7 +155,6 @@ class BackgroundsHandler {
 
         try {
             const files = fs.readdirSync(BackgroundsHandler.BackgroundDir);
-            console.dir(BackgroundsHandler.BackgroundDir);
 
             /** @type {Map<string, Background>} */
             const backgrounds = new Map();

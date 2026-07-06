@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const {XMLParser} = require("fast-xml-parser");
 const {DateParser} = require("./DateParser");
+const {app} = require("electron");
 
 
 /**
@@ -44,7 +45,9 @@ const {DateParser} = require("./DateParser");
 
 
 class BackgroundProvider {
-    static ProvidersFile = path.resolve(path.join('configs','BackgroundProviders.json'));
+    static ProvidersFile = app.isPackaged
+        ? path.join(process.resourcesPath, 'configs', 'BackgroundProviders.json')
+        : path.join(app.getAppPath(), 'configs', 'BackgroundProviders.json');
     static Providers = [];
 
     /** @type {!string} **/

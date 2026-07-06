@@ -21,15 +21,12 @@ const {DaemonsNotEnabledError} = require("./common/Daemons.js");
 const fs = require("fs");
 const {homedir} = require("node:os");
 const {WindowProvider} = require("./windows/WindowProvider.js");
-const BackgroundsHandler = require("./backgrounds/BackgroundsHandler.js");
-
 
 let mainWindow = null;
 
 const PreloadedContent = new Loaders(__dirname);
 const platform = new Platform();
 const Rdp = new RdpWindow(PreloadedContent, platform, __dirname);
-BackgroundsHandler.init();
 
 if (process.env.XDG_SESSION_TYPE === 'wayland') {
     app.commandLine.appendSwitch('ozone-platform', 'wayland');
@@ -296,6 +293,9 @@ ipcMain.handle('check-port', async (event, {ip, port}) => {
 });
 
 app.whenReady().then(() => {
+    const BackgroundsHandler = require("./backgrounds/BackgroundsHandler.js");
+    BackgroundsHandler.init();
+
     const menu = Menu.buildFromTemplate(
       BuildMenuTemplate(),
     );
