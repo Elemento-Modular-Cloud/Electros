@@ -159,12 +159,12 @@ jobs:
 
           if [ ${{ matrix.os }} == "win" ]; then
             echo "Running on windows, pulling correct lib"
-            npm install --os=win32 --cpu=x64 sharp@0.33.5
+            npm install --os=win32 --cpu=x64 sharp@0.35.3
           fi
           
           if [ "${{ matrix.os }}" == "linux" ] && [ "${{ matrix.arch }}" == "arm64" ]; then
             echo "Running on Linux arm64, pulling correct lib"
-            npm install --os=linux --cpu=arm64 --libc=glibc sharp@0.33.5
+            npm install --os=linux --cpu=arm64 --libc=glibc sharp@0.35.3
           fi
 
           # Clean up

@@ -1,6 +1,6 @@
 {
     "name": "electros",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "description": "Electros Desktop Application",
     "main": "main.js",
     "homepage": "https://elemento.cloud",
@@ -130,6 +130,10 @@
                 "filter": [
                     "**/*"
                 ]
+            },
+            {
+                "from": "configs/BackgroundProviders.json",
+                "to": "configs/BackgroundProviders.json"
             }
         ]
     },
@@ -161,7 +165,7 @@
         "cors": "^2.8.5",
         "express": "^4.21.2",
         "fast-xml-parser": "^5.4.1",
-        "sharp": "^0.33.5",
+        "sharp": "^0.35.3",
         "socket.io": "^4.8.1",
         "ssh2": "^1.15.0"
     }

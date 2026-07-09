@@ -22,7 +22,6 @@ const fs = require("fs");
 const {homedir} = require("node:os");
 const {WindowProvider} = require("./windows/WindowProvider.js");
 
-
 let mainWindow = null;
 
 const PreloadedContent = new Loaders(__dirname);
@@ -52,6 +51,7 @@ function createMainWindow() {
               backgroundThrottling: false,
               enableRemoteModule: false,
               experimentalFeatures: false,
+              webSecurity: app.isPackaged,
               devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
           }
       }, __dirname);
@@ -293,6 +293,9 @@ ipcMain.handle('check-port', async (event, {ip, port}) => {
 });
 
 app.whenReady().then(() => {
+    const BackgroundsHandler = require("./backgrounds/BackgroundsHandler.js");
+    BackgroundsHandler.init();
+
     const menu = Menu.buildFromTemplate(
       BuildMenuTemplate(),
     );
@@ -307,17 +310,6 @@ app.whenReady().then(() => {
     }
 
     createWindows();
-
-    // Convert existing background images to WebP on startup (async, non-blocking)
-    configHandlers.convertExistingBackgrounds().then(result => {
-        if (result.success) {
-            console.log(`Background conversion complete: ${result.converted} converted, ${result.failed} failed, ${result.skipped} skipped`);
-        } else {
-            console.error('Background conversion failed:', result.error);
-        }
-    }).catch(error => {
-        console.error('Error during background conversion:', error);
-    });
 });
 
 app.on('window-all-closed', () => {
