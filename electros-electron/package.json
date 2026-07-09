@@ -20,7 +20,7 @@
         "build:nosign": "node build.mjs --config.mac.identity=null",
         "pack": "node build.mjs --dir",
         "pack:nosign": "node build.mjs --dir --config.mac.identity=null",
-        "postinstall": "electron-rebuild -f -w sharp"
+        "postinstall": "electron-builder install-app-deps"
     },
     "build": {
         "appId": "app.elemento.cloud",
@@ -88,7 +88,8 @@
             ],
             "asarUnpack": [
                 "node_modules/ssh2/**/*",
-                "node_modules/sharp/**/*",
+                "**/node_modules/sharp/**/*",
+                "**/node_modules/@img/**/*",
                 "electros/remotes/**/*"
             ]
         },
@@ -102,8 +103,15 @@
             "maintainer": "Elemento Cloud Srl <hello@elemento.cloud>",
             "category": "Utility"
         },
+        "deb": {
+            "depends": ["libvips42 | libvips40 | libvips"]
+        },
+        "rpm": {
+            "depends": ["vips-libs"]
+        },
         "compression": "maximum",
         "asar": true,
+        "npmRebuild": true,
         "removePackageScripts": true,
         "removePackageKeywords": true,
         "artifactName": "${productName}-${version}_${os}-${arch}.${ext}",
