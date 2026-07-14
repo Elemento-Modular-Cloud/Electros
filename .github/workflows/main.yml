@@ -143,6 +143,12 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          
+          if [ ${{ matrix.os }} == "mac" ] && [ "${{ matrix.arch }}" == "x64" ]; then
+            echo "Running on mac, pulling correct lib"
+            npm install --os=darwin --cpu=x64 sharp@0.35.3
+          fi
+          
           if [ ${{ matrix.os }} == "mac" ]; then
             # Create keychain
             security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
