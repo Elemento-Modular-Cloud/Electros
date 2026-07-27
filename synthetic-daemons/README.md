@@ -4,6 +4,18 @@ Standalone mock servers that emulate Elemento **client daemons** on the ECD loca
 
 ## Quick start
 
+One-command demo (Electros spawns this package via `npm start`):
+
+```bash
+cd synthetic-daemons && npm install   # once
+cd ../electros-electron
+npm start -- --synthetic-daemons
+```
+
+Or from the Electros **Developer** menu: **Use Synthetic Daemons** (`CmdOrCtrl+Shift+Alt+S`) / **Use Native Daemons** (`CmdOrCtrl+Shift+Alt+N`) to switch at runtime.
+
+### Manual (two terminals)
+
 ```bash
 cd synthetic-daemons
 npm install
@@ -130,5 +142,6 @@ npm run build        # compile only
 From `electros-electron`:
 
 ```bash
-npm run synthetic-daemons
+npm start -- --synthetic-daemons   # GUI + mocks together
+npm run synthetic-daemons          # mocks only
 ```

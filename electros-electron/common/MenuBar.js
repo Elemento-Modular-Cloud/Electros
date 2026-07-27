@@ -3,6 +3,14 @@ import { Terminal } from "../windows/Terminal.js";
 import {app, Notification} from "electron";
 
 
+function notify(title, body, urgency = 'low') {
+    if (!Notification.isSupported()) {
+        return;
+    }
+    new Notification({title, body, silent: true, urgency}).show();
+}
+
+
 export function BuildMenuTemplate() {
     const baseMenu = [
         {
@@ -76,30 +84,45 @@ export function BuildMenuTemplate() {
             label: 'Developer',
             submenu:[
                 {
-                    label: 'Terminate Daemons',
+                    label: 'Use Native Daemons',
+                    accelerator: 'CmdOrCtrl+Shift+Alt+N',
                     click: async () => {
-                        console.log("manual daemon termination triggered");
-                        if(Daemons.Terminate()) {
-                            if(Notification.isSupported()) {
-                                new Notification({
-                                    title: "Daemons Terminated",
-                                    body: "Electros Client Daemons successfully terminated.",
-                                    silent: true,
-                                    urgency: 'low'
-                                }).show();
-                            }
-                        } else {
-                            if(Notification.isSupported()) {
-                                new Notification({
-                                    title: "Failed to Terminate Daemons",
-                                    body: "Electros Client Daemons were not terminated.",
-                                    silent: true,
-                                    urgency: 'low'
-                                }).show();
-                            }
+                        console.log("switch to native daemons triggered");
+                        try {
+                            await Daemons.LaunchNative();
+                            notify("Native Daemons Started", "Switched to native client daemons.");
+                        } catch (e) {
+                            console.error("Failed to launch native daemons:", e);
+                            notify("Failed to Launch Native Daemons", e?.message || "Could not start native daemons.", 'normal');
                         }
                     }
                 },
+                {
+                    label: 'Use Synthetic Daemons',
+                    accelerator: 'CmdOrCtrl+Shift+Alt+S',
+                    click: async () => {
+                        console.log("switch to synthetic daemons triggered");
+                        try {
+                            await Daemons.LaunchSynthetic();
+                            notify("Synthetic Daemons Started", "Switched to synthetic-daemons (npm start).");
+                        } catch (e) {
+                            console.error("Failed to launch synthetic daemons:", e);
+                            notify("Failed to Launch Synthetic Daemons", e?.message || "Could not start synthetic-daemons.", 'normal');
+                        }
+                    }
+                },
+                {
+                    label: 'Terminate Daemons',
+                    click: async () => {
+                        console.log("manual daemon termination triggered");
+                        if (Daemons.Terminate()) {
+                            notify("Daemons Terminated", "Electros Client Daemons successfully terminated.");
+                        } else {
+                            notify("Failed to Terminate Daemons", "Electros Client Daemons were not terminated.", 'low');
+                        }
+                    }
+                },
+                {type: 'separator'},
                 {label: 'Toggle DevTools', role: 'toggleDevTools'},
                 {label: 'Toggle Fullscreen', role: 'toggleFullScreen'},
             ]
