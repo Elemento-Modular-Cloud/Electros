@@ -14,7 +14,7 @@
     },
     "scripts": {
         "synthetic-daemons": "npm run start --prefix ../synthetic-daemons",
-        "start": "concurrently --kill-others --names \"vite,electron\" -c \"green,yellow\" -l 10 --pad-prefix \"vite\" \"electron . --trace-warnings --v=1\"",
+        "start": "concurrently --kill-others --names \"vite,electron\" -c \"green,yellow\" -l 10 --pad-prefix -P \"vite\" \"electron . --trace-warnings --v=1 {@}\" --",
         "dev": "vite",
         "build": "node build.mjs",
         "build:nosign": "node build.mjs --config.mac.identity=null",
