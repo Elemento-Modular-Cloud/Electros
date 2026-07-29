@@ -29,7 +29,9 @@ contextBridge.exposeInMainWorld('electron', {
             'background-fetch',
             'background-provider-images',
             'background-import',
-            'background-providers'
+            'background-providers',
+            'read-ai-config',
+            'write-ai-config'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

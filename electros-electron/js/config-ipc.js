@@ -7,6 +7,7 @@ const sharp = require('sharp');
 // File paths
 const CONFIG_DIR = path.join(os.homedir(), '.elemento');
 const CONFIG_PATH = path.join(CONFIG_DIR, 'settings');
+const AI_CONFIG_PATH = path.join(CONFIG_DIR, 'ai-config');
 const HOSTS_PATH = path.join(CONFIG_DIR, 'hosts');
 const BACKGROUNDS_DIR = path.join(CONFIG_DIR, 'backgrounds');
 
@@ -44,6 +45,49 @@ ipcMain.handle('read-hosts', async () => {
         return [];
     }
 });
+
+ipcMain.handle('read-ai-config', async () => {
+    try {
+        if (fs.existsSync(AI_CONFIG_PATH)) {
+            const data = fs.readFileSync(AI_CONFIG_PATH, 'utf8');
+            return JSON.parse(data);
+        }
+        return {};
+    } catch (error) {
+        console.error('Error reading AI config:', error);
+        return {};
+    }
+});
+
+ipcMain.handle('write-ai-config', async (event, config) => {
+    if (config.config) {
+        config = config.config;
+    }
+    try {
+        let existingConfig = {};
+        if (fs.existsSync(AI_CONFIG_PATH)) {
+            try {
+                const fileContent = fs.readFileSync(AI_CONFIG_PATH, 'utf8');
+                const parsed = JSON.parse(fileContent);
+                existingConfig = parsed.config || parsed;
+            } catch (e) {
+                console.warn('Could not parse existing AI config, starting fresh');
+            }
+        }
+
+        const mergedConfig = { ...existingConfig, ...config };
+
+        const json = JSON.stringify(mergedConfig, null, 4);
+        console.log('Writing AI config to', AI_CONFIG_PATH);
+        console.log('Keys being written:', Object.keys(mergedConfig).filter(key => !AI_SECRET_KEYS.has(key)));
+        fs.writeFileSync(AI_CONFIG_PATH, json, 'utf8');
+        return true;
+    } catch (error) {
+        console.error('Error writing AI config:', error);
+        return false;
+    }
+});
+
 
 ipcMain.handle('write-config', async (event, config) => {
     if (config.config) {
@@ -143,5 +187,5 @@ ipcMain.handle('import-background', async (event) => {
 });
 
 module.exports = {
-    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts']
+    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'read-ai-config', 'write-ai-config'],
 };
