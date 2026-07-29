@@ -7,11 +7,54 @@ const sharp = require('sharp');
 // File paths
 const CONFIG_DIR = path.join(os.homedir(), '.elemento');
 const CONFIG_PATH = path.join(CONFIG_DIR, 'settings');
+const AI_CONFIG_PATH = path.join(CONFIG_DIR, 'ai-config');
 const HOSTS_PATH = path.join(CONFIG_DIR, 'hosts');
 const BACKGROUNDS_DIR = path.join(CONFIG_DIR, 'backgrounds');
 
+const AI_SECRET_KEYS = new Set(['ELECTROS_LLM_PROXY_API_KEY']);
+
 // Supported image extensions
 const SUPPORTED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
+
+// Parses a dotenv-style file into a flat string map.
+// Skips blank lines and `#` comments; strips one layer of matching quotes.
+function parseEnvFile(raw) {
+    const config = {};
+    for (const line of raw.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) {
+            continue;
+        }
+        const separator = trimmed.indexOf('=');
+        if (separator <= 0) {
+            continue;
+        }
+        const key = trimmed.slice(0, separator).trim();
+        let value = trimmed.slice(separator + 1).trim();
+        if (value.length >= 2 && value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1).replace(/\\(["\\])/g, '$1');
+        } else if (value.length >= 2 && value.startsWith("'") && value.endsWith("'")) {
+            value = value.slice(1, -1);
+        }
+        config[key] = value;
+    }
+    return config;
+}
+
+// Serializes a flat map back to dotenv, quoting only what needs it.
+function serializeEnvFile(config) {
+    const lines = Object.entries(config)
+        .filter(([key]) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(key))
+        .map(([key, rawValue]) => {
+            const value = rawValue === undefined || rawValue === null ? '' : String(rawValue);
+            const needsQuotes = value !== value.trim() || /[\s#'"\\]/.test(value);
+            return needsQuotes
+                ? `${key}="${value.replace(/(["\\])/g, '\\$1')}"`
+                : `${key}=${value}`;
+        });
+    return lines.join('\n') + '\n';
+}
+
 
 // Ensure config directory exists
 if (!fs.existsSync(CONFIG_DIR)) {
@@ -44,6 +87,48 @@ ipcMain.handle('read-hosts', async () => {
         return [];
     }
 });
+
+ipcMain.handle('read-ai-config', async () => {
+    if (!fs.existsSync(AI_CONFIG_PATH)) {
+        return {};
+    }
+    
+    if (!fs.statSync(AI_CONFIG_PATH).isFile()) {
+        throw new Error(`${AI_CONFIG_PATH} exists but is not a regular file`);
+    }
+    return parseEnvFile(fs.readFileSync(AI_CONFIG_PATH, 'utf8'));
+});
+
+ipcMain.handle('write-ai-config', async (event, config) => {
+    try {
+        if (!config || typeof config !== 'object') {
+            throw new Error('write-ai-config expects a flat key/value object');
+        }
+        
+
+        let existingConfig = {};
+        if (fs.existsSync(AI_CONFIG_PATH) && fs.statSync(AI_CONFIG_PATH).isFile()) {
+            try {
+                existingConfig = parseEnvFile(fs.readFileSync(AI_CONFIG_PATH, 'utf8'));
+            } catch (e) {
+                console.warn('Could not parse existing AI config, starting fresh');
+            }
+        }
+        const mergedConfig = { ...existingConfig, ...config };
+
+        console.log('Writing AI config to', AI_CONFIG_PATH,
+            Object.keys(mergedConfig).filter(key => !AI_SECRET_KEYS.has(key)));
+
+        const tempPath = `${AI_CONFIG_PATH}.tmp`;
+        fs.writeFileSync(tempPath, serializeEnvFile(mergedConfig), { encoding: 'utf8', mode: 0o600 });
+        fs.renameSync(tempPath, AI_CONFIG_PATH);
+        return true;
+    } catch (error) {
+        console.error('Error writing AI config:', error.message);
+        return false;
+    }
+});
+
 
 ipcMain.handle('write-config', async (event, config) => {
     if (config.config) {
@@ -143,5 +228,5 @@ ipcMain.handle('import-background', async (event) => {
 });
 
 module.exports = {
-    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts']
+    channels: ['read-config', 'write-config', 'read-hosts', 'write-hosts', 'read-ai-config', 'write-ai-config'],
 };
