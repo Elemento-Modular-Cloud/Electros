@@ -22,7 +22,16 @@ the Github Actions Nightly workflow. It can only be run against `develop`.
 
 ## Synthetic mock daemons (UI development)
 
-To run the UI without native client daemons, start the HTTP mock servers in [`synthetic-daemons/`](synthetic-daemons/) and launch Electros with `--no-daemons`. See [synthetic-daemons/README.md](synthetic-daemons/README.md) for ports, fixtures, and verification steps.
+To run the UI with HTTP mock servers instead of native client daemons, use `--synthetic-daemons` so Electros starts [`synthetic-daemons/`](synthetic-daemons/) via `npm start` alongside the GUI. See [synthetic-daemons/README.md](synthetic-daemons/README.md) for ports, fixtures, and verification steps.
+
+```bash
+cd synthetic-daemons && npm install   # once
+cd electros-electron && npm start -- --synthetic-daemons
+```
+
+From the **Developer** menu you can switch at runtime between **Use Native Daemons** (`CmdOrCtrl+Shift+Alt+N`) and **Use Synthetic Daemons** (`CmdOrCtrl+Shift+Alt+S`) in unpackaged builds or when `--enable-devtools` is set.
+
+To run mocks in a separate terminal instead:
 
 ```bash
 cd synthetic-daemons && npm install && npm start
@@ -34,7 +43,8 @@ cd electros-electron && npm start -- --no-daemons
 Electros has a set of custom command line switches other than the Electron switches:
 
 - `--enable-devtools` enables the devtools for the application
-- `--no-daemons` disables the execution of the embedded daemons (use with synthetic-daemons above)
+- `--synthetic-daemons` launches [`synthetic-daemons/`](synthetic-daemons/) via `npm start` instead of the native client daemons (unpackaged/dev only)
+- `--no-daemons` disables the execution of the embedded daemons (use when running synthetic-daemons yourself)
 
 > [!NOTE]
 > On macOS, to add a CLI switch, you'll have to append them directly onto the executable:
