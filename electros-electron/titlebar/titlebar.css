@@ -109,7 +109,7 @@
     background: #218cfd; /* Blue color */
 }
 
-.mac .electros-titlebar-buttons:hover #close-button::after {
+.mac .electros-titlebar-buttons:hover *::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -117,56 +117,26 @@
     transform: translate(-50%, -50%);
     width: var(--mac-button-icon-size);
     height: var(--mac-button-icon-size);
-    background-image: url('../titlebar/mac/close.svg');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
     animation: fadeIn 0.08s ease-in forwards;
+}
+
+.mac .electros-titlebar-buttons:hover #close-button::after {
+    background-image: url('../../titlebar/mac/close.svg');
 }
 
 .mac .electros-titlebar-buttons:hover #minimize-button::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--mac-button-icon-size);
-    height: var(--mac-button-icon-size);
-    background-image: url('../titlebar/mac/minimize.svg');
-    background-position: center;
-    background-size: contain cover;
-    background-repeat: no-repeat;
-    animation: fadeIn 0.08s ease-in forwards;
+    background-image: url('../../titlebar/mac/minimize.svg');
 }
 
 .mac .electros-titlebar-buttons:hover #maximize-button::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--mac-button-icon-size);
-    height: var(--mac-button-icon-size);
-    background-image: url('../titlebar/mac/maximize.svg');
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    animation: fadeIn 0.08s ease-in forwards;
+    background-image: url('../../titlebar/mac/maximize.svg');
 }
 
 .mac .electros-titlebar-buttons:hover #fullscreen-button::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--mac-button-icon-size);
-    height: var(--mac-button-icon-size);
-    background-image: url('../titlebar/mac/full.svg');
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    animation: fadeIn 0.08s ease-in forwards;
+    background-image: url('../../titlebar/mac/full.svg');
 }
 
 /* Windows-specific styles */
@@ -212,57 +182,33 @@
     transition: color 0.2s;
 }
 
-.win #minimize-button::after, .linux #minimize-button::after {
+.win *::after, .linux *::after {
     content: '';
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: var(--win-button-icon-size);
     height: var(--win-button-icon-size);
-    background-image: url('../titlebar/win/minimize.svg');
     background-position: center;
     background-size: contain cover;
     background-repeat: no-repeat;
+}
+
+.win #minimize-button::after, .linux #minimize-button::after {
+    background-image: url('../../titlebar/win/minimize.svg');
 
 }
 
 .win #maximize-button::after, .linux #maximize-button::after {
-    content: '';
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--win-button-icon-size);
-    height: var(--win-button-icon-size);
-    background-image: url('../titlebar/win/maximize.svg');
-    background-position: center;
-    background-size: contain cover;
-    background-repeat: no-repeat;
+    background-image: url('../../titlebar/win/maximize.svg');
 }
 
 .win #fullscreen-button::after, .linux #fullscreen-button::after {
-    content: '';
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--win-button-icon-size);
-    height: var(--win-button-icon-size);
-    background-image: url('../titlebar/win/maximize.svg');
-    background-position: center;
-    background-size: contain cover;
-    background-repeat: no-repeat;
+    background-image: url('../../titlebar/win/maximize.svg');
 }
 
 .win #close-button::after, .linux #close-button::after {
-    content: '';
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--win-button-icon-size);
-    height: var(--win-button-icon-size);
-    background-image: url('../titlebar/win/close.svg');
-    background-position: center;
-    background-size: contain cover;
-    background-repeat: no-repeat;
+    background-image: url('../../titlebar/win/close.svg');
 }
 
 .win .electros-titlebar-buttons .electros-titlebar-button:first-of-type {
