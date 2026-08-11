@@ -1,5 +1,3 @@
-import {getDefaultGlassmorphismColor} from "../electros/js/gui/backgrounds/ColourUtils";
-
 function initializeTitlebar(options = { minimizeOnly: false }) {
     const titlebar = document.querySelector('.electros-titlebar');
     const platform = navigator.userAgent.includes('Mac') ? 'mac' :
