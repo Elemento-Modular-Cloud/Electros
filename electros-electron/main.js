@@ -456,20 +456,24 @@ app.on('child-process-gone', (event, details) => {
 ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = true }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable && refuseUnsafe) {
-        return false;
+        console.warn("Encryption refused due to lack of keychain support");
+        throw new Error("Encryption refused due to lack of keychain support");
     } else if (!isAvailable && !refuseUnsafe) {
-        console.warn("Value was not encrypted because the OS has no support for keychains.")
+        console.warn("Value was not encrypted because the OS has no support for keychains.");
         return value;
     }
 
-    return safeStorage.encryptString(value)
+    const v = safeStorage.encryptString(value);
+    return v.toString('base64');
 });
 
 ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable) { return false; }
 
-    return safeStorage.decryptString(value)
+    // Convert str to buffer
+    const buffer = Buffer.from(value, 'base64');
+    return safeStorage.decryptString(buffer);
 });
 
 ipcMain.handle("app-version", () => {
