@@ -142,14 +142,16 @@
         ]
     },
     "devDependencies": {
-        "concurrently": "^9.2.1",
-        "electron": "^40.1.0",
+        "@babel/plugin-proposal-decorators": "^8.0.2",
+        "@rolldown/plugin-babel": "^0.2.3",
+        "concurrently": "^9.2.4",
+        "electron": "^40.10.6",
         "electron-builder": "^25.1.8",
-        "lightningcss": "^1.32.0",
+        "esbuild": "^0.28.2",
+        "lightningcss": "^1.33.0",
         "terser": "^5.46.1",
         "typescript": "^5.9.3",
-        "vite": "^8.0.16",
-        "esbuild": "^0.28.2",
+        "vite": "^8.2.2",
         "vite-plugin-static-copy": "^4.0.1"
     },
     "overrides": {
@@ -166,11 +168,11 @@
         "@xterm/addon-fit": "latest",
         "@xterm/addon-webgl": "^0.19.0",
         "@xterm/xterm": "^6.0.0",
-        "cors": "^2.8.5",
-        "express": "^4.21.2",
+        "cors": "^2.8.6",
+        "express": "^4.22.2",
         "fast-xml-parser": "5.10.1",
         "sharp": "^0.35.3",
-        "socket.io": "^4.8.1",
-        "ssh2": "^1.15.0"
+        "socket.io": "^4.8.3",
+        "ssh2": "^1.17.0"
     }
 }
