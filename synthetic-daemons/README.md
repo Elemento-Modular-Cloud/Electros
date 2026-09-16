@@ -1,6 +1,6 @@
 # Synthetic HTTP Client Daemons
 
-Standalone mock servers that emulate Elemento **client daemons** on the ECD localhost ports. Use them to run the Electros UI without native `elemento_client_daemons` binaries.
+Standalone mock servers that emulate Elemento **client daemons** on the ECD localhost ports. They simulate the in-memory **portal** that `access_client` and `target_client` now proxy to on `elemento-monorepo-client` `develop`. Use them to run Electros without native `elemento_client_daemons` binaries and without `portal.elemento.cloud`.
 
 ## Quick start
 
@@ -33,17 +33,25 @@ Ensure [`elemento-gui-new/electros/configs/flags.json`](../elemento-gui-new/elec
 
 ## Ports (from ECD `networking.json`)
 
-| Service   | Port  |
-|-----------|-------|
-| Auth      | 47777 |
-| Compute   | 17777 |
-| Storage   | 27777 |
-| Network   | 37777 |
-| Targets   | 57777 |
-| Services  | 6777  |
-| MCP       | 7782  |
+| Service   | Port  | Real daemon     |
+|-----------|-------|-----------------|
+| Auth      | 47777 | access_client   |
+| Compute   | 17777 | matcher_client  |
+| Storage   | 27777 | storage_client  |
+| Network   | 37777 | network_client  |
+| Targets   | 57777 | target_client   |
+| Services  | 6777  | service_client  |
+| MCP       | 7782  | mcp_client      |
 
 API paths come from [`elemento-gui-new/electros/ecd/restkeys.json`](../elemento-gui-new/electros/ecd/restkeys.json).
+
+Cloud targets are **centralised**. The target daemon no longer mounts local `/list` / `/create` CRUD. The source of truth is the in-memory portal:
+
+- `GET /api/v1.0/client/target/grants/me`
+- `GET /api/v1.0/client/target/connections/me` (active set, equivalent to `~/.elemento/cloud-targets`)
+- Org-admin: `/org-targets`, `/target-grants`, `/scenarios`
+
+Auth is portal-shaped on the same process: `/api/v1/authenticate/*` plus `/api/v1.0` orgs, membership, limits, invites, and subscriptions.
 
 ## CLI options
 
@@ -56,87 +64,79 @@ API paths come from [`elemento-gui-new/electros/ecd/restkeys.json`](../elemento-
 
 ```bash
 # Health
-curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:47777
+curl -s http://127.0.0.1:47777
+curl -s http://127.0.0.1:47777/version
 
-# Auth status (splash / login)
+# Portal session (splash / login / org switch)
 curl -s http://127.0.0.1:47777/api/v1/authenticate/status
+curl -s http://127.0.0.1:47777/api/v1/authenticate/scopes
+curl -s http://127.0.0.1:47777/api/v1.0/orgs/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/membership/tree
+curl -s http://127.0.0.1:47777/api/v1.0/subscription/tiers
 
-# Licenses (Settings → Licenses)
-curl -s http://127.0.0.1:47777/api/v1/authenticate/license/list
+# Cloud targets (grants + active connections — not /list)
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/grants/me
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/connections/me
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/org-targets
 
-# VM list
+# Workloads
 curl -s http://127.0.0.1:17777/api/v1.0/client/vm/status
-
-# Targets
-curl -s http://127.0.0.1:57777/api/v1.0/client/target/list
-
-# Volumes
 curl -s http://127.0.0.1:27777/api/v1.0/client/volume/accessible
-
-# Networks
 curl -s http://127.0.0.1:37777/api/v1.0/client/network/list
-
-# Port forwards (VM expanded row)
-curl -s http://127.0.0.1:37777/api/v1.0/client/network/portforwards
+curl -s http://127.0.0.1:7782/ping
 ```
 
-Then open Dashboard, My Clouds, VMs, Storage, Networking, and Settings → Licenses in Electros.
+Then open Dashboard, Account, Organisation, Billing, VMs, Storage, Networking, and Settings → Licenses in Electros.
+
+**My Clouds** in the current Electros tree still calls `GET /list` / `POST /create` / `DELETE /delete/{id}`. Those routes are **not mounted** on the real target daemon (or here). That page will 404 until the GUI is moved onto grants/connections.
+
+Default demo session: `demo@synthetic.local`, role `ORGOWNER`, email verified, active **pro** subscriber of org **Elemento Demo**.
 
 ## Default scenario
 
 The `fixtures/default/` set includes:
 
-- AtomOS, Meson (OVH / Scaleway demo names), Proxmox targets
-- **18 VMs** — mixed states, OS families/flavours, AtomOS (two hosts), Proxmox, and ESXi; each VM has a `serverurl` that matches a My Clouds target so the **Hypervisor** column renders correct tagchips
-- **18 volumes** — formats, buses, sizes, privacy/bootable flags; ~half of VMs mount 1–2 disks
-- **18 networks** — libvirt bridge/NAT, tailscale, shared (DHCP hosts on NAT rows)
-- **18 port forwards** — TCP/UDP, tailscale/force flags, wired to synthetic VM UUIDs
-- **18 VM templates** — CPU/RAM/GPU combinations
+- Portal identity: auth status, scopes, org tree, invites, account details, subscription tiers
+- AtomOS, private Meson, Proxmox, ESXi, plus a **`meson_public` org-target per production provider**, all granted to the demo user and **activated** in `connections`
+- **18 VMs** — mixed states, OS families/flavours, AtomOS (two hosts), Proxmox, and ESXi; each VM has a `serverurl` that matches an active cloud target
+- **18 volumes / networks / port forwards / templates**
 - Host status aggregates derived from the generated fleet
-- **15 licenses** — armed, inactive, expired, and expiring-soon rows for Settings → Licenses (`GET/POST /api/v1/authenticate/license/*`)
+- **15 licenses** — armed, inactive, expired, and expiring-soon rows
+- **90 PaaS instances** (kaas, objectstorage, dbaas, n8n, openclaw)
 
-Regenerate IaaS + PaaS + licenses fixtures:
+Regenerate:
 
 ```bash
-npm run generate:fixtures        # both
-npm run generate:iaas-fixtures   # VMs, storage, networking only
+npm run generate:fixtures        # portal + targets + IaaS + PaaS + licenses
+npm run generate:portal-fixtures
+npm run generate:targets-fixtures
+npm run generate:iaas-fixtures
 ```
 
-Network API coverage: list, info, create (libvirt/tailscale JSON from `NetworkModel.toJson()`), delete, port-forward CRUD, export stubs. Mutations update in-memory state for the process lifetime.
-
-**Atomosphere / PaaS:** `GET /api/v1.0/client/target/configs/supported_providers` serves the real [`ecd/supported_providers.json`](../elemento-gui-new/electros/ecd/supported_providers.json) catalog. Default targets include a **`meson_public` target per production provider** (google, azure, ovh, upcloud, wasabi, scaleway, impossiblecloud, oracle).
+**Atomosphere / PaaS:** `GET /api/v1.0/client/target/configs/supported_providers` serves the real [`ecd/supported_providers.json`](../elemento-gui-new/electros/ecd/supported_providers.json) catalog. `POST /service/{type}/cancreate` uses **active** meson targets from `connections/me`.
 
 With [`flags.json`](../elemento-gui-new/electros/configs/flags.json) `"enableAllMesonProviders": true` (default for local dev), Electros registers every production tethered provider on startup so PaaS pages appear without manual setup.
-
-**PaaS service instances** (NDJSON on `GET /api/v1.0/client/service/{sub_type}/running`), aligned with [`supported_intents.json`](../elemento-gui-new/electros/ecd/supported_intents.json):
-
-| `sub_type` (API path) | UI page | Fixture rows |
-|----------------------|---------|--------------|
-| `kaas` | Managed Kubernetes | **18** (providers × regions × versions × statuses) |
-| `objectstorage` | Object Storage | **18** (7 provider endpoint styles × regions × sizes) |
-| `dbaas` | Database | **18** (4 engines × regions × node counts × disk sizes) |
-| `n8n` | n8n workflow Automation | **18** |
-| `openclaw` | OpenCLAW | **18** |
-
-Regenerate with `npm run generate:paas-fixtures` (see `scripts/generate-paas-fixtures.mjs`). After changing fixtures, restart synthetic-daemons and remove `/tmp/synthetic-daemons-state.json` if you used `--persist-state`.
 
 `kops` has no `table_layout` in ECD (no list UI). `blockstorage` is provider-only and not defined in `supported_intents` (not a PaaS nav page).
 
 Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). **n8n** and **openclaw** need experimental features enabled in Electros, or they only appear as mock data when those routes are registered.
 
-Also mocked: `cancreate`, `create`, `delete`, `credentials`, and `GET /api/v1/authenticate/billing/my/transactions`.
+## MCP
+
+`GET /ping` returns `{ ok: true, service: "electros-mcp", status: "up" }`. LLM routes (`/proxy/llm/*`, `/electros/confirm-mode`, `/electros/mitl-test`) return canned envelopes. No real model is called.
 
 ## Limitations
 
-- **`TargetDaemons.getLegacyHosts`** uses Electron IPC (`read-hosts`), not HTTP — returns empty outside Electron host file setup.
-- **`registerUser`** still calls `portal.elemento.cloud` on the real internet.
-- Unimplemented ECD routes return safe empty defaults and log a warning (see server console).
+- Unimplemented ECD routes still return safe empty defaults and log a warning (see server console).
+- Deep backends (libvirt, Ceph, VNC websockets, Stripe, IdP, real LLMs) are envelope stubs.
+- Register / account / org / billing **do not** call `portal.elemento.cloud`.
+- Current Electros My Clouds remains on the unmounted `/list` CRUD API.
 
 ## Development
 
 ```bash
 npm run dev          # build + start
 npm run build        # compile only
+npm test             # build + route-inventory smoke checks
 ```
 
 From `electros-electron`:

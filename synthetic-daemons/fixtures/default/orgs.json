@@ -1,0 +1,66 @@
+[
+  {
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "org_name": "Elemento Demo",
+    "owner": "demo@synthetic.local",
+    "admins": [
+      "demo@synthetic.local"
+    ],
+    "members": [
+      "demo@synthetic.local",
+      "alice@synthetic.local",
+      "bob@synthetic.local"
+    ],
+    "preferred": true,
+    "limits": {
+      "max_vms": -1,
+      "max_slots": -1,
+      "max_ram_mib": -1,
+      "max_storage_gb": -1,
+      "max_networks": -1,
+      "max_global_networks": -1,
+      "max_local_networks": -1,
+      "max_networks_per_driver": {},
+      "cancreate_net_local": true,
+      "cancreate_net_global": true,
+      "cancreate_net_dhcp": true,
+      "cancreate_net_nat": true,
+      "cancreate_net_bridge": true,
+      "cancreate_net_isolated": true,
+      "cancreate_net_fully_isolated": true,
+      "cancreate_net_with_static_routes": true
+    },
+    "suborgs": [
+      {
+        "suborg_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+        "suborg_name": "Platform team",
+        "admins": [
+          "demo@synthetic.local"
+        ],
+        "members": [
+          "demo@synthetic.local",
+          "alice@synthetic.local"
+        ],
+        "inner_suborgs": [],
+        "limits": {
+          "max_vms": -1,
+          "max_slots": -1,
+          "max_ram_mib": -1,
+          "max_storage_gb": -1,
+          "max_networks": -1,
+          "max_global_networks": -1,
+          "max_local_networks": -1,
+          "max_networks_per_driver": {},
+          "cancreate_net_local": true,
+          "cancreate_net_global": true,
+          "cancreate_net_dhcp": true,
+          "cancreate_net_nat": true,
+          "cancreate_net_bridge": true,
+          "cancreate_net_isolated": true,
+          "cancreate_net_fully_isolated": true,
+          "cancreate_net_with_static_routes": true
+        }
+      }
+    ]
+  }
+]

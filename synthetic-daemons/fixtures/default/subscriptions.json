@@ -1,0 +1,22 @@
+[
+  {
+    "id": "33333333-3333-4333-8333-333333333333",
+    "account_id": "55555555-5555-4555-8555-555555555555",
+    "email": "demo@synthetic.local",
+    "organisation_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "tier_id": "22222222-2222-4222-8222-222222222222",
+    "tier_name": "pro",
+    "billing_frequency": "yearly",
+    "status": "active",
+    "is_trial": false,
+    "subscribed_at": "2026-01-01T00:00:00.000Z",
+    "current_period_end": "2027-01-01T00:00:00.000Z",
+    "cancel_at_period_end": false,
+    "cancelled_at": null,
+    "stripe_subscription_id": "sub_synth_pro",
+    "max_connections": 32,
+    "current_connections": 0,
+    "pending_tier_id": null,
+    "pending_tier_name": null
+  }
+]

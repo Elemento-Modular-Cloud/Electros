@@ -152,13 +152,18 @@ for (let i = 0; i < PER_TYPE; i++) {
   const billingUuid = `billing-n8n-${n}`;
   const region = pick(REGIONS, i + 7);
   const provider = pick(["google", "upcloud"], i);
+  const n8nName = `n8n-${provider}-${region}-${n}`;
+  const n8nStatus = pick(VM_STATUSES, i);
   services.push({
     service_type: "n8n",
     service_uuid: `n8n-synth-${n}`,
     billing_uuid: billingUuid,
-    vm_name: `n8n-${provider}-${region}-${n}`,
-    status: pick(VM_STATUSES, i),
+    uniqueID: `n8n-synth-${n}`,
+    vm_name: n8nName,
+    status: n8nStatus,
+    states: n8nStatus,
     region,
+    req_json: { vm_name: n8nName },
   });
   addBilling("n8n", i, billingUuid, 40 + (i % 4) * 12, i);
 }
@@ -168,13 +173,18 @@ for (let i = 0; i < PER_TYPE; i++) {
   const billingUuid = `billing-openclaw-${n}`;
   const region = pick(REGIONS, i + 11);
   const provider = pick(["google", "azure"], i);
+  const clawName = `claw-${provider}-${region}-${n}`;
+  const clawStatus = pick(VM_STATUSES, i + 2);
   services.push({
     service_type: "openclaw",
     service_uuid: `openclaw-synth-${n}`,
     billing_uuid: billingUuid,
-    vm_name: `claw-${provider}-${region}-${n}`,
-    status: pick(VM_STATUSES, i + 2),
+    uniqueID: `openclaw-synth-${n}`,
+    vm_name: clawName,
+    status: clawStatus,
+    states: clawStatus,
     region,
+    req_json: { vm_name: clawName },
   });
   addBilling("openclaw", i, billingUuid, 28 + (i % 5) * 15, i + 3);
 }

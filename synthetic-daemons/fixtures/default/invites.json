@@ -1,0 +1,13 @@
+[
+  {
+    "id": "66666666-6666-4666-8666-666666666666",
+    "invited_email": "charlie@synthetic.local",
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "org_name": "Elemento Demo",
+    "suborg_name": null,
+    "status": "pending",
+    "created_at": "2026-03-01T09:00:00.000Z",
+    "invited_by_email": "demo@synthetic.local",
+    "token": "invite-token-charlie"
+  }
+]

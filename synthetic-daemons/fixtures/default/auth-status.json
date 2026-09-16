@@ -1,5 +1,31 @@
 {
   "authenticated": true,
-  "username": "demo",
-  "org": ""
+  "username": "demo@synthetic.local",
+  "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+  "org_name": "Elemento Demo",
+  "suborg_id": null,
+  "suborg_name": null,
+  "role": "ORGOWNER",
+  "limits": {
+    "max_vms": -1,
+    "max_slots": -1,
+    "max_ram_mib": -1,
+    "max_storage_gb": -1,
+    "max_networks": -1,
+    "max_global_networks": -1,
+    "max_local_networks": -1,
+    "max_networks_per_driver": {},
+    "cancreate_net_local": true,
+    "cancreate_net_global": true,
+    "cancreate_net_dhcp": true,
+    "cancreate_net_nat": true,
+    "cancreate_net_bridge": true,
+    "cancreate_net_isolated": true,
+    "cancreate_net_fully_isolated": true,
+    "cancreate_net_with_static_routes": true
+  },
+  "client_uid": "00000000-0000-4000-8000-000000000001",
+  "authz_token": "synthetic-authz-token",
+  "active_subscriber": true,
+  "email_verified": true
 }

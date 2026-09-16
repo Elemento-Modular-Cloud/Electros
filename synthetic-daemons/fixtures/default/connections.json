@@ -1,0 +1,11 @@
+{
+  "active_target_ids": [
+    "atomos-lab",
+    "atomos-meson-edge",
+    "atomosphere-private-lab",
+    "proxmox-hv",
+    "esxi-hv"
+  ],
+  "active_scenario_id": "44444444-4444-4444-8444-444444444444",
+  "max_connections": 32
+}

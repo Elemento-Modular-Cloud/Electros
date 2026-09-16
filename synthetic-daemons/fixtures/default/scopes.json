@@ -1,0 +1,26 @@
+{
+  "username": "demo@synthetic.local",
+  "scopes": [
+    {
+      "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "org_name": "Elemento Demo",
+      "suborg": null,
+      "member": true,
+      "selectable": true,
+      "reason": null,
+      "preferred": true,
+      "role": "ORGOWNER",
+      "is_trial": false,
+      "suborgs": [
+        {
+          "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+          "org_name": "Elemento Demo",
+          "suborg_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+          "suborg_name": "Platform team",
+          "role": "SUBORGADMIN",
+          "selectable": true
+        }
+      ]
+    }
+  ]
+}

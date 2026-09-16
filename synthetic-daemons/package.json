@@ -13,8 +13,11 @@
     "generate:paas-fixtures": "node scripts/generate-paas-fixtures.mjs",
     "generate:iaas-fixtures": "node scripts/generate-iaas-fixtures.mjs",
     "generate:targets-fixtures": "node scripts/generate-targets-fixtures.mjs",
+    "generate:portal-fixtures": "node scripts/generate-portal-fixtures.mjs",
     "generate:licenses-fixtures": "node scripts/generate-licenses-fixtures.mjs",
-    "generate:fixtures": "npm run generate:targets-fixtures && npm run generate:iaas-fixtures && npm run generate:paas-fixtures && npm run generate:licenses-fixtures"
+    "generate:fixtures": "npm run generate:portal-fixtures && npm run generate:targets-fixtures && npm run generate:iaas-fixtures && npm run generate:paas-fixtures && npm run generate:licenses-fixtures",
+    "test:routes": "node tests/route-inventory.mjs",
+    "test": "npm run build && npm run test:routes"
   },
   "engines": {
     "node": ">=20"

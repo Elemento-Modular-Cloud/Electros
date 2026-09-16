@@ -1,6 +1,6 @@
 {
-  "allocated_cores_count": 9,
-  "allocated_slots_count": 100,
+  "allocated_cores_count": 28,
+  "allocated_slots_count": 153,
   "bridge_interfaces": [
     "br-001",
     "br-005",
@@ -9,7 +9,7 @@
     "br-017"
   ],
   "client_id_count": 3,
-  "core_allocation_percentage": 50,
+  "core_allocation_percentage": 95,
   "core_provisioning": [
     {
       "available_slots": 8,
@@ -18,9 +18,13 @@
       "provisioned_vms": [
         "ubuntu-vm-001",
         "windows-server-vm-008",
-        "rocky-vm-015"
+        "rocky-vm-015",
+        "aws-m5-large-023",
+        "azure-D4s-v5-027",
+        "google-c2-standard-4-032",
+        "scaleway-DEV1-S-037"
       ],
-      "provisioned_vms_count": 3
+      "provisioned_vms_count": 7
     },
     {
       "available_slots": 7,
@@ -28,9 +32,14 @@
       "max_overprovision": 2,
       "provisioned_vms": [
         "debian-vm-002",
-        "rocky-vm-009"
+        "rocky-vm-009",
+        "aws-t3-micro-019",
+        "aws-c5-large-024",
+        "azure-E2s-v5-028",
+        "ovh-b2-7-033",
+        "scaleway-DEV1-M-038"
       ],
-      "provisioned_vms_count": 2
+      "provisioned_vms_count": 7
     },
     {
       "available_slots": 6,
@@ -38,9 +47,14 @@
       "max_overprovision": 2,
       "provisioned_vms": [
         "rocky-vm-003",
-        "ubuntu-vm-013"
+        "ubuntu-vm-013",
+        "aws-t3-small-020",
+        "azure-B2s-025",
+        "google-e2-medium-030",
+        "ovh-b2-15-034",
+        "scaleway-GP1-S-039"
       ],
-      "provisioned_vms_count": 2
+      "provisioned_vms_count": 7
     },
     {
       "available_slots": 5,
@@ -48,9 +62,14 @@
       "max_overprovision": 2,
       "provisioned_vms": [
         "ubuntu-vm-007",
-        "debian-vm-014"
+        "debian-vm-014",
+        "aws-t3-medium-021",
+        "azure-D2s-v5-026",
+        "google-n2-standard-2-031",
+        "ovh-c2-7-035",
+        "scaleway-GP1-M-040"
       ],
-      "provisioned_vms_count": 2
+      "provisioned_vms_count": 7
     }
   ],
   "direct_interfaces": [],
@@ -64,7 +83,8 @@
       5905,
       5906,
       5907,
-      5908
+      5908,
+      5909
     ],
     "protocols": [
       "vnc",
@@ -74,31 +94,31 @@
   "nic_count": 18,
   "os_families": {
     "linux": {
-      "count": 14,
+      "count": 36,
       "flavours": [
         {
           "name": "ubuntu",
-          "count": 3
+          "count": 9
         },
         {
           "name": "debian",
-          "count": 2
+          "count": 7
         },
         {
           "name": "rocky",
-          "count": 3
+          "count": 7
         },
         {
           "name": "fedora",
-          "count": 1
+          "count": 4
         },
         {
           "name": "alpine",
-          "count": 3
+          "count": 5
         },
         {
           "name": "centos",
-          "count": 2
+          "count": 4
         }
       ]
     },
@@ -112,7 +132,7 @@
       ]
     }
   },
-  "slot_allocation_percentage": 78,
+  "slot_allocation_percentage": 99,
   "storage_count": 18,
   "storages": [
     {
@@ -270,10 +290,10 @@
       "volume_id": "vol-synth-018"
     }
   ],
-  "total_allocated_ram_mib": 387072,
+  "total_allocated_ram_mib": 566272,
   "total_allocated_storage_size_gb": 2790,
   "total_cores_count": 32,
   "total_slots_count": 128,
-  "total_used_ram_mib": 43008,
-  "vm_count": 18
+  "total_used_ram_mib": 196608,
+  "vm_count": 40
 }

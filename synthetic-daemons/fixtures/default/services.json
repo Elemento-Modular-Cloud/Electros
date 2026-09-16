@@ -543,288 +543,468 @@
     "service_type": "n8n",
     "service_uuid": "n8n-synth-001",
     "billing_uuid": "billing-n8n-001",
+    "uniqueID": "n8n-synth-001",
     "vm_name": "n8n-google-de-fra1-001",
     "status": "running",
-    "region": "de-fra1"
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "n8n-google-de-fra1-001"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-002",
     "billing_uuid": "billing-n8n-002",
+    "uniqueID": "n8n-synth-002",
     "vm_name": "n8n-upcloud-pl-waw1-002",
     "status": "running",
-    "region": "pl-waw1"
+    "states": "running",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "n8n-upcloud-pl-waw1-002"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-003",
     "billing_uuid": "billing-n8n-003",
+    "uniqueID": "n8n-synth-003",
     "vm_name": "n8n-google-us-east1-003",
     "status": "stopped",
-    "region": "us-east1"
+    "states": "stopped",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "n8n-google-us-east1-003"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-004",
     "billing_uuid": "billing-n8n-004",
+    "uniqueID": "n8n-synth-004",
     "vm_name": "n8n-upcloud-eastus-004",
     "status": "updating",
-    "region": "eastus"
+    "states": "updating",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "n8n-upcloud-eastus-004"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-005",
     "billing_uuid": "billing-n8n-005",
+    "uniqueID": "n8n-synth-005",
     "vm_name": "n8n-google-westeurope-005",
     "status": "error",
-    "region": "westeurope"
+    "states": "error",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "n8n-google-westeurope-005"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-006",
     "billing_uuid": "billing-n8n-006",
+    "uniqueID": "n8n-synth-006",
     "vm_name": "n8n-upcloud-eu-central-1-006",
     "status": "provisioning",
-    "region": "eu-central-1"
+    "states": "provisioning",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "n8n-upcloud-eu-central-1-006"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-007",
     "billing_uuid": "billing-n8n-007",
+    "uniqueID": "n8n-synth-007",
     "vm_name": "n8n-google-eu-central-2-007",
     "status": "running",
-    "region": "eu-central-2"
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "n8n-google-eu-central-2-007"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-008",
     "billing_uuid": "billing-n8n-008",
+    "uniqueID": "n8n-synth-008",
     "vm_name": "n8n-upcloud-uk-lon1-008",
     "status": "running",
-    "region": "uk-lon1"
+    "states": "running",
+    "region": "uk-lon1",
+    "req_json": {
+      "vm_name": "n8n-upcloud-uk-lon1-008"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-009",
     "billing_uuid": "billing-n8n-009",
+    "uniqueID": "n8n-synth-009",
     "vm_name": "n8n-google-fr-par-009",
     "status": "stopped",
-    "region": "fr-par"
+    "states": "stopped",
+    "region": "fr-par",
+    "req_json": {
+      "vm_name": "n8n-google-fr-par-009"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-010",
     "billing_uuid": "billing-n8n-010",
+    "uniqueID": "n8n-synth-010",
     "vm_name": "n8n-upcloud-gra7-010",
     "status": "updating",
-    "region": "gra7"
+    "states": "updating",
+    "region": "gra7",
+    "req_json": {
+      "vm_name": "n8n-upcloud-gra7-010"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-011",
     "billing_uuid": "billing-n8n-011",
+    "uniqueID": "n8n-synth-011",
     "vm_name": "n8n-google-rbx-011",
     "status": "error",
-    "region": "rbx"
+    "states": "error",
+    "region": "rbx",
+    "req_json": {
+      "vm_name": "n8n-google-rbx-011"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-012",
     "billing_uuid": "billing-n8n-012",
+    "uniqueID": "n8n-synth-012",
     "vm_name": "n8n-upcloud-europe-west1-012",
     "status": "provisioning",
-    "region": "europe-west1"
+    "states": "provisioning",
+    "region": "europe-west1",
+    "req_json": {
+      "vm_name": "n8n-upcloud-europe-west1-012"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-013",
     "billing_uuid": "billing-n8n-013",
+    "uniqueID": "n8n-synth-013",
     "vm_name": "n8n-google-europe-west4-013",
     "status": "running",
-    "region": "europe-west4"
+    "states": "running",
+    "region": "europe-west4",
+    "req_json": {
+      "vm_name": "n8n-google-europe-west4-013"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-014",
     "billing_uuid": "billing-n8n-014",
+    "uniqueID": "n8n-synth-014",
     "vm_name": "n8n-upcloud-nl-ams-014",
     "status": "running",
-    "region": "nl-ams"
+    "states": "running",
+    "region": "nl-ams",
+    "req_json": {
+      "vm_name": "n8n-upcloud-nl-ams-014"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-015",
     "billing_uuid": "billing-n8n-015",
+    "uniqueID": "n8n-synth-015",
     "vm_name": "n8n-google-fi-hel2-015",
     "status": "stopped",
-    "region": "fi-hel2"
+    "states": "stopped",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "n8n-google-fi-hel2-015"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-016",
     "billing_uuid": "billing-n8n-016",
+    "uniqueID": "n8n-synth-016",
     "vm_name": "n8n-upcloud-de-fra1-016",
     "status": "updating",
-    "region": "de-fra1"
+    "states": "updating",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "n8n-upcloud-de-fra1-016"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-017",
     "billing_uuid": "billing-n8n-017",
+    "uniqueID": "n8n-synth-017",
     "vm_name": "n8n-google-pl-waw1-017",
     "status": "error",
-    "region": "pl-waw1"
+    "states": "error",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "n8n-google-pl-waw1-017"
+    }
   },
   {
     "service_type": "n8n",
     "service_uuid": "n8n-synth-018",
     "billing_uuid": "billing-n8n-018",
+    "uniqueID": "n8n-synth-018",
     "vm_name": "n8n-upcloud-us-east1-018",
     "status": "provisioning",
-    "region": "us-east1"
+    "states": "provisioning",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "n8n-upcloud-us-east1-018"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-001",
     "billing_uuid": "billing-openclaw-001",
+    "uniqueID": "openclaw-synth-001",
     "vm_name": "claw-google-westeurope-001",
     "status": "stopped",
-    "region": "westeurope"
+    "states": "stopped",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "claw-google-westeurope-001"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-002",
     "billing_uuid": "billing-openclaw-002",
+    "uniqueID": "openclaw-synth-002",
     "vm_name": "claw-azure-eu-central-1-002",
     "status": "updating",
-    "region": "eu-central-1"
+    "states": "updating",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "claw-azure-eu-central-1-002"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-003",
     "billing_uuid": "billing-openclaw-003",
+    "uniqueID": "openclaw-synth-003",
     "vm_name": "claw-google-eu-central-2-003",
     "status": "error",
-    "region": "eu-central-2"
+    "states": "error",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "claw-google-eu-central-2-003"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-004",
     "billing_uuid": "billing-openclaw-004",
+    "uniqueID": "openclaw-synth-004",
     "vm_name": "claw-azure-uk-lon1-004",
     "status": "provisioning",
-    "region": "uk-lon1"
+    "states": "provisioning",
+    "region": "uk-lon1",
+    "req_json": {
+      "vm_name": "claw-azure-uk-lon1-004"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-005",
     "billing_uuid": "billing-openclaw-005",
+    "uniqueID": "openclaw-synth-005",
     "vm_name": "claw-google-fr-par-005",
     "status": "running",
-    "region": "fr-par"
+    "states": "running",
+    "region": "fr-par",
+    "req_json": {
+      "vm_name": "claw-google-fr-par-005"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-006",
     "billing_uuid": "billing-openclaw-006",
+    "uniqueID": "openclaw-synth-006",
     "vm_name": "claw-azure-gra7-006",
     "status": "running",
-    "region": "gra7"
+    "states": "running",
+    "region": "gra7",
+    "req_json": {
+      "vm_name": "claw-azure-gra7-006"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-007",
     "billing_uuid": "billing-openclaw-007",
+    "uniqueID": "openclaw-synth-007",
     "vm_name": "claw-google-rbx-007",
     "status": "stopped",
-    "region": "rbx"
+    "states": "stopped",
+    "region": "rbx",
+    "req_json": {
+      "vm_name": "claw-google-rbx-007"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-008",
     "billing_uuid": "billing-openclaw-008",
+    "uniqueID": "openclaw-synth-008",
     "vm_name": "claw-azure-europe-west1-008",
     "status": "updating",
-    "region": "europe-west1"
+    "states": "updating",
+    "region": "europe-west1",
+    "req_json": {
+      "vm_name": "claw-azure-europe-west1-008"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-009",
     "billing_uuid": "billing-openclaw-009",
+    "uniqueID": "openclaw-synth-009",
     "vm_name": "claw-google-europe-west4-009",
     "status": "error",
-    "region": "europe-west4"
+    "states": "error",
+    "region": "europe-west4",
+    "req_json": {
+      "vm_name": "claw-google-europe-west4-009"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-010",
     "billing_uuid": "billing-openclaw-010",
+    "uniqueID": "openclaw-synth-010",
     "vm_name": "claw-azure-nl-ams-010",
     "status": "provisioning",
-    "region": "nl-ams"
+    "states": "provisioning",
+    "region": "nl-ams",
+    "req_json": {
+      "vm_name": "claw-azure-nl-ams-010"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-011",
     "billing_uuid": "billing-openclaw-011",
+    "uniqueID": "openclaw-synth-011",
     "vm_name": "claw-google-fi-hel2-011",
     "status": "running",
-    "region": "fi-hel2"
+    "states": "running",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "claw-google-fi-hel2-011"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-012",
     "billing_uuid": "billing-openclaw-012",
+    "uniqueID": "openclaw-synth-012",
     "vm_name": "claw-azure-de-fra1-012",
     "status": "running",
-    "region": "de-fra1"
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "claw-azure-de-fra1-012"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-013",
     "billing_uuid": "billing-openclaw-013",
+    "uniqueID": "openclaw-synth-013",
     "vm_name": "claw-google-pl-waw1-013",
     "status": "stopped",
-    "region": "pl-waw1"
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "claw-google-pl-waw1-013"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-014",
     "billing_uuid": "billing-openclaw-014",
+    "uniqueID": "openclaw-synth-014",
     "vm_name": "claw-azure-us-east1-014",
     "status": "updating",
-    "region": "us-east1"
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "claw-azure-us-east1-014"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-015",
     "billing_uuid": "billing-openclaw-015",
+    "uniqueID": "openclaw-synth-015",
     "vm_name": "claw-google-eastus-015",
     "status": "error",
-    "region": "eastus"
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "claw-google-eastus-015"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-016",
     "billing_uuid": "billing-openclaw-016",
+    "uniqueID": "openclaw-synth-016",
     "vm_name": "claw-azure-westeurope-016",
     "status": "provisioning",
-    "region": "westeurope"
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "claw-azure-westeurope-016"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-017",
     "billing_uuid": "billing-openclaw-017",
+    "uniqueID": "openclaw-synth-017",
     "vm_name": "claw-google-eu-central-1-017",
     "status": "running",
-    "region": "eu-central-1"
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "claw-google-eu-central-1-017"
+    }
   },
   {
     "service_type": "openclaw",
     "service_uuid": "openclaw-synth-018",
     "billing_uuid": "billing-openclaw-018",
+    "uniqueID": "openclaw-synth-018",
     "vm_name": "claw-azure-eu-central-2-018",
     "status": "running",
-    "region": "eu-central-2"
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "claw-azure-eu-central-2-018"
+    }
   }
 ]

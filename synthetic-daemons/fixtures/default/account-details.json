@@ -1,0 +1,15 @@
+{
+  "fiscal_code": "RSSMRA80A01H501U",
+  "vat_code": "IT12345678901",
+  "company_name": "Elemento Demo S.r.l.",
+  "full_address": "Via Cloud 1",
+  "zip_code": "20100",
+  "city": "Milan",
+  "province": "MI",
+  "sdi_code": "0000000",
+  "nationality": "IT",
+  "preferences": {
+    "marketing_emails": false,
+    "lang": "en"
+  }
+}

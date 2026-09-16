@@ -1,10 +1,13 @@
 import express, { type Express, type Request, type Response, type Router } from "express";
 import cors from "cors";
 import type { Server } from "node:http";
+import type { MemoryStore } from "./MemoryStore.js";
 
 export interface DaemonServerOptions {
   name: string;
   port: number;
+  rootMessage?: string;
+  versionMessage?: string;
   mountRouters: (app: Express) => void;
 }
 
@@ -25,7 +28,14 @@ export function createDaemonServer(options: DaemonServerOptions): Server {
   });
 
   app.get("/", (_req, res) => {
-    res.status(200).send("ok");
+    res.status(200).type("text/plain").send(options.rootMessage ?? "ok");
+  });
+
+  app.get("/version", (_req, res) => {
+    json(res, {
+      version: "synthetic-1.0.0",
+      msg: options.versionMessage ?? options.rootMessage ?? "ok",
+    });
   });
 
   options.mountRouters(app);
@@ -41,6 +51,28 @@ export function json(res: Response, body: unknown, status = 200): void {
 
 export function ok(res: Response): void {
   res.status(200).send("");
+}
+
+export function noContent(res: Response): void {
+  res.status(204).send();
+}
+
+export function notFound(res: Response, detail = "Not found"): void {
+  json(res, { detail }, 404);
+}
+
+export function message(res: Response, text: string, details?: string, status = 200): void {
+  json(res, { message: text, details: details ?? "" }, status);
+}
+
+export function requireAuth(store: MemoryStore) {
+  return (_req: Request, res: Response, next: () => void): void => {
+    if (!store.authStatus.authenticated) {
+      json(res, { detail: "Not authenticated" }, 401);
+      return;
+    }
+    next();
+  };
 }
 
 export function mountRouter(app: Express, basePath: string, router: Router): void {

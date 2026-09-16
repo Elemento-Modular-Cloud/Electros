@@ -1,0 +1,113 @@
+[
+  {
+    "target_id": "atomos-lab",
+    "target_name": "AtomOS Lab",
+    "target_type": "atomos_local_ip",
+    "target_config": {
+      "ips": [
+        "192.168.1.10"
+      ]
+    }
+  },
+  {
+    "target_id": "atomos-meson-edge",
+    "target_name": "AtomOS Meson Edge",
+    "target_type": "atomos_local_ip",
+    "target_config": {
+      "ips": [
+        "10.0.0.5"
+      ]
+    }
+  },
+  {
+    "target_id": "atomosphere-private-lab",
+    "target_name": "Atomosphere Private Lab",
+    "target_type": "meson_private",
+    "target_config": {
+      "provider": "ovh",
+      "meson_ip": "10.0.0.5",
+      "meson_credentials": {
+        "username": "demo",
+        "password": "synthetic"
+      }
+    }
+  },
+  {
+    "target_id": "proxmox-hv",
+    "target_name": "Proxmox Hypervisor",
+    "target_type": "hypervisor_proxmox",
+    "target_config": {
+      "host": "https://192.168.1.20:8006",
+      "user": "root@pam",
+      "password": "synthetic",
+      "verify_ssl": false
+    }
+  },
+  {
+    "target_id": "esxi-hv",
+    "target_name": "ESXi Hypervisor",
+    "target_type": "hypervisor_esxi",
+    "target_config": {
+      "host": "https://192.168.1.30",
+      "user": "root",
+      "password": "synthetic",
+      "verify_ssl": false
+    }
+  },
+  {
+    "target_id": "google-demo-public",
+    "target_name": "google public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "google"
+    }
+  },
+  {
+    "target_id": "azure-demo-public",
+    "target_name": "azure public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "azure"
+    }
+  },
+  {
+    "target_id": "ovh-demo-public",
+    "target_name": "ovh public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "ovh"
+    }
+  },
+  {
+    "target_id": "upcloud-demo-public",
+    "target_name": "upcloud public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "upcloud"
+    }
+  },
+  {
+    "target_id": "wasabi-demo-public",
+    "target_name": "wasabi public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "wasabi"
+    }
+  },
+  {
+    "target_id": "scaleway-demo-public",
+    "target_name": "scaleway public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "scaleway"
+    }
+  },
+  {
+    "target_id": "impossiblecloud-demo-public",
+    "target_name": "impossiblecloud public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "impossiblecloud"
+    }
+  }
+]

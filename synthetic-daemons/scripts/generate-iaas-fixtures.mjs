@@ -11,7 +11,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURES_DIR = join(__dirname, "..", "fixtures", "default");
 const COUNT = 18;
 
-/** Must match `targets.json` atomos_local_ip / hypervisor host IPs for VM list hypervisor chips. */
+/** Must match org-targets.json atomos_local_ip / hypervisor host IPs for VM list hypervisor chips. */
 const ATOMOS_HOSTS = [
   { ip: "192.168.1.10", serverurl: "https://192.168.1.10" },
   { ip: "10.0.0.5", serverurl: "https://10.0.0.5" },
@@ -123,6 +123,71 @@ for (let i = 0; i < COUNT; i++) {
         ? [{ ...pick(GPU_MODELS, i), quantity: 1 + (i % 2) }]
         : [],
       volumes: [],
+    },
+  });
+}
+
+const SPOT_VMS = [
+  { catalog: "aws", flavour: "t3.micro", vcpus: 2, ram: 1, block: 8, region: "eu-west-1", os: "ubuntu" },
+  { catalog: "aws", flavour: "t3.small", vcpus: 2, ram: 2, block: 20, region: "eu-central-1", os: "debian" },
+  { catalog: "aws", flavour: "t3.medium", vcpus: 2, ram: 4, block: 30, region: "us-east-1", os: "ubuntu" },
+  { catalog: "aws", flavour: "t3.large", vcpus: 2, ram: 8, block: 50, region: "ap-southeast-1", os: "rocky" },
+  { catalog: "aws", flavour: "m5.large", vcpus: 2, ram: 8, block: 80, region: "eu-west-1", os: "fedora" },
+  { catalog: "aws", flavour: "c5.large", vcpus: 2, ram: 4, block: 40, region: "us-west-2", os: "alpine" },
+  { catalog: "azure", flavour: "B2s", vcpus: 2, ram: 4, block: 16, region: "westeurope", os: "ubuntu" },
+  { catalog: "azure", flavour: "D2s_v5", vcpus: 2, ram: 8, block: 30, region: "northeurope", os: "debian" },
+  { catalog: "azure", flavour: "D4s_v5", vcpus: 4, ram: 16, block: 60, region: "eastus", os: "rocky" },
+  { catalog: "azure", flavour: "E2s_v5", vcpus: 2, ram: 16, block: 40, region: "uksouth", os: "centos" },
+  { catalog: "google", flavour: "e2-small", vcpus: 2, ram: 2, block: 20, region: "europe-west1", os: "debian" },
+  { catalog: "google", flavour: "e2-medium", vcpus: 2, ram: 4, block: 30, region: "europe-west4", os: "ubuntu" },
+  { catalog: "google", flavour: "n2-standard-2", vcpus: 2, ram: 8, block: 50, region: "us-central1", os: "fedora" },
+  { catalog: "google", flavour: "c2-standard-4", vcpus: 4, ram: 16, block: 60, region: "asia-east1", os: "rocky" },
+  { catalog: "ovh", flavour: "b2-7", vcpus: 2, ram: 7, block: 25, region: "gra", os: "ubuntu" },
+  { catalog: "ovh", flavour: "b2-15", vcpus: 4, ram: 15, block: 50, region: "sbg", os: "debian" },
+  { catalog: "ovh", flavour: "c2-7", vcpus: 2, ram: 7, block: 25, region: "bhs", os: "alpine" },
+  { catalog: "ovh", flavour: "r2-15", vcpus: 2, ram: 15, block: 40, region: "waw", os: "rocky" },
+  { catalog: "scaleway", flavour: "DEV1-S", vcpus: 2, ram: 2, block: 10, region: "fr-par-1", os: "ubuntu" },
+  { catalog: "scaleway", flavour: "DEV1-M", vcpus: 3, ram: 4, block: 20, region: "nl-ams-1", os: "debian" },
+  { catalog: "scaleway", flavour: "GP1-S", vcpus: 2, ram: 8, block: 40, region: "pl-waw-1", os: "fedora" },
+  { catalog: "scaleway", flavour: "GP1-M", vcpus: 4, ram: 16, block: 80, region: "fr-par-1", os: "centos" },
+];
+
+for (let i = 0; i < SPOT_VMS.length; i++) {
+  const spec = SPOT_VMS[i];
+  const n = pad3(COUNT + i + 1);
+  const hex = (COUNT + i + 1).toString(16).padStart(12, "0");
+  vms.push({
+    uniqueID: `b0000000-0000-4000-8000-${hex}`,
+    serverurl: spec.catalog,
+    target_type: "meson_public",
+    req_json: {
+      vm_name: `${spec.catalog}-${spec.flavour.replace(/[._]/g, "-")}-${n}`,
+      allowSMT: false,
+      arch: "x86_64",
+      creation_date: `2025-08-${String((i % 28) + 1).padStart(2, "0")}T09:00:00Z`,
+      flags: [],
+      netdevs: [],
+      os_family: "linux",
+      os_flavour: spec.os,
+      firmware: "uefi",
+      overprovision: 1,
+      qemu_agent: true,
+      ramsize: spec.ram,
+      reqECC: false,
+      slots: spec.vcpus,
+      autostart: true,
+      states: i % 7 === 3 ? "shut off" : "running",
+      networks: [],
+      pcidevs: [],
+      volumes: [],
+      instance_flavour_catalog: spec.catalog,
+      instance_flavour: spec.flavour,
+      block_storage_gb: spec.block,
+      deployment_region: spec.region,
+      network_config: {
+        ipv4: `203.0.113.${10 + i}`,
+        interface: "eth0",
+      },
     },
   });
 }
@@ -426,5 +491,5 @@ writeJson("portforwards.json", portforwards);
 writeJson("templates.json", templates);
 writeJson("host-status.json", hostStatus);
 
-console.log(`Wrote ${COUNT} VMs, volumes, networks, port-forwards, templates`);
+console.log(`Wrote ${vms.length} VMs (${COUNT} on-prem, ${SPOT_VMS.length} spot), volumes, networks, port-forwards, templates`);
 console.log(`Wrote host-status.json (vm_count=${hostStatus.vm_count})`);

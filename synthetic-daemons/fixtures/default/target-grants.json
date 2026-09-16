@@ -1,0 +1,62 @@
+[
+  {
+    "target_id": "atomos-lab",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "atomos-meson-edge",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "atomosphere-private-lab",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "proxmox-hv",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "esxi-hv",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "google-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "azure-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "ovh-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "upcloud-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "wasabi-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "scaleway-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "impossiblecloud-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
+  }
+]

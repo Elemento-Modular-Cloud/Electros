@@ -1,0 +1,74 @@
+[
+  {
+    "id": "44444444-4444-4444-8444-444444444444",
+    "name": "Lab fleet",
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "pools": [
+      "atomos-lab",
+      "atomos-meson-edge",
+      "atomosphere-private-lab",
+      "proxmox-hv",
+      "esxi-hv"
+    ],
+    "users": [
+      "demo@synthetic.local"
+    ],
+    "active": true
+  },
+  {
+    "id": "55555555-5555-5555-8555-555555555555",
+    "name": "Public clouds",
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "pools": [
+      "google-demo-public",
+      "azure-demo-public",
+      "ovh-demo-public",
+      "upcloud-demo-public",
+      "scaleway-demo-public"
+    ],
+    "users": [
+      "demo@synthetic.local"
+    ],
+    "active": false
+  },
+  {
+    "id": "66666666-6666-6666-8666-666666666666",
+    "name": "Hypervisors",
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "pools": [
+      "proxmox-hv",
+      "esxi-hv"
+    ],
+    "users": [
+      "demo@synthetic.local"
+    ],
+    "active": false
+  },
+  {
+    "id": "77777777-7777-7777-8777-777777777777",
+    "name": "Object storage",
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "pools": [
+      "wasabi-demo-public",
+      "impossiblecloud-demo-public"
+    ],
+    "users": [
+      "demo@synthetic.local"
+    ],
+    "active": false
+  },
+  {
+    "id": "88888888-8888-8888-8888-888888888888",
+    "name": "Private edge",
+    "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "pools": [
+      "atomos-lab",
+      "atomos-meson-edge",
+      "atomosphere-private-lab"
+    ],
+    "users": [
+      "demo@synthetic.local"
+    ],
+    "active": false
+  }
+]

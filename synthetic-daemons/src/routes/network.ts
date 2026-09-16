@@ -8,7 +8,6 @@ import { createCatchAllRouter } from "../catchAll.js";
 
 function normalizeNetworkBody(body: Record<string, unknown>): NetworkRecord {
   const networkName = (body.network_name as string) ?? (body.name as string) ?? `net-${randomUUID().slice(0, 8)}`;
-
   return {
     servers: Array.isArray(body.servers) ? body.servers : ["192.168.1.10"],
     network_name: networkName,
@@ -48,15 +47,17 @@ export function networkRouter(store: MemoryStore, config: AppConfig): Router {
     json(res, store.networks);
   });
 
-  router.get(rk(keys, "INFO_NETWORK_API_KEY"), (req: Request, res: Response) => {
-    const uid = String(req.query.network_uid ?? req.query.uid ?? "");
+  const networkInfo = (req: Request, res: Response): void => {
+    const uid = String(req.body?.network_uid ?? req.query.network_uid ?? req.query.uid ?? "");
     const net = store.findNetwork(uid);
     if (!net) {
       json(res, {}, 404);
       return;
     }
     json(res, net);
-  });
+  };
+  router.get(rk(keys, "INFO_NETWORK_API_KEY"), networkInfo);
+  router.post(rk(keys, "INFO_NETWORK_API_KEY"), networkInfo);
 
   router.post(rk(keys, "CREATE_NETWORK_API_KEY"), (req: Request, res: Response) => {
     const net = normalizeNetworkBody((req.body ?? {}) as Record<string, unknown>);
@@ -73,28 +74,40 @@ export function networkRouter(store: MemoryStore, config: AppConfig): Router {
   router.post(rk(keys, "START_EXPORT_NETWORK_API_KEY"), (_req: Request, res: Response) => {
     ok(res);
   });
-
   router.post(rk(keys, "STOP_EXPORT_NETWORK_API_KEY"), (_req: Request, res: Response) => {
     ok(res);
+  });
+  router.post(rk(keys, "REFRESH_NETWORK_API_KEY"), (_req: Request, res: Response) => {
+    json(res, store.networks);
   });
 
   router.get(rk(keys, "LIST_FORWARDED_PORTS_API_KEY"), (_req: Request, res: Response) => {
     json(res, store.portForwards);
   });
-
   router.post(rk(keys, "FORWARD_PORT_API_KEY"), (req: Request, res: Response) => {
     const pf = normalizePortForwardBody((req.body ?? {}) as Record<string, unknown>);
     store.addPortForward(pf);
     json(res, pf);
   });
-
   router.delete(rk(keys, "UNFORWARD_PORT_API_KEY"), (req: Request, res: Response) => {
     const uid = (req.body?.forward_uid as string) ?? (req.query.forward_uid as string) ?? "";
     store.removePortForward(uid);
     ok(res);
   });
 
-  router.use(createCatchAllRouter(base));
+  router.get(rk(keys, "HEADSCALE_LIST_NETWORKS_API_KEY"), (_req: Request, res: Response) => {
+    json(res, store.networks.filter((n) => n.type === "tailscale" || n.headscale));
+  });
+  router.post(rk(keys, "HEADSCALE_GENERATE_PREAUTHKEY_API_KEY"), (_req: Request, res: Response) => {
+    json(res, { token: `synth-preauth-${randomUUID()}`, reusable: true, expiration: null });
+  });
+  router.delete(rk(keys, "HEADSCALE_DELETE_PREAUTHKEY_API_KEY"), (_req: Request, res: Response) => {
+    ok(res);
+  });
+  router.post(rk(keys, "HEADSCALE_REFRESH_PREAUTHKEY_API_KEY"), (_req: Request, res: Response) => {
+    json(res, { token: `synth-preauth-${randomUUID()}`, reusable: true, expiration: null });
+  });
 
+  router.use(createCatchAllRouter(base));
   return router;
 }
