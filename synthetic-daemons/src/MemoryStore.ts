@@ -136,11 +136,11 @@ export class MemoryStore {
       ?? tryLoad(fixturesDir, "host-status.json", {});
     this.portForwards = (saved.portForwards as PortForwardRecord[])
       ?? tryLoad(fixturesDir, "portforwards.json", []);
-    this.portTunnels = (saved.portTunnels as Record<string, unknown>[]) ?? [];
+      this.portTunnels = (saved.portTunnels as Record<string, unknown>[]) ?? [];
     this.portTunnelServices = (saved.portTunnelServices as Record<string, unknown>[]) ?? [];
     this.backups = (saved.backups as Record<string, unknown>[]) ?? [];
     this.services = (saved.services as ServiceInstanceRecord[]) ?? tryLoad(fixturesDir, "services.json", []);
-    this.billingTransactions = (saved.billingTransactions as BillingTransactionRecord[])
+        this.billingTransactions = (saved.billingTransactions as BillingTransactionRecord[])
       ?? tryLoad(fixturesDir, "billing-transactions.json", []);
     this.licenses = (saved.licenses as LicensesListResponse) ?? tryLoad(fixturesDir, "licenses.json", {
       licenses: [],
@@ -156,7 +156,7 @@ export class MemoryStore {
       return;
     }
     writeFileSync(STATE_PATH, JSON.stringify({
-      authStatus: this.authStatus,
+        authStatus: this.authStatus,
       orgs: this.orgs,
       invites: this.invites,
       memberLimits: this.memberLimits,
@@ -170,18 +170,18 @@ export class MemoryStore {
       waitingCerts: this.waitingCerts,
       tiers: this.tiers,
       subscriptions: this.subscriptions,
-      vms: this.vms,
-      volumes: this.volumes,
-      networks: this.networks,
-      templates: this.templates,
-      hostStatus: this.hostStatus,
-      portForwards: this.portForwards,
-      portTunnels: this.portTunnels,
+        vms: this.vms,
+        volumes: this.volumes,
+        networks: this.networks,
+        templates: this.templates,
+        hostStatus: this.hostStatus,
+        portForwards: this.portForwards,
+        portTunnels: this.portTunnels,
       portTunnelServices: this.portTunnelServices,
       backups: this.backups,
-      services: this.services,
-      billingTransactions: this.billingTransactions,
-      licenses: this.licenses,
+        services: this.services,
+        billingTransactions: this.billingTransactions,
+        licenses: this.licenses,
       verificationCodes: this.verificationCodes,
       users: this.users,
     }, null, 2));
