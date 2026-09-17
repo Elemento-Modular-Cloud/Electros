@@ -36,9 +36,35 @@ if (process.env.NODE_ENV === 'development') {
     app.setAsDefaultProtocolClient('electros');
 }
 
+let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
+
+
+// macOS URL handling
+app.on('open-url', (event, url) => {
+    event.preventDefault();
+    console.log('App opened with URL:', url);
+    try {
+        sendUrlToRenderer(url);
+    } catch (e) {
+        console.warn(e);
+    }
+
+    pendingUrl = url;
+});
+
+// Windows/Linux URL handling - ensure single instance and handle second instance URLs
+app.requestSingleInstanceLock();
+app.on('second-instance', (event, argv) => {
+    const url = argv.find(arg => arg.startsWith('electros://'));
+    if (url) {
+        console.log('Second instance opened with URL:', url);
+        sendUrlToRenderer(url);
+    }
+});
+
 
 function createMainWindow() {
-    const win = WindowProvider("electros/electros.html",
+    const win = WindowProvider(`electros/electros.html?deeplink=${encodeURIComponent(pendingUrl)}`,
       {
           width: 1800,
           height: 1200,
@@ -203,26 +229,6 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         throw error;
     }
 });
-
-// macOS URL handling
-app.on('open-url', (event, url) => {
-    event.preventDefault();
-    console.log('App opened with URL:', url);
-    sendUrlToRenderer(url);
-});
-
-// Windows/Linux URL handling - ensure single instance and handle second instance URLs
-app.requestSingleInstanceLock();
-app.on('second-instance', (event, argv) => {
-    const url = argv.find(arg => arg.startsWith('electros://'));
-    if (url) {
-        console.log('Second instance opened with URL:', url);
-        sendUrlToRenderer(url);
-    }
-});
-
-let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
-
 
 app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
