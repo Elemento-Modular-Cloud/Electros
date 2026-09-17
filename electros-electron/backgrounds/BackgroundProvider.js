@@ -101,7 +101,13 @@ class BackgroundProvider {
      */
     fetchFeedData() {
         return new Promise(async(resolve, reject) => {
-            const req = await fetch(this.feedUrl);
+            const req = await fetch(this.feedUrl, {
+                headers: {
+                    // Wikimedia asks for a descriptive UA; unnamed clients get blocked.
+                    "User-Agent": "ElectrosGUI/3 (Elemento desktop; background provider)",
+                    "Accept": this.format,
+                },
+            });
 
             if (!req.ok) {
                 reject(new Error(await req.text()))
@@ -191,7 +197,7 @@ class BackgroundProvider {
         let imgUrl = this._handleXmlKey(feedObject, this.itemStructure.imgUrl);
 
         if (this.name === "wikimedia") {
-            imgUrl = imgUrl.replace('/thumb', '').replace(/[^/]*$/, '').replace(/\/$/, '');
+            imgUrl = BackgroundProvider.resolveWikimediaFullResUrl(imgUrl);
         }
 
         return {
@@ -202,6 +208,51 @@ class BackgroundProvider {
             pubDate: this.dateParser.parse(this._handleXmlKey(feedObject, this.itemStructure.pubDate)),
             copyright: this._handleXmlKey(feedObject, this.itemStructure.copyright)
         };
+    }
+
+    /**
+     * Convert a Commons thumb / srcset URL to the original upload.wikimedia.org file.
+     *
+     * Wikimedia now serves thumbs from `thumb.wikimedia.org`, so a naive
+     * `.replace('/thumb', '')` corrupts the hostname (`https://thumb…` → `https:…`).
+     *
+     * @param {unknown} raw
+     * @returns {string|undefined}
+     */
+    static resolveWikimediaFullResUrl(raw) {
+        if (raw == null) { return undefined; }
+        if (typeof raw !== "string") { return raw; }
+
+        // srcset: "url 1.5x, url2 2x" — prefer the last (usually highest) candidate
+        const candidates = raw
+            .split(",")
+            .map((part) => part.trim().split(/\s+/)[0])
+            .filter(Boolean);
+        const url = candidates[candidates.length - 1] ?? raw.trim().split(/\s+/)[0];
+        if (!url) { return undefined; }
+
+        try {
+            const parsed = new URL(url);
+            // /wikipedia/commons/thumb/<a>/<ab>/<file>/<Nx-file>
+            const match = parsed.pathname.match(
+                /^\/wikipedia\/commons\/thumb\/([^/]+)\/([^/]+)\/([^/]+)\//
+            );
+            if (match) {
+                const [ , a, ab, file ] = match;
+                return `https://upload.wikimedia.org/wikipedia/commons/${a}/${ab}/${file}`;
+            }
+
+            if (parsed.pathname.includes("/wikipedia/commons/")) {
+                parsed.hostname = "upload.wikimedia.org";
+                parsed.search = "";
+                parsed.hash = "";
+                return parsed.toString();
+            }
+        } catch {
+            // fall through
+        }
+
+        return url.split("?")[0];
     }
 
     _handleXmlKey(feedObject, key) {

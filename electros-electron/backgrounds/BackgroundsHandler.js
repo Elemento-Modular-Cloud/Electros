@@ -113,7 +113,11 @@ class BackgroundsHandler {
 
         return new Promise((resolve, reject) => {
             try {
-                fetch(url).then(res => {
+                fetch(url, {
+                    headers: {
+                        "User-Agent": "ElectrosGUI/3 (Elemento desktop; background download)",
+                    },
+                }).then(res => {
                     return res.arrayBuffer()
                 }).then(imgBuf => {
                     const buffer = Buffer.from(imgBuf);

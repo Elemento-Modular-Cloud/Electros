@@ -119,7 +119,7 @@ const scenarios = [
     org_id: DEMO_ORG_ID,
     pools: labPools,
     users: [DEMO_USER],
-    active: true,
+    active: false,
   },
   {
     id: SCENARIO_PUBLIC_ID,
@@ -127,7 +127,7 @@ const scenarios = [
     org_id: DEMO_ORG_ID,
     pools: publicComputeIds,
     users: [DEMO_USER],
-    active: false,
+    active: true,
   },
   {
     id: SCENARIO_HYPERVISOR_ID,
@@ -155,9 +155,10 @@ const scenarios = [
   },
 ];
 
+// Lab + public compute mesons so PaaS/SaaS create host pickers list every cloud host.
 const connections = {
-  active_target_ids: [...labPools],
-  active_scenario_id: SCENARIO_LAB_ID,
+  active_target_ids: [ ...new Set([ ...labPools, ...publicComputeIds ]) ],
+  active_scenario_id: SCENARIO_PUBLIC_ID,
   max_connections: 32,
 };
 

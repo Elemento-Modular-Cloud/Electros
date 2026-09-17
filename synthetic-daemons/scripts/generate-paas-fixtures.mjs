@@ -189,6 +189,70 @@ for (let i = 0; i < PER_TYPE; i++) {
   addBilling("openclaw", i, billingUuid, 28 + (i % 5) * 15, i + 3);
 }
 
+/** Marketplace SaaS apps (non-database) mirrored from elemento-marketplace. */
+const MARKETPLACE_SAAS = [
+  "caddy_ca",
+  "hermes",
+  "litellm",
+  "llmstudio",
+  "minio",
+  "n8n_runner",
+  "npm",
+  "openwebui",
+  "searxng",
+];
+const MARKETPLACE_SAAS_PER_TYPE = 6;
+
+for (const serviceType of MARKETPLACE_SAAS) {
+  for (let i = 0; i < MARKETPLACE_SAAS_PER_TYPE; i++) {
+    const n = pad3(i + 1);
+    const billingUuid = `billing-${serviceType}-${n}`;
+    const region = pick(REGIONS, i + serviceType.length);
+    const provider = pick(["google", "azure", "upcloud"], i);
+    const vmName = `${serviceType}-${provider}-${region}-${n}`;
+    const status = pick(VM_STATUSES, i + serviceType.length);
+    services.push({
+      service_type: serviceType,
+      service_uuid: `${serviceType}-synth-${n}`,
+      billing_uuid: billingUuid,
+      uniqueID: `${serviceType}-synth-${n}`,
+      vm_name: vmName,
+      status,
+      states: status,
+      region,
+      req_json: { vm_name: vmName },
+    });
+    addBilling(serviceType, i, billingUuid, 22 + (i % 5) * 9, i + 4);
+  }
+}
+
+/** Simulated hosting — one SaaS type with platform = wordpress|prestashop|magento. */
+const HOSTING_PLATFORMS = ["wordpress", "prestashop", "magento"];
+const HOSTING_PER_PLATFORM = 8;
+
+for (let i = 0; i < HOSTING_PER_PLATFORM * HOSTING_PLATFORMS.length; i++) {
+  const n = pad3(i + 1);
+  const platform = pick(HOSTING_PLATFORMS, i);
+  const billingUuid = `billing-hosting-${n}`;
+  const region = pick(REGIONS, i + 17);
+  const provider = pick(["google", "azure", "upcloud"], i);
+  const siteName = `${platform}-site-${provider}-${region}-${n}`;
+  const status = pick(VM_STATUSES, i + 1);
+  services.push({
+    service_type: "hosting",
+    service_uuid: `hosting-synth-${n}`,
+    billing_uuid: billingUuid,
+    uniqueID: `hosting-synth-${n}`,
+    vm_name: siteName,
+    platform,
+    status,
+    states: status,
+    region,
+    req_json: { vm_name: siteName, platform },
+  });
+  addBilling("hosting", i, billingUuid, 18 + (i % 6) * 7, i + 5);
+}
+
 const servicesPath = join(FIXTURES_DIR, "services.json");
 const billingPath = join(FIXTURES_DIR, "billing-transactions.json");
 

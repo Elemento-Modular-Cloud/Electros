@@ -642,17 +642,38 @@ export class MemoryStore {
     const grant = this.targetGrants.find((g) =>
       g.target_id === target.target_id && g.member === (this.authStatus.username ?? DEMO_USER)
     );
-    return {
+    const base: Record<string, unknown> = {
       target_id: target.target_id,
       target_name: target.target_name,
       target_type: target.target_type,
       target_config: target.target_config,
       assigned_at: grant?.assigned_at ?? null,
       active: this.connections.active_target_ids.includes(target.target_id),
-      version: { daemon: "synthetic", semver: "1.0.0" },
       status: { pingable: true, health: "ok" },
       ...extra,
     };
+
+    // AtomOS host picker gates on target_status.{compute,storage,network}.
+    if (target.target_type === "atomos_local_ip" || target.target_type === "remote-gateway") {
+      base.target_status = {
+        compute: true,
+        storage: true,
+        network: true,
+        "atomos-cli": true,
+        "atomos-gui": true,
+      };
+      base.version = {
+        compute: "1.0.0-synth",
+        storage: "1.0.0-synth",
+        network: "1.0.0-synth",
+        "atomos-cli": "1.0.0-synth",
+        "atomos-gui": "1.0.0-synth",
+      };
+    } else {
+      base.version = { daemon: "synthetic", semver: "1.0.0" };
+    }
+
+    return base;
   }
 
   serializeScenario(scenario: ScenarioRecord): Record<string, unknown> {
@@ -1093,12 +1114,34 @@ export class MemoryStore {
         disk_size: Math.round(diskGb * 1024 ** 3),
         nodes_number: String(body.nodes_number ?? 1),
       };
-    } else if (serviceType === "n8n" || serviceType === "openclaw") {
+    } else if (
+      serviceType === "n8n"
+      || serviceType === "openclaw"
+      || serviceType === "caddy_ca"
+      || serviceType === "hermes"
+      || serviceType === "litellm"
+      || serviceType === "llmstudio"
+      || serviceType === "minio"
+      || serviceType === "n8n_runner"
+      || serviceType === "npm"
+      || serviceType === "openwebui"
+      || serviceType === "searxng"
+      || serviceType === "hosting"
+    ) {
+      const vmName = (body.vm_name as string) ?? `${serviceType}-${serviceUuid.slice(0, 6)}`;
+      const platform =
+        serviceType === "hosting"
+          ? String((body.platform as string) ?? "wordpress")
+          : undefined;
       record = {
         ...base,
-        vm_name: (body.vm_name as string) ?? `${serviceType}-${serviceUuid.slice(0, 6)}`,
+        uniqueID: serviceUuid,
+        vm_name: vmName,
         status: "running",
+        states: "running",
         region,
+        ...(platform ? { platform } : {}),
+        req_json: { vm_name: vmName, ...(platform ? { platform } : {}) },
       };
     } else {
       record = { ...base, ...body, status: (body.status as string) ?? "running" };

@@ -4,8 +4,13 @@
     "atomos-meson-edge",
     "atomosphere-private-lab",
     "proxmox-hv",
-    "esxi-hv"
+    "esxi-hv",
+    "google-demo-public",
+    "azure-demo-public",
+    "ovh-demo-public",
+    "upcloud-demo-public",
+    "scaleway-demo-public"
   ],
-  "active_scenario_id": "44444444-4444-4444-8444-444444444444",
+  "active_scenario_id": "55555555-5555-5555-8555-555555555555",
   "max_connections": 32
 }

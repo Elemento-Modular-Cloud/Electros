@@ -1006,5 +1006,1067 @@
     "req_json": {
       "vm_name": "claw-azure-eu-central-2-018"
     }
+  },
+  {
+    "service_type": "caddy_ca",
+    "service_uuid": "caddy_ca-synth-001",
+    "billing_uuid": "billing-caddy_ca-001",
+    "uniqueID": "caddy_ca-synth-001",
+    "vm_name": "caddy_ca-google-pl-waw1-001",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "caddy_ca-google-pl-waw1-001"
+    }
+  },
+  {
+    "service_type": "caddy_ca",
+    "service_uuid": "caddy_ca-synth-002",
+    "billing_uuid": "billing-caddy_ca-002",
+    "uniqueID": "caddy_ca-synth-002",
+    "vm_name": "caddy_ca-azure-us-east1-002",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "caddy_ca-azure-us-east1-002"
+    }
+  },
+  {
+    "service_type": "caddy_ca",
+    "service_uuid": "caddy_ca-synth-003",
+    "billing_uuid": "billing-caddy_ca-003",
+    "uniqueID": "caddy_ca-synth-003",
+    "vm_name": "caddy_ca-upcloud-eastus-003",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "caddy_ca-upcloud-eastus-003"
+    }
+  },
+  {
+    "service_type": "caddy_ca",
+    "service_uuid": "caddy_ca-synth-004",
+    "billing_uuid": "billing-caddy_ca-004",
+    "uniqueID": "caddy_ca-synth-004",
+    "vm_name": "caddy_ca-google-westeurope-004",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "caddy_ca-google-westeurope-004"
+    }
+  },
+  {
+    "service_type": "caddy_ca",
+    "service_uuid": "caddy_ca-synth-005",
+    "billing_uuid": "billing-caddy_ca-005",
+    "uniqueID": "caddy_ca-synth-005",
+    "vm_name": "caddy_ca-azure-eu-central-1-005",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "caddy_ca-azure-eu-central-1-005"
+    }
+  },
+  {
+    "service_type": "caddy_ca",
+    "service_uuid": "caddy_ca-synth-006",
+    "billing_uuid": "billing-caddy_ca-006",
+    "uniqueID": "caddy_ca-synth-006",
+    "vm_name": "caddy_ca-upcloud-eu-central-2-006",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "caddy_ca-upcloud-eu-central-2-006"
+    }
+  },
+  {
+    "service_type": "hermes",
+    "service_uuid": "hermes-synth-001",
+    "billing_uuid": "billing-hermes-001",
+    "uniqueID": "hermes-synth-001",
+    "vm_name": "hermes-google-fi-hel2-001",
+    "status": "running",
+    "states": "running",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "hermes-google-fi-hel2-001"
+    }
+  },
+  {
+    "service_type": "hermes",
+    "service_uuid": "hermes-synth-002",
+    "billing_uuid": "billing-hermes-002",
+    "uniqueID": "hermes-synth-002",
+    "vm_name": "hermes-azure-de-fra1-002",
+    "status": "running",
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "hermes-azure-de-fra1-002"
+    }
+  },
+  {
+    "service_type": "hermes",
+    "service_uuid": "hermes-synth-003",
+    "billing_uuid": "billing-hermes-003",
+    "uniqueID": "hermes-synth-003",
+    "vm_name": "hermes-upcloud-pl-waw1-003",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "hermes-upcloud-pl-waw1-003"
+    }
+  },
+  {
+    "service_type": "hermes",
+    "service_uuid": "hermes-synth-004",
+    "billing_uuid": "billing-hermes-004",
+    "uniqueID": "hermes-synth-004",
+    "vm_name": "hermes-google-us-east1-004",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "hermes-google-us-east1-004"
+    }
+  },
+  {
+    "service_type": "hermes",
+    "service_uuid": "hermes-synth-005",
+    "billing_uuid": "billing-hermes-005",
+    "uniqueID": "hermes-synth-005",
+    "vm_name": "hermes-azure-eastus-005",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "hermes-azure-eastus-005"
+    }
+  },
+  {
+    "service_type": "hermes",
+    "service_uuid": "hermes-synth-006",
+    "billing_uuid": "billing-hermes-006",
+    "uniqueID": "hermes-synth-006",
+    "vm_name": "hermes-upcloud-westeurope-006",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "hermes-upcloud-westeurope-006"
+    }
+  },
+  {
+    "service_type": "litellm",
+    "service_uuid": "litellm-synth-001",
+    "billing_uuid": "billing-litellm-001",
+    "uniqueID": "litellm-synth-001",
+    "vm_name": "litellm-google-de-fra1-001",
+    "status": "running",
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "litellm-google-de-fra1-001"
+    }
+  },
+  {
+    "service_type": "litellm",
+    "service_uuid": "litellm-synth-002",
+    "billing_uuid": "billing-litellm-002",
+    "uniqueID": "litellm-synth-002",
+    "vm_name": "litellm-azure-pl-waw1-002",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "litellm-azure-pl-waw1-002"
+    }
+  },
+  {
+    "service_type": "litellm",
+    "service_uuid": "litellm-synth-003",
+    "billing_uuid": "billing-litellm-003",
+    "uniqueID": "litellm-synth-003",
+    "vm_name": "litellm-upcloud-us-east1-003",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "litellm-upcloud-us-east1-003"
+    }
+  },
+  {
+    "service_type": "litellm",
+    "service_uuid": "litellm-synth-004",
+    "billing_uuid": "billing-litellm-004",
+    "uniqueID": "litellm-synth-004",
+    "vm_name": "litellm-google-eastus-004",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "litellm-google-eastus-004"
+    }
+  },
+  {
+    "service_type": "litellm",
+    "service_uuid": "litellm-synth-005",
+    "billing_uuid": "billing-litellm-005",
+    "uniqueID": "litellm-synth-005",
+    "vm_name": "litellm-azure-westeurope-005",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "litellm-azure-westeurope-005"
+    }
+  },
+  {
+    "service_type": "litellm",
+    "service_uuid": "litellm-synth-006",
+    "billing_uuid": "billing-litellm-006",
+    "uniqueID": "litellm-synth-006",
+    "vm_name": "litellm-upcloud-eu-central-1-006",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "litellm-upcloud-eu-central-1-006"
+    }
+  },
+  {
+    "service_type": "llmstudio",
+    "service_uuid": "llmstudio-synth-001",
+    "billing_uuid": "billing-llmstudio-001",
+    "uniqueID": "llmstudio-synth-001",
+    "vm_name": "llmstudio-google-us-east1-001",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "llmstudio-google-us-east1-001"
+    }
+  },
+  {
+    "service_type": "llmstudio",
+    "service_uuid": "llmstudio-synth-002",
+    "billing_uuid": "billing-llmstudio-002",
+    "uniqueID": "llmstudio-synth-002",
+    "vm_name": "llmstudio-azure-eastus-002",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "llmstudio-azure-eastus-002"
+    }
+  },
+  {
+    "service_type": "llmstudio",
+    "service_uuid": "llmstudio-synth-003",
+    "billing_uuid": "billing-llmstudio-003",
+    "uniqueID": "llmstudio-synth-003",
+    "vm_name": "llmstudio-upcloud-westeurope-003",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "llmstudio-upcloud-westeurope-003"
+    }
+  },
+  {
+    "service_type": "llmstudio",
+    "service_uuid": "llmstudio-synth-004",
+    "billing_uuid": "billing-llmstudio-004",
+    "uniqueID": "llmstudio-synth-004",
+    "vm_name": "llmstudio-google-eu-central-1-004",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "llmstudio-google-eu-central-1-004"
+    }
+  },
+  {
+    "service_type": "llmstudio",
+    "service_uuid": "llmstudio-synth-005",
+    "billing_uuid": "billing-llmstudio-005",
+    "uniqueID": "llmstudio-synth-005",
+    "vm_name": "llmstudio-azure-eu-central-2-005",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "llmstudio-azure-eu-central-2-005"
+    }
+  },
+  {
+    "service_type": "llmstudio",
+    "service_uuid": "llmstudio-synth-006",
+    "billing_uuid": "billing-llmstudio-006",
+    "uniqueID": "llmstudio-synth-006",
+    "vm_name": "llmstudio-upcloud-uk-lon1-006",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "uk-lon1",
+    "req_json": {
+      "vm_name": "llmstudio-upcloud-uk-lon1-006"
+    }
+  },
+  {
+    "service_type": "minio",
+    "service_uuid": "minio-synth-001",
+    "billing_uuid": "billing-minio-001",
+    "uniqueID": "minio-synth-001",
+    "vm_name": "minio-google-nl-ams-001",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "nl-ams",
+    "req_json": {
+      "vm_name": "minio-google-nl-ams-001"
+    }
+  },
+  {
+    "service_type": "minio",
+    "service_uuid": "minio-synth-002",
+    "billing_uuid": "billing-minio-002",
+    "uniqueID": "minio-synth-002",
+    "vm_name": "minio-azure-fi-hel2-002",
+    "status": "running",
+    "states": "running",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "minio-azure-fi-hel2-002"
+    }
+  },
+  {
+    "service_type": "minio",
+    "service_uuid": "minio-synth-003",
+    "billing_uuid": "billing-minio-003",
+    "uniqueID": "minio-synth-003",
+    "vm_name": "minio-upcloud-de-fra1-003",
+    "status": "running",
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "minio-upcloud-de-fra1-003"
+    }
+  },
+  {
+    "service_type": "minio",
+    "service_uuid": "minio-synth-004",
+    "billing_uuid": "billing-minio-004",
+    "uniqueID": "minio-synth-004",
+    "vm_name": "minio-google-pl-waw1-004",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "minio-google-pl-waw1-004"
+    }
+  },
+  {
+    "service_type": "minio",
+    "service_uuid": "minio-synth-005",
+    "billing_uuid": "billing-minio-005",
+    "uniqueID": "minio-synth-005",
+    "vm_name": "minio-azure-us-east1-005",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "minio-azure-us-east1-005"
+    }
+  },
+  {
+    "service_type": "minio",
+    "service_uuid": "minio-synth-006",
+    "billing_uuid": "billing-minio-006",
+    "uniqueID": "minio-synth-006",
+    "vm_name": "minio-upcloud-eastus-006",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "minio-upcloud-eastus-006"
+    }
+  },
+  {
+    "service_type": "n8n_runner",
+    "service_uuid": "n8n_runner-synth-001",
+    "billing_uuid": "billing-n8n_runner-001",
+    "uniqueID": "n8n_runner-synth-001",
+    "vm_name": "n8n_runner-google-eastus-001",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "n8n_runner-google-eastus-001"
+    }
+  },
+  {
+    "service_type": "n8n_runner",
+    "service_uuid": "n8n_runner-synth-002",
+    "billing_uuid": "billing-n8n_runner-002",
+    "uniqueID": "n8n_runner-synth-002",
+    "vm_name": "n8n_runner-azure-westeurope-002",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "n8n_runner-azure-westeurope-002"
+    }
+  },
+  {
+    "service_type": "n8n_runner",
+    "service_uuid": "n8n_runner-synth-003",
+    "billing_uuid": "billing-n8n_runner-003",
+    "uniqueID": "n8n_runner-synth-003",
+    "vm_name": "n8n_runner-upcloud-eu-central-1-003",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "n8n_runner-upcloud-eu-central-1-003"
+    }
+  },
+  {
+    "service_type": "n8n_runner",
+    "service_uuid": "n8n_runner-synth-004",
+    "billing_uuid": "billing-n8n_runner-004",
+    "uniqueID": "n8n_runner-synth-004",
+    "vm_name": "n8n_runner-google-eu-central-2-004",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "n8n_runner-google-eu-central-2-004"
+    }
+  },
+  {
+    "service_type": "n8n_runner",
+    "service_uuid": "n8n_runner-synth-005",
+    "billing_uuid": "billing-n8n_runner-005",
+    "uniqueID": "n8n_runner-synth-005",
+    "vm_name": "n8n_runner-azure-uk-lon1-005",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "uk-lon1",
+    "req_json": {
+      "vm_name": "n8n_runner-azure-uk-lon1-005"
+    }
+  },
+  {
+    "service_type": "n8n_runner",
+    "service_uuid": "n8n_runner-synth-006",
+    "billing_uuid": "billing-n8n_runner-006",
+    "uniqueID": "n8n_runner-synth-006",
+    "vm_name": "n8n_runner-upcloud-fr-par-006",
+    "status": "updating",
+    "states": "updating",
+    "region": "fr-par",
+    "req_json": {
+      "vm_name": "n8n_runner-upcloud-fr-par-006"
+    }
+  },
+  {
+    "service_type": "npm",
+    "service_uuid": "npm-synth-001",
+    "billing_uuid": "billing-npm-001",
+    "uniqueID": "npm-synth-001",
+    "vm_name": "npm-google-europe-west1-001",
+    "status": "updating",
+    "states": "updating",
+    "region": "europe-west1",
+    "req_json": {
+      "vm_name": "npm-google-europe-west1-001"
+    }
+  },
+  {
+    "service_type": "npm",
+    "service_uuid": "npm-synth-002",
+    "billing_uuid": "billing-npm-002",
+    "uniqueID": "npm-synth-002",
+    "vm_name": "npm-azure-europe-west4-002",
+    "status": "error",
+    "states": "error",
+    "region": "europe-west4",
+    "req_json": {
+      "vm_name": "npm-azure-europe-west4-002"
+    }
+  },
+  {
+    "service_type": "npm",
+    "service_uuid": "npm-synth-003",
+    "billing_uuid": "billing-npm-003",
+    "uniqueID": "npm-synth-003",
+    "vm_name": "npm-upcloud-nl-ams-003",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "nl-ams",
+    "req_json": {
+      "vm_name": "npm-upcloud-nl-ams-003"
+    }
+  },
+  {
+    "service_type": "npm",
+    "service_uuid": "npm-synth-004",
+    "billing_uuid": "billing-npm-004",
+    "uniqueID": "npm-synth-004",
+    "vm_name": "npm-google-fi-hel2-004",
+    "status": "running",
+    "states": "running",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "npm-google-fi-hel2-004"
+    }
+  },
+  {
+    "service_type": "npm",
+    "service_uuid": "npm-synth-005",
+    "billing_uuid": "billing-npm-005",
+    "uniqueID": "npm-synth-005",
+    "vm_name": "npm-azure-de-fra1-005",
+    "status": "running",
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "npm-azure-de-fra1-005"
+    }
+  },
+  {
+    "service_type": "npm",
+    "service_uuid": "npm-synth-006",
+    "billing_uuid": "billing-npm-006",
+    "uniqueID": "npm-synth-006",
+    "vm_name": "npm-upcloud-pl-waw1-006",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "npm-upcloud-pl-waw1-006"
+    }
+  },
+  {
+    "service_type": "openwebui",
+    "service_uuid": "openwebui-synth-001",
+    "billing_uuid": "billing-openwebui-001",
+    "uniqueID": "openwebui-synth-001",
+    "vm_name": "openwebui-google-us-east1-001",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "openwebui-google-us-east1-001"
+    }
+  },
+  {
+    "service_type": "openwebui",
+    "service_uuid": "openwebui-synth-002",
+    "billing_uuid": "billing-openwebui-002",
+    "uniqueID": "openwebui-synth-002",
+    "vm_name": "openwebui-azure-eastus-002",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "openwebui-azure-eastus-002"
+    }
+  },
+  {
+    "service_type": "openwebui",
+    "service_uuid": "openwebui-synth-003",
+    "billing_uuid": "billing-openwebui-003",
+    "uniqueID": "openwebui-synth-003",
+    "vm_name": "openwebui-upcloud-westeurope-003",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "openwebui-upcloud-westeurope-003"
+    }
+  },
+  {
+    "service_type": "openwebui",
+    "service_uuid": "openwebui-synth-004",
+    "billing_uuid": "billing-openwebui-004",
+    "uniqueID": "openwebui-synth-004",
+    "vm_name": "openwebui-google-eu-central-1-004",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "openwebui-google-eu-central-1-004"
+    }
+  },
+  {
+    "service_type": "openwebui",
+    "service_uuid": "openwebui-synth-005",
+    "billing_uuid": "billing-openwebui-005",
+    "uniqueID": "openwebui-synth-005",
+    "vm_name": "openwebui-azure-eu-central-2-005",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "openwebui-azure-eu-central-2-005"
+    }
+  },
+  {
+    "service_type": "openwebui",
+    "service_uuid": "openwebui-synth-006",
+    "billing_uuid": "billing-openwebui-006",
+    "uniqueID": "openwebui-synth-006",
+    "vm_name": "openwebui-upcloud-uk-lon1-006",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "uk-lon1",
+    "req_json": {
+      "vm_name": "openwebui-upcloud-uk-lon1-006"
+    }
+  },
+  {
+    "service_type": "searxng",
+    "service_uuid": "searxng-synth-001",
+    "billing_uuid": "billing-searxng-001",
+    "uniqueID": "searxng-synth-001",
+    "vm_name": "searxng-google-de-fra1-001",
+    "status": "running",
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "searxng-google-de-fra1-001"
+    }
+  },
+  {
+    "service_type": "searxng",
+    "service_uuid": "searxng-synth-002",
+    "billing_uuid": "billing-searxng-002",
+    "uniqueID": "searxng-synth-002",
+    "vm_name": "searxng-azure-pl-waw1-002",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "searxng-azure-pl-waw1-002"
+    }
+  },
+  {
+    "service_type": "searxng",
+    "service_uuid": "searxng-synth-003",
+    "billing_uuid": "billing-searxng-003",
+    "uniqueID": "searxng-synth-003",
+    "vm_name": "searxng-upcloud-us-east1-003",
+    "status": "updating",
+    "states": "updating",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "searxng-upcloud-us-east1-003"
+    }
+  },
+  {
+    "service_type": "searxng",
+    "service_uuid": "searxng-synth-004",
+    "billing_uuid": "billing-searxng-004",
+    "uniqueID": "searxng-synth-004",
+    "vm_name": "searxng-google-eastus-004",
+    "status": "error",
+    "states": "error",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "searxng-google-eastus-004"
+    }
+  },
+  {
+    "service_type": "searxng",
+    "service_uuid": "searxng-synth-005",
+    "billing_uuid": "billing-searxng-005",
+    "uniqueID": "searxng-synth-005",
+    "vm_name": "searxng-azure-westeurope-005",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "searxng-azure-westeurope-005"
+    }
+  },
+  {
+    "service_type": "searxng",
+    "service_uuid": "searxng-synth-006",
+    "billing_uuid": "billing-searxng-006",
+    "uniqueID": "searxng-synth-006",
+    "vm_name": "searxng-upcloud-eu-central-1-006",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "searxng-upcloud-eu-central-1-006"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-001",
+    "billing_uuid": "billing-hosting-001",
+    "uniqueID": "hosting-synth-001",
+    "vm_name": "wordpress-site-google-rbx-001",
+    "platform": "wordpress",
+    "status": "running",
+    "states": "running",
+    "region": "rbx",
+    "req_json": {
+      "vm_name": "wordpress-site-google-rbx-001",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-002",
+    "billing_uuid": "billing-hosting-002",
+    "uniqueID": "hosting-synth-002",
+    "vm_name": "prestashop-site-azure-europe-west1-002",
+    "platform": "prestashop",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "europe-west1",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-europe-west1-002",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-003",
+    "billing_uuid": "billing-hosting-003",
+    "uniqueID": "hosting-synth-003",
+    "vm_name": "magento-site-upcloud-europe-west4-003",
+    "platform": "magento",
+    "status": "updating",
+    "states": "updating",
+    "region": "europe-west4",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-europe-west4-003",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-004",
+    "billing_uuid": "billing-hosting-004",
+    "uniqueID": "hosting-synth-004",
+    "vm_name": "wordpress-site-google-nl-ams-004",
+    "platform": "wordpress",
+    "status": "error",
+    "states": "error",
+    "region": "nl-ams",
+    "req_json": {
+      "vm_name": "wordpress-site-google-nl-ams-004",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-005",
+    "billing_uuid": "billing-hosting-005",
+    "uniqueID": "hosting-synth-005",
+    "vm_name": "prestashop-site-azure-fi-hel2-005",
+    "platform": "prestashop",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-fi-hel2-005",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-006",
+    "billing_uuid": "billing-hosting-006",
+    "uniqueID": "hosting-synth-006",
+    "vm_name": "magento-site-upcloud-de-fra1-006",
+    "platform": "magento",
+    "status": "running",
+    "states": "running",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-de-fra1-006",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-007",
+    "billing_uuid": "billing-hosting-007",
+    "uniqueID": "hosting-synth-007",
+    "vm_name": "wordpress-site-google-pl-waw1-007",
+    "platform": "wordpress",
+    "status": "running",
+    "states": "running",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "wordpress-site-google-pl-waw1-007",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-008",
+    "billing_uuid": "billing-hosting-008",
+    "uniqueID": "hosting-synth-008",
+    "vm_name": "prestashop-site-azure-us-east1-008",
+    "platform": "prestashop",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-us-east1-008",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-009",
+    "billing_uuid": "billing-hosting-009",
+    "uniqueID": "hosting-synth-009",
+    "vm_name": "magento-site-upcloud-eastus-009",
+    "platform": "magento",
+    "status": "updating",
+    "states": "updating",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-eastus-009",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-010",
+    "billing_uuid": "billing-hosting-010",
+    "uniqueID": "hosting-synth-010",
+    "vm_name": "wordpress-site-google-westeurope-010",
+    "platform": "wordpress",
+    "status": "error",
+    "states": "error",
+    "region": "westeurope",
+    "req_json": {
+      "vm_name": "wordpress-site-google-westeurope-010",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-011",
+    "billing_uuid": "billing-hosting-011",
+    "uniqueID": "hosting-synth-011",
+    "vm_name": "prestashop-site-azure-eu-central-1-011",
+    "platform": "prestashop",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "eu-central-1",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-eu-central-1-011",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-012",
+    "billing_uuid": "billing-hosting-012",
+    "uniqueID": "hosting-synth-012",
+    "vm_name": "magento-site-upcloud-eu-central-2-012",
+    "platform": "magento",
+    "status": "running",
+    "states": "running",
+    "region": "eu-central-2",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-eu-central-2-012",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-013",
+    "billing_uuid": "billing-hosting-013",
+    "uniqueID": "hosting-synth-013",
+    "vm_name": "wordpress-site-google-uk-lon1-013",
+    "platform": "wordpress",
+    "status": "running",
+    "states": "running",
+    "region": "uk-lon1",
+    "req_json": {
+      "vm_name": "wordpress-site-google-uk-lon1-013",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-014",
+    "billing_uuid": "billing-hosting-014",
+    "uniqueID": "hosting-synth-014",
+    "vm_name": "prestashop-site-azure-fr-par-014",
+    "platform": "prestashop",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "fr-par",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-fr-par-014",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-015",
+    "billing_uuid": "billing-hosting-015",
+    "uniqueID": "hosting-synth-015",
+    "vm_name": "magento-site-upcloud-gra7-015",
+    "platform": "magento",
+    "status": "updating",
+    "states": "updating",
+    "region": "gra7",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-gra7-015",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-016",
+    "billing_uuid": "billing-hosting-016",
+    "uniqueID": "hosting-synth-016",
+    "vm_name": "wordpress-site-google-rbx-016",
+    "platform": "wordpress",
+    "status": "error",
+    "states": "error",
+    "region": "rbx",
+    "req_json": {
+      "vm_name": "wordpress-site-google-rbx-016",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-017",
+    "billing_uuid": "billing-hosting-017",
+    "uniqueID": "hosting-synth-017",
+    "vm_name": "prestashop-site-azure-europe-west1-017",
+    "platform": "prestashop",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "europe-west1",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-europe-west1-017",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-018",
+    "billing_uuid": "billing-hosting-018",
+    "uniqueID": "hosting-synth-018",
+    "vm_name": "magento-site-upcloud-europe-west4-018",
+    "platform": "magento",
+    "status": "running",
+    "states": "running",
+    "region": "europe-west4",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-europe-west4-018",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-019",
+    "billing_uuid": "billing-hosting-019",
+    "uniqueID": "hosting-synth-019",
+    "vm_name": "wordpress-site-google-nl-ams-019",
+    "platform": "wordpress",
+    "status": "running",
+    "states": "running",
+    "region": "nl-ams",
+    "req_json": {
+      "vm_name": "wordpress-site-google-nl-ams-019",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-020",
+    "billing_uuid": "billing-hosting-020",
+    "uniqueID": "hosting-synth-020",
+    "vm_name": "prestashop-site-azure-fi-hel2-020",
+    "platform": "prestashop",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "fi-hel2",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-fi-hel2-020",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-021",
+    "billing_uuid": "billing-hosting-021",
+    "uniqueID": "hosting-synth-021",
+    "vm_name": "magento-site-upcloud-de-fra1-021",
+    "platform": "magento",
+    "status": "updating",
+    "states": "updating",
+    "region": "de-fra1",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-de-fra1-021",
+      "platform": "magento"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-022",
+    "billing_uuid": "billing-hosting-022",
+    "uniqueID": "hosting-synth-022",
+    "vm_name": "wordpress-site-google-pl-waw1-022",
+    "platform": "wordpress",
+    "status": "error",
+    "states": "error",
+    "region": "pl-waw1",
+    "req_json": {
+      "vm_name": "wordpress-site-google-pl-waw1-022",
+      "platform": "wordpress"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-023",
+    "billing_uuid": "billing-hosting-023",
+    "uniqueID": "hosting-synth-023",
+    "vm_name": "prestashop-site-azure-us-east1-023",
+    "platform": "prestashop",
+    "status": "provisioning",
+    "states": "provisioning",
+    "region": "us-east1",
+    "req_json": {
+      "vm_name": "prestashop-site-azure-us-east1-023",
+      "platform": "prestashop"
+    }
+  },
+  {
+    "service_type": "hosting",
+    "service_uuid": "hosting-synth-024",
+    "billing_uuid": "billing-hosting-024",
+    "uniqueID": "hosting-synth-024",
+    "vm_name": "magento-site-upcloud-eastus-024",
+    "platform": "magento",
+    "status": "running",
+    "states": "running",
+    "region": "eastus",
+    "req_json": {
+      "vm_name": "magento-site-upcloud-eastus-024",
+      "platform": "magento"
+    }
   }
 ]

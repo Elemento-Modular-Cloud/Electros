@@ -101,7 +101,7 @@ The `fixtures/default/` set includes:
 - **18 volumes / networks / port forwards / templates**
 - Host status aggregates derived from the generated fleet
 - **15 licenses** — armed, inactive, expired, and expiring-soon rows
-- **90 PaaS instances** (kaas, objectstorage, dbaas, n8n, openclaw)
+- **168 PaaS/SaaS instances** (kaas, objectstorage, dbaas, n8n, openclaw, marketplace SaaS, plus WordPress / PrestaShop / Magento hosting)
 
 Regenerate:
 
@@ -118,7 +118,7 @@ With [`flags.json`](../elemento-gui-new/electros/configs/flags.json) `"enableAll
 
 `kops` has no `table_layout` in ECD (no list UI). `blockstorage` is provider-only and not defined in `supported_intents` (not a PaaS nav page).
 
-Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). **n8n** and **openclaw** need experimental features enabled in Electros, or they only appear as mock data when those routes are registered.
+Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). Marketplace SaaS apps (n8n, openclaw, Open WebUI, Hermes, LiteLLM, LM Studio, MinIO, SearXNG, NPM, Caddy CA, n8n Runner) plus hosting (WordPress, PrestaShop, Magento) are offered on Google / Azure / UpCloud.
 
 ## MCP
 
