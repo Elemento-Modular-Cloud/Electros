@@ -3,7 +3,7 @@
  * with a light set of synthetic instances per PaaS sub_type (ECD supported_intents).
  * Core types stay at 18; catalog pages that were empty (registry, publicip,
  * loadbalancer, privatenetwork, publicgateway, serverless, aiserverless,
- * queueaas, filestorage) get 4 each so lists are not empty. kops is skipped.
+ * queueaas, filestorage) get 4 each so lists are not empty.
  *
  * Usage: node scripts/generate-paas-fixtures.mjs
  */
