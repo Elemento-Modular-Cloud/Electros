@@ -67,6 +67,7 @@ const NODE_SIZES = ["S", "M", "L"];
 const BILLING_INTERVALS = ["day", "week", "month", "year"];
 const BILLING_STATUSES = ["running", "running", "running", "to_delete", "suspended"];
 const PAAS_PROVIDERS = ["scaleway", "ovh", "google", "azure", "upcloud"];
+const SAAS_PROVIDERS = ["google", "azure", "ovh", "upcloud", "scaleway", "aws"];
 
 function pad3(n) {
   return String(n).padStart(3, "0");
@@ -182,7 +183,7 @@ for (let i = 0; i < PER_TYPE; i++) {
   const n = pad3(i + 1);
   const billingUuid = `billing-n8n-${n}`;
   const region = pick(REGIONS, i + 7);
-  const provider = pick(["google", "upcloud"], i);
+  const provider = pick(SAAS_PROVIDERS, i);
   const n8nName = `n8n-${provider}-${region}-${n}`;
   const n8nStatus = pick(VM_STATUSES, i);
   services.push({
@@ -194,7 +195,8 @@ for (let i = 0; i < PER_TYPE; i++) {
     status: n8nStatus,
     states: n8nStatus,
     region,
-    req_json: { vm_name: n8nName },
+    provider,
+    req_json: { vm_name: n8nName, provider },
   });
   addBilling("n8n", i, billingUuid, 40 + (i % 4) * 12, i);
 }
@@ -203,7 +205,7 @@ for (let i = 0; i < PER_TYPE; i++) {
   const n = pad3(i + 1);
   const billingUuid = `billing-openclaw-${n}`;
   const region = pick(REGIONS, i + 11);
-  const provider = pick(["google", "azure"], i);
+  const provider = pick(SAAS_PROVIDERS, i);
   const clawName = `claw-${provider}-${region}-${n}`;
   const clawStatus = pick(VM_STATUSES, i + 2);
   services.push({
@@ -215,7 +217,8 @@ for (let i = 0; i < PER_TYPE; i++) {
     status: clawStatus,
     states: clawStatus,
     region,
-    req_json: { vm_name: clawName },
+    provider,
+    req_json: { vm_name: clawName, provider },
   });
   addBilling("openclaw", i, billingUuid, 28 + (i % 5) * 15, i + 3);
 }
@@ -432,7 +435,7 @@ for (const serviceType of MARKETPLACE_SAAS) {
     const n = pad3(i + 1);
     const billingUuid = `billing-${serviceType}-${n}`;
     const region = pick(REGIONS, i + serviceType.length);
-    const provider = pick(["google", "azure", "upcloud"], i);
+    const provider = pick(SAAS_PROVIDERS, i);
     const vmName = `${serviceType}-${provider}-${region}-${n}`;
     const status = pick(VM_STATUSES, i + serviceType.length);
     services.push({
@@ -444,7 +447,8 @@ for (const serviceType of MARKETPLACE_SAAS) {
       status,
       states: status,
       region,
-      req_json: { vm_name: vmName },
+      provider,
+      req_json: { vm_name: vmName, provider },
     });
     addBilling(serviceType, i, billingUuid, 22 + (i % 5) * 9, i + 4);
   }
@@ -459,7 +463,7 @@ for (let i = 0; i < HOSTING_PER_PLATFORM * HOSTING_PLATFORMS.length; i++) {
   const platform = pick(HOSTING_PLATFORMS, i);
   const billingUuid = `billing-hosting-${n}`;
   const region = pick(REGIONS, i + 17);
-  const provider = pick(["google", "azure", "upcloud"], i);
+  const provider = pick(SAAS_PROVIDERS, i);
   const siteName = `${platform}-site-${provider}-${region}-${n}`;
   const status = pick(VM_STATUSES, i + 1);
   services.push({
@@ -472,7 +476,8 @@ for (let i = 0; i < HOSTING_PER_PLATFORM * HOSTING_PLATFORMS.length; i++) {
     status,
     states: status,
     region,
-    req_json: { vm_name: siteName, platform },
+    provider,
+    req_json: { vm_name: siteName, platform, provider },
   });
   addBilling("hosting", i, billingUuid, 18 + (i % 6) * 7, i + 5);
 }

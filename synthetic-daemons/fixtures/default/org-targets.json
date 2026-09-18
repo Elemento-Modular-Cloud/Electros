@@ -109,5 +109,13 @@
     "target_config": {
       "provider": "impossiblecloud"
     }
+  },
+  {
+    "target_id": "aws-demo-public",
+    "target_name": "aws public meson",
+    "target_type": "meson_public",
+    "target_config": {
+      "provider": "aws"
+    }
   }
 ]

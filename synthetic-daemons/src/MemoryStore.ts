@@ -1137,6 +1137,9 @@ export class MemoryStore {
         serviceType === "hosting"
           ? String((body.platform as string) ?? "wordpress")
           : undefined;
+      const provider = (body.provider as string)
+        ?? (this.activeTargets.find((t) => t.target_id === body.target)?.target_config?.provider as string)
+        ?? "google";
       record = {
         ...base,
         uniqueID: serviceUuid,
@@ -1145,8 +1148,9 @@ export class MemoryStore {
         status: "running",
         states: "running",
         region,
+        provider,
         ...(platform ? { platform } : {}),
-        req_json: { vm_name: vmName, ...(platform ? { platform } : {}) },
+        req_json: { vm_name: vmName, provider, ...(platform ? { platform } : {}) },
       };
     } else if (serviceType === "publicip") {
       const ipType = (body.type as string) ?? "v4";

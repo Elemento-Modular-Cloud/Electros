@@ -9,7 +9,8 @@
     "azure-demo-public",
     "ovh-demo-public",
     "upcloud-demo-public",
-    "scaleway-demo-public"
+    "scaleway-demo-public",
+    "aws-demo-public"
   ],
   "active_scenario_id": "55555555-5555-5555-8555-555555555555",
   "max_connections": 32

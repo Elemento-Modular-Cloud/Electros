@@ -58,5 +58,10 @@
     "target_id": "impossiblecloud-demo-public",
     "member": "demo@synthetic.local",
     "assigned_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "target_id": "aws-demo-public",
+    "member": "demo@synthetic.local",
+    "assigned_at": "2026-01-15T10:00:00.000Z"
   }
 ]

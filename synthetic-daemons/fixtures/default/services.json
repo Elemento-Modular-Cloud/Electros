@@ -566,8 +566,10 @@
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "n8n-google-de-fra1-001"
+      "vm_name": "n8n-google-de-fra1-001",
+      "provider": "google"
     }
   },
   {
@@ -575,12 +577,14 @@
     "service_uuid": "n8n-synth-002",
     "billing_uuid": "billing-n8n-002",
     "uniqueID": "n8n-synth-002",
-    "vm_name": "n8n-upcloud-pl-waw1-002",
+    "vm_name": "n8n-azure-pl-waw1-002",
     "status": "running",
     "states": "running",
     "region": "pl-waw1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "n8n-upcloud-pl-waw1-002"
+      "vm_name": "n8n-azure-pl-waw1-002",
+      "provider": "azure"
     }
   },
   {
@@ -588,12 +592,14 @@
     "service_uuid": "n8n-synth-003",
     "billing_uuid": "billing-n8n-003",
     "uniqueID": "n8n-synth-003",
-    "vm_name": "n8n-google-us-east1-003",
+    "vm_name": "n8n-ovh-us-east1-003",
     "status": "stopped",
     "states": "stopped",
     "region": "us-east1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "n8n-google-us-east1-003"
+      "vm_name": "n8n-ovh-us-east1-003",
+      "provider": "ovh"
     }
   },
   {
@@ -605,8 +611,10 @@
     "status": "updating",
     "states": "updating",
     "region": "eastus",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "n8n-upcloud-eastus-004"
+      "vm_name": "n8n-upcloud-eastus-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -614,12 +622,14 @@
     "service_uuid": "n8n-synth-005",
     "billing_uuid": "billing-n8n-005",
     "uniqueID": "n8n-synth-005",
-    "vm_name": "n8n-google-westeurope-005",
+    "vm_name": "n8n-scaleway-westeurope-005",
     "status": "error",
     "states": "error",
     "region": "westeurope",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "n8n-google-westeurope-005"
+      "vm_name": "n8n-scaleway-westeurope-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -627,12 +637,14 @@
     "service_uuid": "n8n-synth-006",
     "billing_uuid": "billing-n8n-006",
     "uniqueID": "n8n-synth-006",
-    "vm_name": "n8n-upcloud-eu-central-1-006",
+    "vm_name": "n8n-aws-eu-central-1-006",
     "status": "provisioning",
     "states": "provisioning",
     "region": "eu-central-1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "n8n-upcloud-eu-central-1-006"
+      "vm_name": "n8n-aws-eu-central-1-006",
+      "provider": "aws"
     }
   },
   {
@@ -644,8 +656,10 @@
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "google",
     "req_json": {
-      "vm_name": "n8n-google-eu-central-2-007"
+      "vm_name": "n8n-google-eu-central-2-007",
+      "provider": "google"
     }
   },
   {
@@ -653,12 +667,14 @@
     "service_uuid": "n8n-synth-008",
     "billing_uuid": "billing-n8n-008",
     "uniqueID": "n8n-synth-008",
-    "vm_name": "n8n-upcloud-uk-lon1-008",
+    "vm_name": "n8n-azure-uk-lon1-008",
     "status": "running",
     "states": "running",
     "region": "uk-lon1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "n8n-upcloud-uk-lon1-008"
+      "vm_name": "n8n-azure-uk-lon1-008",
+      "provider": "azure"
     }
   },
   {
@@ -666,12 +682,14 @@
     "service_uuid": "n8n-synth-009",
     "billing_uuid": "billing-n8n-009",
     "uniqueID": "n8n-synth-009",
-    "vm_name": "n8n-google-fr-par-009",
+    "vm_name": "n8n-ovh-fr-par-009",
     "status": "stopped",
     "states": "stopped",
     "region": "fr-par",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "n8n-google-fr-par-009"
+      "vm_name": "n8n-ovh-fr-par-009",
+      "provider": "ovh"
     }
   },
   {
@@ -683,8 +701,10 @@
     "status": "updating",
     "states": "updating",
     "region": "gra7",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "n8n-upcloud-gra7-010"
+      "vm_name": "n8n-upcloud-gra7-010",
+      "provider": "upcloud"
     }
   },
   {
@@ -692,12 +712,14 @@
     "service_uuid": "n8n-synth-011",
     "billing_uuid": "billing-n8n-011",
     "uniqueID": "n8n-synth-011",
-    "vm_name": "n8n-google-rbx-011",
+    "vm_name": "n8n-scaleway-rbx-011",
     "status": "error",
     "states": "error",
     "region": "rbx",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "n8n-google-rbx-011"
+      "vm_name": "n8n-scaleway-rbx-011",
+      "provider": "scaleway"
     }
   },
   {
@@ -705,12 +727,14 @@
     "service_uuid": "n8n-synth-012",
     "billing_uuid": "billing-n8n-012",
     "uniqueID": "n8n-synth-012",
-    "vm_name": "n8n-upcloud-europe-west1-012",
+    "vm_name": "n8n-aws-europe-west1-012",
     "status": "provisioning",
     "states": "provisioning",
     "region": "europe-west1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "n8n-upcloud-europe-west1-012"
+      "vm_name": "n8n-aws-europe-west1-012",
+      "provider": "aws"
     }
   },
   {
@@ -722,8 +746,10 @@
     "status": "running",
     "states": "running",
     "region": "europe-west4",
+    "provider": "google",
     "req_json": {
-      "vm_name": "n8n-google-europe-west4-013"
+      "vm_name": "n8n-google-europe-west4-013",
+      "provider": "google"
     }
   },
   {
@@ -731,12 +757,14 @@
     "service_uuid": "n8n-synth-014",
     "billing_uuid": "billing-n8n-014",
     "uniqueID": "n8n-synth-014",
-    "vm_name": "n8n-upcloud-nl-ams-014",
+    "vm_name": "n8n-azure-nl-ams-014",
     "status": "running",
     "states": "running",
     "region": "nl-ams",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "n8n-upcloud-nl-ams-014"
+      "vm_name": "n8n-azure-nl-ams-014",
+      "provider": "azure"
     }
   },
   {
@@ -744,12 +772,14 @@
     "service_uuid": "n8n-synth-015",
     "billing_uuid": "billing-n8n-015",
     "uniqueID": "n8n-synth-015",
-    "vm_name": "n8n-google-fi-hel2-015",
+    "vm_name": "n8n-ovh-fi-hel2-015",
     "status": "stopped",
     "states": "stopped",
     "region": "fi-hel2",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "n8n-google-fi-hel2-015"
+      "vm_name": "n8n-ovh-fi-hel2-015",
+      "provider": "ovh"
     }
   },
   {
@@ -761,8 +791,10 @@
     "status": "updating",
     "states": "updating",
     "region": "de-fra1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "n8n-upcloud-de-fra1-016"
+      "vm_name": "n8n-upcloud-de-fra1-016",
+      "provider": "upcloud"
     }
   },
   {
@@ -770,12 +802,14 @@
     "service_uuid": "n8n-synth-017",
     "billing_uuid": "billing-n8n-017",
     "uniqueID": "n8n-synth-017",
-    "vm_name": "n8n-google-pl-waw1-017",
+    "vm_name": "n8n-scaleway-pl-waw1-017",
     "status": "error",
     "states": "error",
     "region": "pl-waw1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "n8n-google-pl-waw1-017"
+      "vm_name": "n8n-scaleway-pl-waw1-017",
+      "provider": "scaleway"
     }
   },
   {
@@ -783,12 +817,14 @@
     "service_uuid": "n8n-synth-018",
     "billing_uuid": "billing-n8n-018",
     "uniqueID": "n8n-synth-018",
-    "vm_name": "n8n-upcloud-us-east1-018",
+    "vm_name": "n8n-aws-us-east1-018",
     "status": "provisioning",
     "states": "provisioning",
     "region": "us-east1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "n8n-upcloud-us-east1-018"
+      "vm_name": "n8n-aws-us-east1-018",
+      "provider": "aws"
     }
   },
   {
@@ -800,8 +836,10 @@
     "status": "stopped",
     "states": "stopped",
     "region": "westeurope",
+    "provider": "google",
     "req_json": {
-      "vm_name": "claw-google-westeurope-001"
+      "vm_name": "claw-google-westeurope-001",
+      "provider": "google"
     }
   },
   {
@@ -813,8 +851,10 @@
     "status": "updating",
     "states": "updating",
     "region": "eu-central-1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "claw-azure-eu-central-1-002"
+      "vm_name": "claw-azure-eu-central-1-002",
+      "provider": "azure"
     }
   },
   {
@@ -822,12 +862,14 @@
     "service_uuid": "openclaw-synth-003",
     "billing_uuid": "billing-openclaw-003",
     "uniqueID": "openclaw-synth-003",
-    "vm_name": "claw-google-eu-central-2-003",
+    "vm_name": "claw-ovh-eu-central-2-003",
     "status": "error",
     "states": "error",
     "region": "eu-central-2",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "claw-google-eu-central-2-003"
+      "vm_name": "claw-ovh-eu-central-2-003",
+      "provider": "ovh"
     }
   },
   {
@@ -835,12 +877,14 @@
     "service_uuid": "openclaw-synth-004",
     "billing_uuid": "billing-openclaw-004",
     "uniqueID": "openclaw-synth-004",
-    "vm_name": "claw-azure-uk-lon1-004",
+    "vm_name": "claw-upcloud-uk-lon1-004",
     "status": "provisioning",
     "states": "provisioning",
     "region": "uk-lon1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "claw-azure-uk-lon1-004"
+      "vm_name": "claw-upcloud-uk-lon1-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -848,12 +892,14 @@
     "service_uuid": "openclaw-synth-005",
     "billing_uuid": "billing-openclaw-005",
     "uniqueID": "openclaw-synth-005",
-    "vm_name": "claw-google-fr-par-005",
+    "vm_name": "claw-scaleway-fr-par-005",
     "status": "running",
     "states": "running",
     "region": "fr-par",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "claw-google-fr-par-005"
+      "vm_name": "claw-scaleway-fr-par-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -861,12 +907,14 @@
     "service_uuid": "openclaw-synth-006",
     "billing_uuid": "billing-openclaw-006",
     "uniqueID": "openclaw-synth-006",
-    "vm_name": "claw-azure-gra7-006",
+    "vm_name": "claw-aws-gra7-006",
     "status": "running",
     "states": "running",
     "region": "gra7",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "claw-azure-gra7-006"
+      "vm_name": "claw-aws-gra7-006",
+      "provider": "aws"
     }
   },
   {
@@ -878,8 +926,10 @@
     "status": "stopped",
     "states": "stopped",
     "region": "rbx",
+    "provider": "google",
     "req_json": {
-      "vm_name": "claw-google-rbx-007"
+      "vm_name": "claw-google-rbx-007",
+      "provider": "google"
     }
   },
   {
@@ -891,8 +941,10 @@
     "status": "updating",
     "states": "updating",
     "region": "europe-west1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "claw-azure-europe-west1-008"
+      "vm_name": "claw-azure-europe-west1-008",
+      "provider": "azure"
     }
   },
   {
@@ -900,12 +952,14 @@
     "service_uuid": "openclaw-synth-009",
     "billing_uuid": "billing-openclaw-009",
     "uniqueID": "openclaw-synth-009",
-    "vm_name": "claw-google-europe-west4-009",
+    "vm_name": "claw-ovh-europe-west4-009",
     "status": "error",
     "states": "error",
     "region": "europe-west4",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "claw-google-europe-west4-009"
+      "vm_name": "claw-ovh-europe-west4-009",
+      "provider": "ovh"
     }
   },
   {
@@ -913,12 +967,14 @@
     "service_uuid": "openclaw-synth-010",
     "billing_uuid": "billing-openclaw-010",
     "uniqueID": "openclaw-synth-010",
-    "vm_name": "claw-azure-nl-ams-010",
+    "vm_name": "claw-upcloud-nl-ams-010",
     "status": "provisioning",
     "states": "provisioning",
     "region": "nl-ams",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "claw-azure-nl-ams-010"
+      "vm_name": "claw-upcloud-nl-ams-010",
+      "provider": "upcloud"
     }
   },
   {
@@ -926,12 +982,14 @@
     "service_uuid": "openclaw-synth-011",
     "billing_uuid": "billing-openclaw-011",
     "uniqueID": "openclaw-synth-011",
-    "vm_name": "claw-google-fi-hel2-011",
+    "vm_name": "claw-scaleway-fi-hel2-011",
     "status": "running",
     "states": "running",
     "region": "fi-hel2",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "claw-google-fi-hel2-011"
+      "vm_name": "claw-scaleway-fi-hel2-011",
+      "provider": "scaleway"
     }
   },
   {
@@ -939,12 +997,14 @@
     "service_uuid": "openclaw-synth-012",
     "billing_uuid": "billing-openclaw-012",
     "uniqueID": "openclaw-synth-012",
-    "vm_name": "claw-azure-de-fra1-012",
+    "vm_name": "claw-aws-de-fra1-012",
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "claw-azure-de-fra1-012"
+      "vm_name": "claw-aws-de-fra1-012",
+      "provider": "aws"
     }
   },
   {
@@ -956,8 +1016,10 @@
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "claw-google-pl-waw1-013"
+      "vm_name": "claw-google-pl-waw1-013",
+      "provider": "google"
     }
   },
   {
@@ -969,8 +1031,10 @@
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "claw-azure-us-east1-014"
+      "vm_name": "claw-azure-us-east1-014",
+      "provider": "azure"
     }
   },
   {
@@ -978,12 +1042,14 @@
     "service_uuid": "openclaw-synth-015",
     "billing_uuid": "billing-openclaw-015",
     "uniqueID": "openclaw-synth-015",
-    "vm_name": "claw-google-eastus-015",
+    "vm_name": "claw-ovh-eastus-015",
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "claw-google-eastus-015"
+      "vm_name": "claw-ovh-eastus-015",
+      "provider": "ovh"
     }
   },
   {
@@ -991,12 +1057,14 @@
     "service_uuid": "openclaw-synth-016",
     "billing_uuid": "billing-openclaw-016",
     "uniqueID": "openclaw-synth-016",
-    "vm_name": "claw-azure-westeurope-016",
+    "vm_name": "claw-upcloud-westeurope-016",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "claw-azure-westeurope-016"
+      "vm_name": "claw-upcloud-westeurope-016",
+      "provider": "upcloud"
     }
   },
   {
@@ -1004,12 +1072,14 @@
     "service_uuid": "openclaw-synth-017",
     "billing_uuid": "billing-openclaw-017",
     "uniqueID": "openclaw-synth-017",
-    "vm_name": "claw-google-eu-central-1-017",
+    "vm_name": "claw-scaleway-eu-central-1-017",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "claw-google-eu-central-1-017"
+      "vm_name": "claw-scaleway-eu-central-1-017",
+      "provider": "scaleway"
     }
   },
   {
@@ -1017,12 +1087,14 @@
     "service_uuid": "openclaw-synth-018",
     "billing_uuid": "billing-openclaw-018",
     "uniqueID": "openclaw-synth-018",
-    "vm_name": "claw-azure-eu-central-2-018",
+    "vm_name": "claw-aws-eu-central-2-018",
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "claw-azure-eu-central-2-018"
+      "vm_name": "claw-aws-eu-central-2-018",
+      "provider": "aws"
     }
   },
   {
@@ -1478,8 +1550,10 @@
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "caddy_ca-google-pl-waw1-001"
+      "vm_name": "caddy_ca-google-pl-waw1-001",
+      "provider": "google"
     }
   },
   {
@@ -1491,8 +1565,10 @@
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "caddy_ca-azure-us-east1-002"
+      "vm_name": "caddy_ca-azure-us-east1-002",
+      "provider": "azure"
     }
   },
   {
@@ -1500,12 +1576,14 @@
     "service_uuid": "caddy_ca-synth-003",
     "billing_uuid": "billing-caddy_ca-003",
     "uniqueID": "caddy_ca-synth-003",
-    "vm_name": "caddy_ca-upcloud-eastus-003",
+    "vm_name": "caddy_ca-ovh-eastus-003",
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "caddy_ca-upcloud-eastus-003"
+      "vm_name": "caddy_ca-ovh-eastus-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1513,12 +1591,14 @@
     "service_uuid": "caddy_ca-synth-004",
     "billing_uuid": "billing-caddy_ca-004",
     "uniqueID": "caddy_ca-synth-004",
-    "vm_name": "caddy_ca-google-westeurope-004",
+    "vm_name": "caddy_ca-upcloud-westeurope-004",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "caddy_ca-google-westeurope-004"
+      "vm_name": "caddy_ca-upcloud-westeurope-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1526,12 +1606,14 @@
     "service_uuid": "caddy_ca-synth-005",
     "billing_uuid": "billing-caddy_ca-005",
     "uniqueID": "caddy_ca-synth-005",
-    "vm_name": "caddy_ca-azure-eu-central-1-005",
+    "vm_name": "caddy_ca-scaleway-eu-central-1-005",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "caddy_ca-azure-eu-central-1-005"
+      "vm_name": "caddy_ca-scaleway-eu-central-1-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -1539,12 +1621,14 @@
     "service_uuid": "caddy_ca-synth-006",
     "billing_uuid": "billing-caddy_ca-006",
     "uniqueID": "caddy_ca-synth-006",
-    "vm_name": "caddy_ca-upcloud-eu-central-2-006",
+    "vm_name": "caddy_ca-aws-eu-central-2-006",
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "caddy_ca-upcloud-eu-central-2-006"
+      "vm_name": "caddy_ca-aws-eu-central-2-006",
+      "provider": "aws"
     }
   },
   {
@@ -1556,8 +1640,10 @@
     "status": "running",
     "states": "running",
     "region": "fi-hel2",
+    "provider": "google",
     "req_json": {
-      "vm_name": "hermes-google-fi-hel2-001"
+      "vm_name": "hermes-google-fi-hel2-001",
+      "provider": "google"
     }
   },
   {
@@ -1569,8 +1655,10 @@
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "hermes-azure-de-fra1-002"
+      "vm_name": "hermes-azure-de-fra1-002",
+      "provider": "azure"
     }
   },
   {
@@ -1578,12 +1666,14 @@
     "service_uuid": "hermes-synth-003",
     "billing_uuid": "billing-hermes-003",
     "uniqueID": "hermes-synth-003",
-    "vm_name": "hermes-upcloud-pl-waw1-003",
+    "vm_name": "hermes-ovh-pl-waw1-003",
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "hermes-upcloud-pl-waw1-003"
+      "vm_name": "hermes-ovh-pl-waw1-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1591,12 +1681,14 @@
     "service_uuid": "hermes-synth-004",
     "billing_uuid": "billing-hermes-004",
     "uniqueID": "hermes-synth-004",
-    "vm_name": "hermes-google-us-east1-004",
+    "vm_name": "hermes-upcloud-us-east1-004",
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "hermes-google-us-east1-004"
+      "vm_name": "hermes-upcloud-us-east1-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1604,12 +1696,14 @@
     "service_uuid": "hermes-synth-005",
     "billing_uuid": "billing-hermes-005",
     "uniqueID": "hermes-synth-005",
-    "vm_name": "hermes-azure-eastus-005",
+    "vm_name": "hermes-scaleway-eastus-005",
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "hermes-azure-eastus-005"
+      "vm_name": "hermes-scaleway-eastus-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -1617,12 +1711,14 @@
     "service_uuid": "hermes-synth-006",
     "billing_uuid": "billing-hermes-006",
     "uniqueID": "hermes-synth-006",
-    "vm_name": "hermes-upcloud-westeurope-006",
+    "vm_name": "hermes-aws-westeurope-006",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "hermes-upcloud-westeurope-006"
+      "vm_name": "hermes-aws-westeurope-006",
+      "provider": "aws"
     }
   },
   {
@@ -1634,8 +1730,10 @@
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "litellm-google-de-fra1-001"
+      "vm_name": "litellm-google-de-fra1-001",
+      "provider": "google"
     }
   },
   {
@@ -1647,8 +1745,10 @@
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "litellm-azure-pl-waw1-002"
+      "vm_name": "litellm-azure-pl-waw1-002",
+      "provider": "azure"
     }
   },
   {
@@ -1656,12 +1756,14 @@
     "service_uuid": "litellm-synth-003",
     "billing_uuid": "billing-litellm-003",
     "uniqueID": "litellm-synth-003",
-    "vm_name": "litellm-upcloud-us-east1-003",
+    "vm_name": "litellm-ovh-us-east1-003",
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "litellm-upcloud-us-east1-003"
+      "vm_name": "litellm-ovh-us-east1-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1669,12 +1771,14 @@
     "service_uuid": "litellm-synth-004",
     "billing_uuid": "billing-litellm-004",
     "uniqueID": "litellm-synth-004",
-    "vm_name": "litellm-google-eastus-004",
+    "vm_name": "litellm-upcloud-eastus-004",
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "litellm-google-eastus-004"
+      "vm_name": "litellm-upcloud-eastus-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1682,12 +1786,14 @@
     "service_uuid": "litellm-synth-005",
     "billing_uuid": "billing-litellm-005",
     "uniqueID": "litellm-synth-005",
-    "vm_name": "litellm-azure-westeurope-005",
+    "vm_name": "litellm-scaleway-westeurope-005",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "litellm-azure-westeurope-005"
+      "vm_name": "litellm-scaleway-westeurope-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -1695,12 +1801,14 @@
     "service_uuid": "litellm-synth-006",
     "billing_uuid": "billing-litellm-006",
     "uniqueID": "litellm-synth-006",
-    "vm_name": "litellm-upcloud-eu-central-1-006",
+    "vm_name": "litellm-aws-eu-central-1-006",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "litellm-upcloud-eu-central-1-006"
+      "vm_name": "litellm-aws-eu-central-1-006",
+      "provider": "aws"
     }
   },
   {
@@ -1712,8 +1820,10 @@
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "llmstudio-google-us-east1-001"
+      "vm_name": "llmstudio-google-us-east1-001",
+      "provider": "google"
     }
   },
   {
@@ -1725,8 +1835,10 @@
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "llmstudio-azure-eastus-002"
+      "vm_name": "llmstudio-azure-eastus-002",
+      "provider": "azure"
     }
   },
   {
@@ -1734,12 +1846,14 @@
     "service_uuid": "llmstudio-synth-003",
     "billing_uuid": "billing-llmstudio-003",
     "uniqueID": "llmstudio-synth-003",
-    "vm_name": "llmstudio-upcloud-westeurope-003",
+    "vm_name": "llmstudio-ovh-westeurope-003",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "llmstudio-upcloud-westeurope-003"
+      "vm_name": "llmstudio-ovh-westeurope-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1747,12 +1861,14 @@
     "service_uuid": "llmstudio-synth-004",
     "billing_uuid": "billing-llmstudio-004",
     "uniqueID": "llmstudio-synth-004",
-    "vm_name": "llmstudio-google-eu-central-1-004",
+    "vm_name": "llmstudio-upcloud-eu-central-1-004",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "llmstudio-google-eu-central-1-004"
+      "vm_name": "llmstudio-upcloud-eu-central-1-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1760,12 +1876,14 @@
     "service_uuid": "llmstudio-synth-005",
     "billing_uuid": "billing-llmstudio-005",
     "uniqueID": "llmstudio-synth-005",
-    "vm_name": "llmstudio-azure-eu-central-2-005",
+    "vm_name": "llmstudio-scaleway-eu-central-2-005",
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "llmstudio-azure-eu-central-2-005"
+      "vm_name": "llmstudio-scaleway-eu-central-2-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -1773,12 +1891,14 @@
     "service_uuid": "llmstudio-synth-006",
     "billing_uuid": "billing-llmstudio-006",
     "uniqueID": "llmstudio-synth-006",
-    "vm_name": "llmstudio-upcloud-uk-lon1-006",
+    "vm_name": "llmstudio-aws-uk-lon1-006",
     "status": "stopped",
     "states": "stopped",
     "region": "uk-lon1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "llmstudio-upcloud-uk-lon1-006"
+      "vm_name": "llmstudio-aws-uk-lon1-006",
+      "provider": "aws"
     }
   },
   {
@@ -1790,8 +1910,10 @@
     "status": "provisioning",
     "states": "provisioning",
     "region": "nl-ams",
+    "provider": "google",
     "req_json": {
-      "vm_name": "minio-google-nl-ams-001"
+      "vm_name": "minio-google-nl-ams-001",
+      "provider": "google"
     }
   },
   {
@@ -1803,8 +1925,10 @@
     "status": "running",
     "states": "running",
     "region": "fi-hel2",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "minio-azure-fi-hel2-002"
+      "vm_name": "minio-azure-fi-hel2-002",
+      "provider": "azure"
     }
   },
   {
@@ -1812,12 +1936,14 @@
     "service_uuid": "minio-synth-003",
     "billing_uuid": "billing-minio-003",
     "uniqueID": "minio-synth-003",
-    "vm_name": "minio-upcloud-de-fra1-003",
+    "vm_name": "minio-ovh-de-fra1-003",
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "minio-upcloud-de-fra1-003"
+      "vm_name": "minio-ovh-de-fra1-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1825,12 +1951,14 @@
     "service_uuid": "minio-synth-004",
     "billing_uuid": "billing-minio-004",
     "uniqueID": "minio-synth-004",
-    "vm_name": "minio-google-pl-waw1-004",
+    "vm_name": "minio-upcloud-pl-waw1-004",
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "minio-google-pl-waw1-004"
+      "vm_name": "minio-upcloud-pl-waw1-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1838,12 +1966,14 @@
     "service_uuid": "minio-synth-005",
     "billing_uuid": "billing-minio-005",
     "uniqueID": "minio-synth-005",
-    "vm_name": "minio-azure-us-east1-005",
+    "vm_name": "minio-scaleway-us-east1-005",
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "minio-azure-us-east1-005"
+      "vm_name": "minio-scaleway-us-east1-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -1851,12 +1981,14 @@
     "service_uuid": "minio-synth-006",
     "billing_uuid": "billing-minio-006",
     "uniqueID": "minio-synth-006",
-    "vm_name": "minio-upcloud-eastus-006",
+    "vm_name": "minio-aws-eastus-006",
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "minio-upcloud-eastus-006"
+      "vm_name": "minio-aws-eastus-006",
+      "provider": "aws"
     }
   },
   {
@@ -1868,8 +2000,10 @@
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "google",
     "req_json": {
-      "vm_name": "n8n_runner-google-eastus-001"
+      "vm_name": "n8n_runner-google-eastus-001",
+      "provider": "google"
     }
   },
   {
@@ -1881,8 +2015,10 @@
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "n8n_runner-azure-westeurope-002"
+      "vm_name": "n8n_runner-azure-westeurope-002",
+      "provider": "azure"
     }
   },
   {
@@ -1890,12 +2026,14 @@
     "service_uuid": "n8n_runner-synth-003",
     "billing_uuid": "billing-n8n_runner-003",
     "uniqueID": "n8n_runner-synth-003",
-    "vm_name": "n8n_runner-upcloud-eu-central-1-003",
+    "vm_name": "n8n_runner-ovh-eu-central-1-003",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "n8n_runner-upcloud-eu-central-1-003"
+      "vm_name": "n8n_runner-ovh-eu-central-1-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1903,12 +2041,14 @@
     "service_uuid": "n8n_runner-synth-004",
     "billing_uuid": "billing-n8n_runner-004",
     "uniqueID": "n8n_runner-synth-004",
-    "vm_name": "n8n_runner-google-eu-central-2-004",
+    "vm_name": "n8n_runner-upcloud-eu-central-2-004",
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "n8n_runner-google-eu-central-2-004"
+      "vm_name": "n8n_runner-upcloud-eu-central-2-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1916,12 +2056,14 @@
     "service_uuid": "n8n_runner-synth-005",
     "billing_uuid": "billing-n8n_runner-005",
     "uniqueID": "n8n_runner-synth-005",
-    "vm_name": "n8n_runner-azure-uk-lon1-005",
+    "vm_name": "n8n_runner-scaleway-uk-lon1-005",
     "status": "stopped",
     "states": "stopped",
     "region": "uk-lon1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "n8n_runner-azure-uk-lon1-005"
+      "vm_name": "n8n_runner-scaleway-uk-lon1-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -1929,12 +2071,14 @@
     "service_uuid": "n8n_runner-synth-006",
     "billing_uuid": "billing-n8n_runner-006",
     "uniqueID": "n8n_runner-synth-006",
-    "vm_name": "n8n_runner-upcloud-fr-par-006",
+    "vm_name": "n8n_runner-aws-fr-par-006",
     "status": "updating",
     "states": "updating",
     "region": "fr-par",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "n8n_runner-upcloud-fr-par-006"
+      "vm_name": "n8n_runner-aws-fr-par-006",
+      "provider": "aws"
     }
   },
   {
@@ -1946,8 +2090,10 @@
     "status": "updating",
     "states": "updating",
     "region": "europe-west1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "npm-google-europe-west1-001"
+      "vm_name": "npm-google-europe-west1-001",
+      "provider": "google"
     }
   },
   {
@@ -1959,8 +2105,10 @@
     "status": "error",
     "states": "error",
     "region": "europe-west4",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "npm-azure-europe-west4-002"
+      "vm_name": "npm-azure-europe-west4-002",
+      "provider": "azure"
     }
   },
   {
@@ -1968,12 +2116,14 @@
     "service_uuid": "npm-synth-003",
     "billing_uuid": "billing-npm-003",
     "uniqueID": "npm-synth-003",
-    "vm_name": "npm-upcloud-nl-ams-003",
+    "vm_name": "npm-ovh-nl-ams-003",
     "status": "provisioning",
     "states": "provisioning",
     "region": "nl-ams",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "npm-upcloud-nl-ams-003"
+      "vm_name": "npm-ovh-nl-ams-003",
+      "provider": "ovh"
     }
   },
   {
@@ -1981,12 +2131,14 @@
     "service_uuid": "npm-synth-004",
     "billing_uuid": "billing-npm-004",
     "uniqueID": "npm-synth-004",
-    "vm_name": "npm-google-fi-hel2-004",
+    "vm_name": "npm-upcloud-fi-hel2-004",
     "status": "running",
     "states": "running",
     "region": "fi-hel2",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "npm-google-fi-hel2-004"
+      "vm_name": "npm-upcloud-fi-hel2-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -1994,12 +2146,14 @@
     "service_uuid": "npm-synth-005",
     "billing_uuid": "billing-npm-005",
     "uniqueID": "npm-synth-005",
-    "vm_name": "npm-azure-de-fra1-005",
+    "vm_name": "npm-scaleway-de-fra1-005",
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "npm-azure-de-fra1-005"
+      "vm_name": "npm-scaleway-de-fra1-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -2007,12 +2161,14 @@
     "service_uuid": "npm-synth-006",
     "billing_uuid": "billing-npm-006",
     "uniqueID": "npm-synth-006",
-    "vm_name": "npm-upcloud-pl-waw1-006",
+    "vm_name": "npm-aws-pl-waw1-006",
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "npm-upcloud-pl-waw1-006"
+      "vm_name": "npm-aws-pl-waw1-006",
+      "provider": "aws"
     }
   },
   {
@@ -2024,8 +2180,10 @@
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "openwebui-google-us-east1-001"
+      "vm_name": "openwebui-google-us-east1-001",
+      "provider": "google"
     }
   },
   {
@@ -2037,8 +2195,10 @@
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "openwebui-azure-eastus-002"
+      "vm_name": "openwebui-azure-eastus-002",
+      "provider": "azure"
     }
   },
   {
@@ -2046,12 +2206,14 @@
     "service_uuid": "openwebui-synth-003",
     "billing_uuid": "billing-openwebui-003",
     "uniqueID": "openwebui-synth-003",
-    "vm_name": "openwebui-upcloud-westeurope-003",
+    "vm_name": "openwebui-ovh-westeurope-003",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "openwebui-upcloud-westeurope-003"
+      "vm_name": "openwebui-ovh-westeurope-003",
+      "provider": "ovh"
     }
   },
   {
@@ -2059,12 +2221,14 @@
     "service_uuid": "openwebui-synth-004",
     "billing_uuid": "billing-openwebui-004",
     "uniqueID": "openwebui-synth-004",
-    "vm_name": "openwebui-google-eu-central-1-004",
+    "vm_name": "openwebui-upcloud-eu-central-1-004",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "openwebui-google-eu-central-1-004"
+      "vm_name": "openwebui-upcloud-eu-central-1-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -2072,12 +2236,14 @@
     "service_uuid": "openwebui-synth-005",
     "billing_uuid": "billing-openwebui-005",
     "uniqueID": "openwebui-synth-005",
-    "vm_name": "openwebui-azure-eu-central-2-005",
+    "vm_name": "openwebui-scaleway-eu-central-2-005",
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "openwebui-azure-eu-central-2-005"
+      "vm_name": "openwebui-scaleway-eu-central-2-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -2085,12 +2251,14 @@
     "service_uuid": "openwebui-synth-006",
     "billing_uuid": "billing-openwebui-006",
     "uniqueID": "openwebui-synth-006",
-    "vm_name": "openwebui-upcloud-uk-lon1-006",
+    "vm_name": "openwebui-aws-uk-lon1-006",
     "status": "stopped",
     "states": "stopped",
     "region": "uk-lon1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "openwebui-upcloud-uk-lon1-006"
+      "vm_name": "openwebui-aws-uk-lon1-006",
+      "provider": "aws"
     }
   },
   {
@@ -2102,8 +2270,10 @@
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "google",
     "req_json": {
-      "vm_name": "searxng-google-de-fra1-001"
+      "vm_name": "searxng-google-de-fra1-001",
+      "provider": "google"
     }
   },
   {
@@ -2115,8 +2285,10 @@
     "status": "stopped",
     "states": "stopped",
     "region": "pl-waw1",
+    "provider": "azure",
     "req_json": {
-      "vm_name": "searxng-azure-pl-waw1-002"
+      "vm_name": "searxng-azure-pl-waw1-002",
+      "provider": "azure"
     }
   },
   {
@@ -2124,12 +2296,14 @@
     "service_uuid": "searxng-synth-003",
     "billing_uuid": "billing-searxng-003",
     "uniqueID": "searxng-synth-003",
-    "vm_name": "searxng-upcloud-us-east1-003",
+    "vm_name": "searxng-ovh-us-east1-003",
     "status": "updating",
     "states": "updating",
     "region": "us-east1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "searxng-upcloud-us-east1-003"
+      "vm_name": "searxng-ovh-us-east1-003",
+      "provider": "ovh"
     }
   },
   {
@@ -2137,12 +2311,14 @@
     "service_uuid": "searxng-synth-004",
     "billing_uuid": "billing-searxng-004",
     "uniqueID": "searxng-synth-004",
-    "vm_name": "searxng-google-eastus-004",
+    "vm_name": "searxng-upcloud-eastus-004",
     "status": "error",
     "states": "error",
     "region": "eastus",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "searxng-google-eastus-004"
+      "vm_name": "searxng-upcloud-eastus-004",
+      "provider": "upcloud"
     }
   },
   {
@@ -2150,12 +2326,14 @@
     "service_uuid": "searxng-synth-005",
     "billing_uuid": "billing-searxng-005",
     "uniqueID": "searxng-synth-005",
-    "vm_name": "searxng-azure-westeurope-005",
+    "vm_name": "searxng-scaleway-westeurope-005",
     "status": "provisioning",
     "states": "provisioning",
     "region": "westeurope",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "searxng-azure-westeurope-005"
+      "vm_name": "searxng-scaleway-westeurope-005",
+      "provider": "scaleway"
     }
   },
   {
@@ -2163,12 +2341,14 @@
     "service_uuid": "searxng-synth-006",
     "billing_uuid": "billing-searxng-006",
     "uniqueID": "searxng-synth-006",
-    "vm_name": "searxng-upcloud-eu-central-1-006",
+    "vm_name": "searxng-aws-eu-central-1-006",
     "status": "running",
     "states": "running",
     "region": "eu-central-1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "searxng-upcloud-eu-central-1-006"
+      "vm_name": "searxng-aws-eu-central-1-006",
+      "provider": "aws"
     }
   },
   {
@@ -2181,9 +2361,11 @@
     "status": "running",
     "states": "running",
     "region": "rbx",
+    "provider": "google",
     "req_json": {
       "vm_name": "wordpress-site-google-rbx-001",
-      "platform": "wordpress"
+      "platform": "wordpress",
+      "provider": "google"
     }
   },
   {
@@ -2196,9 +2378,11 @@
     "status": "stopped",
     "states": "stopped",
     "region": "europe-west1",
+    "provider": "azure",
     "req_json": {
       "vm_name": "prestashop-site-azure-europe-west1-002",
-      "platform": "prestashop"
+      "platform": "prestashop",
+      "provider": "azure"
     }
   },
   {
@@ -2206,14 +2390,16 @@
     "service_uuid": "hosting-synth-003",
     "billing_uuid": "billing-hosting-003",
     "uniqueID": "hosting-synth-003",
-    "vm_name": "magento-site-upcloud-europe-west4-003",
+    "vm_name": "magento-site-ovh-europe-west4-003",
     "platform": "magento",
     "status": "updating",
     "states": "updating",
     "region": "europe-west4",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "magento-site-upcloud-europe-west4-003",
-      "platform": "magento"
+      "vm_name": "magento-site-ovh-europe-west4-003",
+      "platform": "magento",
+      "provider": "ovh"
     }
   },
   {
@@ -2221,14 +2407,16 @@
     "service_uuid": "hosting-synth-004",
     "billing_uuid": "billing-hosting-004",
     "uniqueID": "hosting-synth-004",
-    "vm_name": "wordpress-site-google-nl-ams-004",
+    "vm_name": "wordpress-site-upcloud-nl-ams-004",
     "platform": "wordpress",
     "status": "error",
     "states": "error",
     "region": "nl-ams",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "wordpress-site-google-nl-ams-004",
-      "platform": "wordpress"
+      "vm_name": "wordpress-site-upcloud-nl-ams-004",
+      "platform": "wordpress",
+      "provider": "upcloud"
     }
   },
   {
@@ -2236,14 +2424,16 @@
     "service_uuid": "hosting-synth-005",
     "billing_uuid": "billing-hosting-005",
     "uniqueID": "hosting-synth-005",
-    "vm_name": "prestashop-site-azure-fi-hel2-005",
+    "vm_name": "prestashop-site-scaleway-fi-hel2-005",
     "platform": "prestashop",
     "status": "provisioning",
     "states": "provisioning",
     "region": "fi-hel2",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "prestashop-site-azure-fi-hel2-005",
-      "platform": "prestashop"
+      "vm_name": "prestashop-site-scaleway-fi-hel2-005",
+      "platform": "prestashop",
+      "provider": "scaleway"
     }
   },
   {
@@ -2251,14 +2441,16 @@
     "service_uuid": "hosting-synth-006",
     "billing_uuid": "billing-hosting-006",
     "uniqueID": "hosting-synth-006",
-    "vm_name": "magento-site-upcloud-de-fra1-006",
+    "vm_name": "magento-site-aws-de-fra1-006",
     "platform": "magento",
     "status": "running",
     "states": "running",
     "region": "de-fra1",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "magento-site-upcloud-de-fra1-006",
-      "platform": "magento"
+      "vm_name": "magento-site-aws-de-fra1-006",
+      "platform": "magento",
+      "provider": "aws"
     }
   },
   {
@@ -2271,9 +2463,11 @@
     "status": "running",
     "states": "running",
     "region": "pl-waw1",
+    "provider": "google",
     "req_json": {
       "vm_name": "wordpress-site-google-pl-waw1-007",
-      "platform": "wordpress"
+      "platform": "wordpress",
+      "provider": "google"
     }
   },
   {
@@ -2286,9 +2480,11 @@
     "status": "stopped",
     "states": "stopped",
     "region": "us-east1",
+    "provider": "azure",
     "req_json": {
       "vm_name": "prestashop-site-azure-us-east1-008",
-      "platform": "prestashop"
+      "platform": "prestashop",
+      "provider": "azure"
     }
   },
   {
@@ -2296,14 +2492,16 @@
     "service_uuid": "hosting-synth-009",
     "billing_uuid": "billing-hosting-009",
     "uniqueID": "hosting-synth-009",
-    "vm_name": "magento-site-upcloud-eastus-009",
+    "vm_name": "magento-site-ovh-eastus-009",
     "platform": "magento",
     "status": "updating",
     "states": "updating",
     "region": "eastus",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "magento-site-upcloud-eastus-009",
-      "platform": "magento"
+      "vm_name": "magento-site-ovh-eastus-009",
+      "platform": "magento",
+      "provider": "ovh"
     }
   },
   {
@@ -2311,14 +2509,16 @@
     "service_uuid": "hosting-synth-010",
     "billing_uuid": "billing-hosting-010",
     "uniqueID": "hosting-synth-010",
-    "vm_name": "wordpress-site-google-westeurope-010",
+    "vm_name": "wordpress-site-upcloud-westeurope-010",
     "platform": "wordpress",
     "status": "error",
     "states": "error",
     "region": "westeurope",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "wordpress-site-google-westeurope-010",
-      "platform": "wordpress"
+      "vm_name": "wordpress-site-upcloud-westeurope-010",
+      "platform": "wordpress",
+      "provider": "upcloud"
     }
   },
   {
@@ -2326,14 +2526,16 @@
     "service_uuid": "hosting-synth-011",
     "billing_uuid": "billing-hosting-011",
     "uniqueID": "hosting-synth-011",
-    "vm_name": "prestashop-site-azure-eu-central-1-011",
+    "vm_name": "prestashop-site-scaleway-eu-central-1-011",
     "platform": "prestashop",
     "status": "provisioning",
     "states": "provisioning",
     "region": "eu-central-1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "prestashop-site-azure-eu-central-1-011",
-      "platform": "prestashop"
+      "vm_name": "prestashop-site-scaleway-eu-central-1-011",
+      "platform": "prestashop",
+      "provider": "scaleway"
     }
   },
   {
@@ -2341,14 +2543,16 @@
     "service_uuid": "hosting-synth-012",
     "billing_uuid": "billing-hosting-012",
     "uniqueID": "hosting-synth-012",
-    "vm_name": "magento-site-upcloud-eu-central-2-012",
+    "vm_name": "magento-site-aws-eu-central-2-012",
     "platform": "magento",
     "status": "running",
     "states": "running",
     "region": "eu-central-2",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "magento-site-upcloud-eu-central-2-012",
-      "platform": "magento"
+      "vm_name": "magento-site-aws-eu-central-2-012",
+      "platform": "magento",
+      "provider": "aws"
     }
   },
   {
@@ -2361,9 +2565,11 @@
     "status": "running",
     "states": "running",
     "region": "uk-lon1",
+    "provider": "google",
     "req_json": {
       "vm_name": "wordpress-site-google-uk-lon1-013",
-      "platform": "wordpress"
+      "platform": "wordpress",
+      "provider": "google"
     }
   },
   {
@@ -2376,9 +2582,11 @@
     "status": "stopped",
     "states": "stopped",
     "region": "fr-par",
+    "provider": "azure",
     "req_json": {
       "vm_name": "prestashop-site-azure-fr-par-014",
-      "platform": "prestashop"
+      "platform": "prestashop",
+      "provider": "azure"
     }
   },
   {
@@ -2386,14 +2594,16 @@
     "service_uuid": "hosting-synth-015",
     "billing_uuid": "billing-hosting-015",
     "uniqueID": "hosting-synth-015",
-    "vm_name": "magento-site-upcloud-gra7-015",
+    "vm_name": "magento-site-ovh-gra7-015",
     "platform": "magento",
     "status": "updating",
     "states": "updating",
     "region": "gra7",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "magento-site-upcloud-gra7-015",
-      "platform": "magento"
+      "vm_name": "magento-site-ovh-gra7-015",
+      "platform": "magento",
+      "provider": "ovh"
     }
   },
   {
@@ -2401,14 +2611,16 @@
     "service_uuid": "hosting-synth-016",
     "billing_uuid": "billing-hosting-016",
     "uniqueID": "hosting-synth-016",
-    "vm_name": "wordpress-site-google-rbx-016",
+    "vm_name": "wordpress-site-upcloud-rbx-016",
     "platform": "wordpress",
     "status": "error",
     "states": "error",
     "region": "rbx",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "wordpress-site-google-rbx-016",
-      "platform": "wordpress"
+      "vm_name": "wordpress-site-upcloud-rbx-016",
+      "platform": "wordpress",
+      "provider": "upcloud"
     }
   },
   {
@@ -2416,14 +2628,16 @@
     "service_uuid": "hosting-synth-017",
     "billing_uuid": "billing-hosting-017",
     "uniqueID": "hosting-synth-017",
-    "vm_name": "prestashop-site-azure-europe-west1-017",
+    "vm_name": "prestashop-site-scaleway-europe-west1-017",
     "platform": "prestashop",
     "status": "provisioning",
     "states": "provisioning",
     "region": "europe-west1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "prestashop-site-azure-europe-west1-017",
-      "platform": "prestashop"
+      "vm_name": "prestashop-site-scaleway-europe-west1-017",
+      "platform": "prestashop",
+      "provider": "scaleway"
     }
   },
   {
@@ -2431,14 +2645,16 @@
     "service_uuid": "hosting-synth-018",
     "billing_uuid": "billing-hosting-018",
     "uniqueID": "hosting-synth-018",
-    "vm_name": "magento-site-upcloud-europe-west4-018",
+    "vm_name": "magento-site-aws-europe-west4-018",
     "platform": "magento",
     "status": "running",
     "states": "running",
     "region": "europe-west4",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "magento-site-upcloud-europe-west4-018",
-      "platform": "magento"
+      "vm_name": "magento-site-aws-europe-west4-018",
+      "platform": "magento",
+      "provider": "aws"
     }
   },
   {
@@ -2451,9 +2667,11 @@
     "status": "running",
     "states": "running",
     "region": "nl-ams",
+    "provider": "google",
     "req_json": {
       "vm_name": "wordpress-site-google-nl-ams-019",
-      "platform": "wordpress"
+      "platform": "wordpress",
+      "provider": "google"
     }
   },
   {
@@ -2466,9 +2684,11 @@
     "status": "stopped",
     "states": "stopped",
     "region": "fi-hel2",
+    "provider": "azure",
     "req_json": {
       "vm_name": "prestashop-site-azure-fi-hel2-020",
-      "platform": "prestashop"
+      "platform": "prestashop",
+      "provider": "azure"
     }
   },
   {
@@ -2476,14 +2696,16 @@
     "service_uuid": "hosting-synth-021",
     "billing_uuid": "billing-hosting-021",
     "uniqueID": "hosting-synth-021",
-    "vm_name": "magento-site-upcloud-de-fra1-021",
+    "vm_name": "magento-site-ovh-de-fra1-021",
     "platform": "magento",
     "status": "updating",
     "states": "updating",
     "region": "de-fra1",
+    "provider": "ovh",
     "req_json": {
-      "vm_name": "magento-site-upcloud-de-fra1-021",
-      "platform": "magento"
+      "vm_name": "magento-site-ovh-de-fra1-021",
+      "platform": "magento",
+      "provider": "ovh"
     }
   },
   {
@@ -2491,14 +2713,16 @@
     "service_uuid": "hosting-synth-022",
     "billing_uuid": "billing-hosting-022",
     "uniqueID": "hosting-synth-022",
-    "vm_name": "wordpress-site-google-pl-waw1-022",
+    "vm_name": "wordpress-site-upcloud-pl-waw1-022",
     "platform": "wordpress",
     "status": "error",
     "states": "error",
     "region": "pl-waw1",
+    "provider": "upcloud",
     "req_json": {
-      "vm_name": "wordpress-site-google-pl-waw1-022",
-      "platform": "wordpress"
+      "vm_name": "wordpress-site-upcloud-pl-waw1-022",
+      "platform": "wordpress",
+      "provider": "upcloud"
     }
   },
   {
@@ -2506,14 +2730,16 @@
     "service_uuid": "hosting-synth-023",
     "billing_uuid": "billing-hosting-023",
     "uniqueID": "hosting-synth-023",
-    "vm_name": "prestashop-site-azure-us-east1-023",
+    "vm_name": "prestashop-site-scaleway-us-east1-023",
     "platform": "prestashop",
     "status": "provisioning",
     "states": "provisioning",
     "region": "us-east1",
+    "provider": "scaleway",
     "req_json": {
-      "vm_name": "prestashop-site-azure-us-east1-023",
-      "platform": "prestashop"
+      "vm_name": "prestashop-site-scaleway-us-east1-023",
+      "platform": "prestashop",
+      "provider": "scaleway"
     }
   },
   {
@@ -2521,14 +2747,16 @@
     "service_uuid": "hosting-synth-024",
     "billing_uuid": "billing-hosting-024",
     "uniqueID": "hosting-synth-024",
-    "vm_name": "magento-site-upcloud-eastus-024",
+    "vm_name": "magento-site-aws-eastus-024",
     "platform": "magento",
     "status": "running",
     "states": "running",
     "region": "eastus",
+    "provider": "aws",
     "req_json": {
-      "vm_name": "magento-site-upcloud-eastus-024",
-      "platform": "magento"
+      "vm_name": "magento-site-aws-eastus-024",
+      "platform": "magento",
+      "provider": "aws"
     }
   }
 ]

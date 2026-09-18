@@ -119,7 +119,7 @@ With [`flags.json`](../elemento-gui-new/electros/configs/flags.json) `"enableAll
 
 `kops` has no `table_layout` in ECD (no list UI). `blockstorage` is provider-only and not defined in `supported_intents` (not a PaaS nav page).
 
-Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). Dev-level PaaS pages (registry, public IP, load balancer, private network, public gateway, serverless, AI functions, Kafka queues, file storage) are populated so those lists are not empty. Marketplace SaaS apps (n8n, openclaw, Open WebUI, Hermes, LiteLLM, LM Studio, MinIO, SearXNG, NPM, Caddy CA, n8n Runner) plus hosting (WordPress, PrestaShop, Magento) are offered on Google / Azure / UpCloud.
+Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). Dev-level PaaS pages (registry, public IP, load balancer, private network, public gateway, serverless, AI functions, Kafka queues, file storage) are populated so those lists are not empty. Marketplace SaaS apps (n8n, openclaw, Open WebUI, Hermes, LiteLLM, LM Studio, MinIO, SearXNG, NPM, Caddy CA, n8n Runner) plus hosting (WordPress, PrestaShop, Magento) are simulated on Google, Azure, OVH, UpCloud, Scaleway, and AWS.
 
 ## MCP
 

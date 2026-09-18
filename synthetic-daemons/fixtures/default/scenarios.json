@@ -24,7 +24,8 @@
       "azure-demo-public",
       "ovh-demo-public",
       "upcloud-demo-public",
-      "scaleway-demo-public"
+      "scaleway-demo-public",
+      "aws-demo-public"
     ],
     "users": [
       "demo@synthetic.local"

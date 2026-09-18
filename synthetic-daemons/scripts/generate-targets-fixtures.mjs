@@ -80,7 +80,7 @@ const orgTargets = [
 ];
 
 for (const [providerKey, meta] of Object.entries(catalog)) {
-  if (meta.status !== "production") {
+  if (meta.status !== "production" && providerKey !== "aws") {
     continue;
   }
   const targetId = `${providerKey}-demo-public`;
