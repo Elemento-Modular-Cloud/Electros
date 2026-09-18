@@ -101,7 +101,7 @@ The `fixtures/default/` set includes:
 - **18 volumes / networks / port forwards / templates**
 - Host status aggregates derived from the generated fleet
 - **15 licenses** — armed, inactive, expired, and expiring-soon rows
-- **168 PaaS/SaaS instances** (kaas, objectstorage, dbaas, n8n, openclaw, marketplace SaaS, plus WordPress / PrestaShop / Magento hosting)
+- **204 PaaS/SaaS instances** (18 each of kaas, objectstorage, dbaas, n8n, openclaw; 4 each of registry, publicip, loadbalancer, privatenetwork, publicgateway, serverless, aiserverless, queueaas, filestorage; marketplace SaaS; plus WordPress / PrestaShop / Magento hosting)
 
 Regenerate:
 
@@ -110,6 +110,7 @@ npm run generate:fixtures        # portal + targets + IaaS + PaaS + licenses
 npm run generate:portal-fixtures
 npm run generate:targets-fixtures
 npm run generate:iaas-fixtures
+npm run generate:paas-fixtures
 ```
 
 **Atomosphere / PaaS:** `GET /api/v1.0/client/target/configs/supported_providers` serves the real [`ecd/supported_providers.json`](../elemento-gui-new/electros/ecd/supported_providers.json) catalog. `POST /service/{type}/cancreate` uses **active** meson targets from `connections/me`.
@@ -118,7 +119,7 @@ With [`flags.json`](../elemento-gui-new/electros/configs/flags.json) `"enableAll
 
 `kops` has no `table_layout` in ECD (no list UI). `blockstorage` is provider-only and not defined in `supported_intents` (not a PaaS nav page).
 
-Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). Marketplace SaaS apps (n8n, openclaw, Open WebUI, Hermes, LiteLLM, LM Studio, MinIO, SearXNG, NPM, Caddy CA, n8n Runner) plus hosting (WordPress, PrestaShop, Magento) are offered on Google / Azure / UpCloud.
+Nav registration still follows production providers with `support_level: full` (kaas, objectstorage, dbaas). Dev-level PaaS pages (registry, public IP, load balancer, private network, public gateway, serverless, AI functions, Kafka queues, file storage) are populated so those lists are not empty. Marketplace SaaS apps (n8n, openclaw, Open WebUI, Hermes, LiteLLM, LM Studio, MinIO, SearXNG, NPM, Caddy CA, n8n Runner) plus hosting (WordPress, PrestaShop, Magento) are offered on Google / Azure / UpCloud.
 
 ## MCP
 

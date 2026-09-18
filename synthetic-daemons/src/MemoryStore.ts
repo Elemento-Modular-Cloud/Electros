@@ -1093,6 +1093,7 @@ export class MemoryStore {
         version: (body.kubernetes_version as string) ?? "1.34",
         network_cidr: (body["nodes_subnet/network"] as string) ?? "10.50.0.0/16",
         location: region,
+        region,
       };
     } else if (serviceType === "objectstorage") {
       const sizeTb = Number(body.purchasedTB ?? 1);
@@ -1127,8 +1128,11 @@ export class MemoryStore {
       || serviceType === "openwebui"
       || serviceType === "searxng"
       || serviceType === "hosting"
+      || serviceType === "registry"
     ) {
-      const vmName = (body.vm_name as string) ?? `${serviceType}-${serviceUuid.slice(0, 6)}`;
+      const vmName = (body.vm_name as string)
+        ?? (body.name as string)
+        ?? `${serviceType}-${serviceUuid.slice(0, 6)}`;
       const platform =
         serviceType === "hosting"
           ? String((body.platform as string) ?? "wordpress")
@@ -1137,11 +1141,105 @@ export class MemoryStore {
         ...base,
         uniqueID: serviceUuid,
         vm_name: vmName,
+        name: vmName,
         status: "running",
         states: "running",
         region,
         ...(platform ? { platform } : {}),
         req_json: { vm_name: vmName, ...(platform ? { platform } : {}) },
+      };
+    } else if (serviceType === "publicip") {
+      const ipType = (body.type as string) ?? "v4";
+      const publicIp = ipType === "v6" ? `2001:db8:${serviceUuid.slice(0, 4)}::1` : "203.0.113.10";
+      record = {
+        ...base,
+        name: (body.name as string) ?? `pip-${serviceUuid.slice(0, 6)}`,
+        region,
+        type: ipType,
+        public_ip: publicIp,
+        todo: publicIp,
+        status: "running",
+      };
+    } else if (serviceType === "loadbalancer") {
+      const isPublic = body.is_public !== false;
+      record = {
+        ...base,
+        name: (body.name as string) ?? `lb-${serviceUuid.slice(0, 6)}`,
+        region,
+        is_public: isPublic,
+        frontend_port: 443,
+        todo: `${isPublic ? "public" : "private"} :443`,
+        status: "running",
+      };
+    } else if (serviceType === "privatenetwork") {
+      const cidr = (body.cidr as string) ?? "192.168.100.0/22";
+      record = {
+        ...base,
+        name: (body.name as string) ?? `vpc-${serviceUuid.slice(0, 6)}`,
+        region,
+        cidr,
+        dhcp: body.dhcp !== false,
+        auto_assign_cidr: body.auto_assign_cidr !== false,
+        todo: cidr,
+        status: "running",
+      };
+    } else if (serviceType === "publicgateway") {
+      const publicIp = "198.51.100.10";
+      record = {
+        ...base,
+        name: (body.name as string) ?? `gw-${serviceUuid.slice(0, 6)}`,
+        region,
+        network_uuid: (body.network_uuid as string) ?? "",
+        public_ip: publicIp,
+        status: "running",
+      };
+    } else if (serviceType === "serverless") {
+      record = {
+        ...base,
+        name: (body.name as string) ?? `fn-${serviceUuid.slice(0, 6)}`,
+        region,
+        runtime: (body.runtime as string) ?? "python3.13",
+        handler: (body.handler as string) ?? "index.handler",
+        memory: Number(body.memory ?? 128),
+        timeout: Number(body.timeout ?? 3),
+        is_public: Boolean(body.is_public),
+        status: "running",
+      };
+    } else if (serviceType === "aiserverless") {
+      record = {
+        ...base,
+        name: (body.name as string) ?? `aifn-${serviceUuid.slice(0, 6)}`,
+        region,
+        model_name: (body.model_name as string) ?? "claude-sonnet-5",
+        enable_streaming: Boolean(body.enable_streaming),
+        status: "running",
+      };
+    } else if (serviceType === "queueaas") {
+      record = {
+        ...base,
+        name: (body.name as string) ?? `kafka-${serviceUuid.slice(0, 6)}`,
+        region,
+        model_name: (body.model_name as string) ?? "4.1.0",
+        node_number: Number(body.node_number ?? 2),
+        node_size: (body.node_size as string) ?? "S",
+        size_gb: Number(body.size_gb ?? 10),
+        is_ha: body.is_ha !== false,
+        is_public: Boolean(body.is_public),
+        private_network_id: (body.private_network_id as string) ?? "",
+        creation_date: new Date().toISOString().slice(0, 10),
+        status: "running",
+      };
+    } else if (serviceType === "filestorage") {
+      const sizeGb = Number(body.size_gb ?? 10);
+      record = {
+        ...base,
+        name: (body.name as string) ?? `fs-${serviceUuid.slice(0, 6)}`,
+        dns_name: `fs-${serviceUuid.slice(0, 8)}.${region}.synthetic.local`,
+        size_gb: Math.round(sizeGb * 1024 ** 3),
+        used_gb: 0,
+        is_public: Boolean(body.is_public),
+        region,
+        status: "running",
       };
     } else {
       record = { ...base, ...body, status: (body.status as string) ?? "running" };

@@ -7,7 +7,8 @@
     "status": "running",
     "version": "1.32",
     "network_cidr": "10.40.0.0/16",
-    "location": "fr-par"
+    "location": "fr-par",
+    "region": "fr-par"
   },
   {
     "service_type": "kaas",
@@ -17,7 +18,8 @@
     "status": "running",
     "version": "1.33",
     "network_cidr": "10.41.1.0/16",
-    "location": "gra7"
+    "location": "gra7",
+    "region": "gra7"
   },
   {
     "service_type": "kaas",
@@ -27,7 +29,8 @@
     "status": "running",
     "version": "1.34",
     "network_cidr": "10.42.2.0/16",
-    "location": "rbx"
+    "location": "rbx",
+    "region": "rbx"
   },
   {
     "service_type": "kaas",
@@ -37,7 +40,8 @@
     "status": "stopped",
     "version": "1.33",
     "network_cidr": "10.43.3.0/16",
-    "location": "europe-west1"
+    "location": "europe-west1",
+    "region": "europe-west1"
   },
   {
     "service_type": "kaas",
@@ -47,7 +51,8 @@
     "status": "updating",
     "version": "1.34",
     "network_cidr": "10.44.4.0/16",
-    "location": "europe-west4"
+    "location": "europe-west4",
+    "region": "europe-west4"
   },
   {
     "service_type": "kaas",
@@ -57,7 +62,8 @@
     "status": "error",
     "version": "1.32",
     "network_cidr": "10.45.5.0/16",
-    "location": "nl-ams"
+    "location": "nl-ams",
+    "region": "nl-ams"
   },
   {
     "service_type": "kaas",
@@ -67,7 +73,8 @@
     "status": "provisioning",
     "version": "1.34",
     "network_cidr": "10.46.6.0/16",
-    "location": "fi-hel2"
+    "location": "fi-hel2",
+    "region": "fi-hel2"
   },
   {
     "service_type": "kaas",
@@ -77,7 +84,8 @@
     "status": "running",
     "version": "1.32",
     "network_cidr": "10.47.7.0/16",
-    "location": "de-fra1"
+    "location": "de-fra1",
+    "region": "de-fra1"
   },
   {
     "service_type": "kaas",
@@ -87,7 +95,8 @@
     "status": "running",
     "version": "1.33",
     "network_cidr": "10.48.8.0/16",
-    "location": "pl-waw1"
+    "location": "pl-waw1",
+    "region": "pl-waw1"
   },
   {
     "service_type": "kaas",
@@ -97,7 +106,8 @@
     "status": "running",
     "version": "1.32",
     "network_cidr": "10.49.9.0/16",
-    "location": "us-east1"
+    "location": "us-east1",
+    "region": "us-east1"
   },
   {
     "service_type": "kaas",
@@ -107,7 +117,8 @@
     "status": "stopped",
     "version": "1.33",
     "network_cidr": "10.50.10.0/16",
-    "location": "eastus"
+    "location": "eastus",
+    "region": "eastus"
   },
   {
     "service_type": "kaas",
@@ -117,7 +128,8 @@
     "status": "updating",
     "version": "1.34",
     "network_cidr": "10.51.11.0/16",
-    "location": "westeurope"
+    "location": "westeurope",
+    "region": "westeurope"
   },
   {
     "service_type": "kaas",
@@ -127,7 +139,8 @@
     "status": "error",
     "version": "1.33",
     "network_cidr": "10.52.12.0/16",
-    "location": "eu-central-1"
+    "location": "eu-central-1",
+    "region": "eu-central-1"
   },
   {
     "service_type": "kaas",
@@ -137,7 +150,8 @@
     "status": "provisioning",
     "version": "1.34",
     "network_cidr": "10.53.13.0/16",
-    "location": "eu-central-2"
+    "location": "eu-central-2",
+    "region": "eu-central-2"
   },
   {
     "service_type": "kaas",
@@ -147,7 +161,8 @@
     "status": "running",
     "version": "1.32",
     "network_cidr": "10.54.14.0/16",
-    "location": "uk-lon1"
+    "location": "uk-lon1",
+    "region": "uk-lon1"
   },
   {
     "service_type": "kaas",
@@ -157,7 +172,8 @@
     "status": "running",
     "version": "1.34",
     "network_cidr": "10.55.15.0/16",
-    "location": "fr-par"
+    "location": "fr-par",
+    "region": "fr-par"
   },
   {
     "service_type": "kaas",
@@ -167,7 +183,8 @@
     "status": "running",
     "version": "1.32",
     "network_cidr": "10.56.16.0/16",
-    "location": "gra7"
+    "location": "gra7",
+    "region": "gra7"
   },
   {
     "service_type": "kaas",
@@ -177,7 +194,8 @@
     "status": "stopped",
     "version": "1.33",
     "network_cidr": "10.57.17.0/16",
-    "location": "rbx"
+    "location": "rbx",
+    "region": "rbx"
   },
   {
     "service_type": "objectstorage",
@@ -1006,6 +1024,450 @@
     "req_json": {
       "vm_name": "claw-azure-eu-central-2-018"
     }
+  },
+  {
+    "service_type": "registry",
+    "service_uuid": "registry-synth-001",
+    "billing_uuid": "billing-registry-001",
+    "uniqueID": "registry-synth-001",
+    "vm_name": "scaleway-europe-west1-registry-001",
+    "name": "scaleway-europe-west1-registry-001",
+    "status": "running",
+    "states": "running",
+    "region": "europe-west1",
+    "size_gb": 10,
+    "is_public": true,
+    "req_json": {
+      "vm_name": "scaleway-europe-west1-registry-001"
+    }
+  },
+  {
+    "service_type": "registry",
+    "service_uuid": "registry-synth-002",
+    "billing_uuid": "billing-registry-002",
+    "uniqueID": "registry-synth-002",
+    "vm_name": "ovh-europe-west4-registry-002",
+    "name": "ovh-europe-west4-registry-002",
+    "status": "stopped",
+    "states": "stopped",
+    "region": "europe-west4",
+    "size_gb": 20,
+    "is_public": false,
+    "req_json": {
+      "vm_name": "ovh-europe-west4-registry-002"
+    }
+  },
+  {
+    "service_type": "registry",
+    "service_uuid": "registry-synth-003",
+    "billing_uuid": "billing-registry-003",
+    "uniqueID": "registry-synth-003",
+    "vm_name": "google-nl-ams-registry-003",
+    "name": "google-nl-ams-registry-003",
+    "status": "updating",
+    "states": "updating",
+    "region": "nl-ams",
+    "size_gb": 50,
+    "is_public": false,
+    "req_json": {
+      "vm_name": "google-nl-ams-registry-003"
+    }
+  },
+  {
+    "service_type": "registry",
+    "service_uuid": "registry-synth-004",
+    "billing_uuid": "billing-registry-004",
+    "uniqueID": "registry-synth-004",
+    "vm_name": "azure-fi-hel2-registry-004",
+    "name": "azure-fi-hel2-registry-004",
+    "status": "error",
+    "states": "error",
+    "region": "fi-hel2",
+    "size_gb": 100,
+    "is_public": true,
+    "req_json": {
+      "vm_name": "azure-fi-hel2-registry-004"
+    }
+  },
+  {
+    "service_type": "publicip",
+    "service_uuid": "pip-synth-001",
+    "billing_uuid": "billing-publicip-001",
+    "name": "ovh-europe-west4-pip-001",
+    "region": "europe-west4",
+    "type": "v6",
+    "public_ip": "2001:db8:001::1",
+    "todo": "2001:db8:001::1",
+    "status": "stopped"
+  },
+  {
+    "service_type": "publicip",
+    "service_uuid": "pip-synth-002",
+    "billing_uuid": "billing-publicip-002",
+    "name": "google-nl-ams-pip-002",
+    "region": "nl-ams",
+    "type": "v4",
+    "public_ip": "203.0.113.2",
+    "todo": "203.0.113.2",
+    "status": "updating"
+  },
+  {
+    "service_type": "publicip",
+    "service_uuid": "pip-synth-003",
+    "billing_uuid": "billing-publicip-003",
+    "name": "azure-fi-hel2-pip-003",
+    "region": "fi-hel2",
+    "type": "v4",
+    "public_ip": "203.0.113.3",
+    "todo": "203.0.113.3",
+    "status": "error"
+  },
+  {
+    "service_type": "publicip",
+    "service_uuid": "pip-synth-004",
+    "billing_uuid": "billing-publicip-004",
+    "name": "upcloud-de-fra1-pip-004",
+    "region": "de-fra1",
+    "type": "v6",
+    "public_ip": "2001:db8:004::1",
+    "todo": "2001:db8:004::1",
+    "status": "provisioning"
+  },
+  {
+    "service_type": "loadbalancer",
+    "service_uuid": "lb-synth-001",
+    "billing_uuid": "billing-lb-001",
+    "name": "google-fi-hel2-lb-001",
+    "region": "fi-hel2",
+    "is_public": true,
+    "frontend_port": 80,
+    "todo": "public :80",
+    "status": "updating"
+  },
+  {
+    "service_type": "loadbalancer",
+    "service_uuid": "lb-synth-002",
+    "billing_uuid": "billing-lb-002",
+    "name": "azure-de-fra1-lb-002",
+    "region": "de-fra1",
+    "is_public": false,
+    "frontend_port": 443,
+    "todo": "private :443",
+    "status": "error"
+  },
+  {
+    "service_type": "loadbalancer",
+    "service_uuid": "lb-synth-003",
+    "billing_uuid": "billing-lb-003",
+    "name": "upcloud-pl-waw1-lb-003",
+    "region": "pl-waw1",
+    "is_public": true,
+    "frontend_port": 8080,
+    "todo": "public :8080",
+    "status": "provisioning"
+  },
+  {
+    "service_type": "loadbalancer",
+    "service_uuid": "lb-synth-004",
+    "billing_uuid": "billing-lb-004",
+    "name": "scaleway-us-east1-lb-004",
+    "region": "us-east1",
+    "is_public": false,
+    "frontend_port": 80,
+    "todo": "private :80",
+    "status": "running"
+  },
+  {
+    "service_type": "privatenetwork",
+    "service_uuid": "pn-synth-001",
+    "billing_uuid": "billing-pn-001",
+    "name": "azure-pl-waw1-vpc-001",
+    "region": "pl-waw1",
+    "cidr": "10.80.0.0/22",
+    "dhcp": false,
+    "auto_assign_cidr": false,
+    "todo": "10.80.0.0/22",
+    "status": "error"
+  },
+  {
+    "service_type": "privatenetwork",
+    "service_uuid": "pn-synth-002",
+    "billing_uuid": "billing-pn-002",
+    "name": "upcloud-us-east1-vpc-002",
+    "region": "us-east1",
+    "cidr": "10.81.1.0/22",
+    "dhcp": true,
+    "auto_assign_cidr": true,
+    "todo": "10.81.1.0/22",
+    "status": "provisioning"
+  },
+  {
+    "service_type": "privatenetwork",
+    "service_uuid": "pn-synth-003",
+    "billing_uuid": "billing-pn-003",
+    "name": "scaleway-eastus-vpc-003",
+    "region": "eastus",
+    "cidr": "10.82.2.0/22",
+    "dhcp": true,
+    "auto_assign_cidr": true,
+    "todo": "10.82.2.0/22",
+    "status": "running"
+  },
+  {
+    "service_type": "privatenetwork",
+    "service_uuid": "pn-synth-004",
+    "billing_uuid": "billing-pn-004",
+    "name": "ovh-westeurope-vpc-004",
+    "region": "westeurope",
+    "cidr": "10.83.3.0/22",
+    "dhcp": true,
+    "auto_assign_cidr": true,
+    "todo": "10.83.3.0/22",
+    "status": "running"
+  },
+  {
+    "service_type": "publicgateway",
+    "service_uuid": "pgw-synth-001",
+    "billing_uuid": "billing-pgw-001",
+    "name": "azure-pl-waw1-gw-001",
+    "region": "pl-waw1",
+    "network_uuid": "pn-synth-001",
+    "public_ip": "198.51.100.1",
+    "status": "provisioning"
+  },
+  {
+    "service_type": "publicgateway",
+    "service_uuid": "pgw-synth-002",
+    "billing_uuid": "billing-pgw-002",
+    "name": "upcloud-us-east1-gw-002",
+    "region": "us-east1",
+    "network_uuid": "pn-synth-002",
+    "public_ip": "198.51.100.2",
+    "status": "running"
+  },
+  {
+    "service_type": "publicgateway",
+    "service_uuid": "pgw-synth-003",
+    "billing_uuid": "billing-pgw-003",
+    "name": "scaleway-eastus-gw-003",
+    "region": "eastus",
+    "network_uuid": "pn-synth-003",
+    "public_ip": "198.51.100.3",
+    "status": "running"
+  },
+  {
+    "service_type": "publicgateway",
+    "service_uuid": "pgw-synth-004",
+    "billing_uuid": "billing-pgw-004",
+    "name": "ovh-westeurope-gw-004",
+    "region": "westeurope",
+    "network_uuid": "pn-synth-004",
+    "public_ip": "198.51.100.4",
+    "status": "stopped"
+  },
+  {
+    "service_type": "serverless",
+    "service_uuid": "fn-synth-001",
+    "billing_uuid": "billing-fn-001",
+    "name": "scaleway-us-east1-fn-001",
+    "region": "us-east1",
+    "runtime": "python3.14",
+    "handler": "index.handler",
+    "memory": 128,
+    "timeout": 3,
+    "is_public": true,
+    "status": "running"
+  },
+  {
+    "service_type": "serverless",
+    "service_uuid": "fn-synth-002",
+    "billing_uuid": "billing-fn-002",
+    "name": "ovh-eastus-fn-002",
+    "region": "eastus",
+    "runtime": "python3.13",
+    "handler": "index.handler",
+    "memory": 256,
+    "timeout": 10,
+    "is_public": false,
+    "status": "running"
+  },
+  {
+    "service_type": "serverless",
+    "service_uuid": "fn-synth-003",
+    "billing_uuid": "billing-fn-003",
+    "name": "google-westeurope-fn-003",
+    "region": "westeurope",
+    "runtime": "python3.12",
+    "handler": "index.handler",
+    "memory": 512,
+    "timeout": 30,
+    "is_public": true,
+    "status": "stopped"
+  },
+  {
+    "service_type": "serverless",
+    "service_uuid": "fn-synth-004",
+    "billing_uuid": "billing-fn-004",
+    "name": "azure-eu-central-1-fn-004",
+    "region": "eu-central-1",
+    "runtime": "nodejs24.x",
+    "handler": "index.handler",
+    "memory": 1024,
+    "timeout": 60,
+    "is_public": false,
+    "status": "updating"
+  },
+  {
+    "service_type": "aiserverless",
+    "service_uuid": "aifn-synth-001",
+    "billing_uuid": "billing-aifn-001",
+    "name": "ovh-eastus-aifn-001",
+    "region": "eastus",
+    "model_name": "claude-sonnet-5",
+    "enable_streaming": true,
+    "status": "running"
+  },
+  {
+    "service_type": "aiserverless",
+    "service_uuid": "aifn-synth-002",
+    "billing_uuid": "billing-aifn-002",
+    "name": "google-westeurope-aifn-002",
+    "region": "westeurope",
+    "model_name": "claude-haiku-4.5",
+    "enable_streaming": false,
+    "status": "stopped"
+  },
+  {
+    "service_type": "aiserverless",
+    "service_uuid": "aifn-synth-003",
+    "billing_uuid": "billing-aifn-003",
+    "name": "azure-eu-central-1-aifn-003",
+    "region": "eu-central-1",
+    "model_name": "nova-pro",
+    "enable_streaming": true,
+    "status": "updating"
+  },
+  {
+    "service_type": "aiserverless",
+    "service_uuid": "aifn-synth-004",
+    "billing_uuid": "billing-aifn-004",
+    "name": "upcloud-eu-central-2-aifn-004",
+    "region": "eu-central-2",
+    "model_name": "nova-lite",
+    "enable_streaming": false,
+    "status": "error"
+  },
+  {
+    "service_type": "queueaas",
+    "service_uuid": "kafka-synth-001",
+    "billing_uuid": "billing-kafka-001",
+    "name": "google-eu-central-1-kafka-001",
+    "region": "eu-central-1",
+    "model_name": "4.1.0",
+    "node_number": 1,
+    "node_size": "S",
+    "size_gb": 10,
+    "is_ha": false,
+    "is_public": true,
+    "private_network_id": "pn-synth-001",
+    "creation_date": "2025-01-01",
+    "status": "running"
+  },
+  {
+    "service_type": "queueaas",
+    "service_uuid": "kafka-synth-002",
+    "billing_uuid": "billing-kafka-002",
+    "name": "azure-eu-central-2-kafka-002",
+    "region": "eu-central-2",
+    "model_name": "4.0.0",
+    "node_number": 2,
+    "node_size": "M",
+    "size_gb": 25,
+    "is_ha": true,
+    "is_public": false,
+    "private_network_id": "pn-synth-002",
+    "creation_date": "2025-02-02",
+    "status": "stopped"
+  },
+  {
+    "service_type": "queueaas",
+    "service_uuid": "kafka-synth-003",
+    "billing_uuid": "billing-kafka-003",
+    "name": "upcloud-uk-lon1-kafka-003",
+    "region": "uk-lon1",
+    "model_name": "3.9.0",
+    "node_number": 3,
+    "node_size": "L",
+    "size_gb": 50,
+    "is_ha": true,
+    "is_public": false,
+    "private_network_id": "pn-synth-003",
+    "creation_date": "2025-03-03",
+    "status": "updating"
+  },
+  {
+    "service_type": "queueaas",
+    "service_uuid": "kafka-synth-004",
+    "billing_uuid": "billing-kafka-004",
+    "name": "scaleway-fr-par-kafka-004",
+    "region": "fr-par",
+    "model_name": "3.8.0",
+    "node_number": 1,
+    "node_size": "S",
+    "size_gb": 100,
+    "is_ha": false,
+    "is_public": false,
+    "private_network_id": "pn-synth-004",
+    "creation_date": "2025-04-04",
+    "status": "error"
+  },
+  {
+    "service_type": "filestorage",
+    "service_uuid": "fs-synth-001",
+    "billing_uuid": "billing-fs-001",
+    "name": "upcloud-eu-central-2-fs-001",
+    "dns_name": "fs-001.eu-central-2.synthetic.local",
+    "size_gb": 10737418240,
+    "used_gb": 1073741824,
+    "is_public": true,
+    "region": "eu-central-2",
+    "status": "stopped"
+  },
+  {
+    "service_type": "filestorage",
+    "service_uuid": "fs-synth-002",
+    "billing_uuid": "billing-fs-002",
+    "name": "scaleway-uk-lon1-fs-002",
+    "dns_name": "fs-002.uk-lon1.synthetic.local",
+    "size_gb": 21474836480,
+    "used_gb": 4294967296,
+    "is_public": false,
+    "region": "uk-lon1",
+    "status": "updating"
+  },
+  {
+    "service_type": "filestorage",
+    "service_uuid": "fs-synth-003",
+    "billing_uuid": "billing-fs-003",
+    "name": "ovh-fr-par-fs-003",
+    "dns_name": "fs-003.fr-par.synthetic.local",
+    "size_gb": 53687091200,
+    "used_gb": 15032385536,
+    "is_public": false,
+    "region": "fr-par",
+    "status": "error"
+  },
+  {
+    "service_type": "filestorage",
+    "service_uuid": "fs-synth-004",
+    "billing_uuid": "billing-fs-004",
+    "name": "google-gra7-fs-004",
+    "dns_name": "fs-004.gra7.synthetic.local",
+    "size_gb": 107374182400,
+    "used_gb": 38654705664,
+    "is_public": false,
+    "region": "gra7",
+    "status": "provisioning"
   },
   {
     "service_type": "caddy_ca",

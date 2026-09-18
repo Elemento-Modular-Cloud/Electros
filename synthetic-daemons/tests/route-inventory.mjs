@@ -157,6 +157,9 @@ async function run() {
     await expect("GET", `${STORAGE}/api/v1.0/client/volume/accessible`, { shape: (b) => Array.isArray(b) });
     await expect("GET", `${NETWORK}/api/v1.0/client/network/list`, { shape: (b) => Array.isArray(b) });
     await expect("GET", `${SERVICE}/api/v1.0/client/service/kaas/running`, { asJson: false });
+    await expect("GET", `${SERVICE}/api/v1.0/client/service/registry/running`, { asJson: false });
+    await expect("GET", `${SERVICE}/api/v1.0/client/service/filestorage/running`, { asJson: false });
+    await expect("GET", `${SERVICE}/api/v1.0/client/service/queueaas/running`, { asJson: false });
     await expect("GET", `${MCP}/ping`, {
       shape: (b) => b.ok === true && b.service === "electros-mcp",
     });

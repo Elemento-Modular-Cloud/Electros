@@ -900,6 +900,366 @@
     "price": 111.89
   },
   {
+    "billing_uuid": "billing-registry-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "week",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 16
+  },
+  {
+    "billing_uuid": "billing-registry-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 27.17
+  },
+  {
+    "billing_uuid": "billing-registry-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 38.34
+  },
+  {
+    "billing_uuid": "billing-registry-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "day",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 49.51
+  },
+  {
+    "billing_uuid": "billing-publicip-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 8
+  },
+  {
+    "billing_uuid": "billing-publicip-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 14.17
+  },
+  {
+    "billing_uuid": "billing-publicip-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "day",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 20.34
+  },
+  {
+    "billing_uuid": "billing-publicip-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "week",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 26.51
+  },
+  {
+    "billing_uuid": "billing-lb-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 22
+  },
+  {
+    "billing_uuid": "billing-lb-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "day",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 34.17
+  },
+  {
+    "billing_uuid": "billing-lb-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "week",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 46.34
+  },
+  {
+    "billing_uuid": "billing-lb-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "month",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 58.51
+  },
+  {
+    "billing_uuid": "billing-pn-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "day",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 6
+  },
+  {
+    "billing_uuid": "billing-pn-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "week",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 13.17
+  },
+  {
+    "billing_uuid": "billing-pn-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 20.34
+  },
+  {
+    "billing_uuid": "billing-pn-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "year",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 15.51
+  },
+  {
+    "billing_uuid": "billing-pgw-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "week",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 14
+  },
+  {
+    "billing_uuid": "billing-pgw-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 23.17
+  },
+  {
+    "billing_uuid": "billing-pgw-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 32.34
+  },
+  {
+    "billing_uuid": "billing-pgw-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "day",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 41.51
+  },
+  {
+    "billing_uuid": "billing-fn-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 5
+  },
+  {
+    "billing_uuid": "billing-fn-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 12.17
+  },
+  {
+    "billing_uuid": "billing-fn-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "day",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 19.34
+  },
+  {
+    "billing_uuid": "billing-fn-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "week",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 26.51
+  },
+  {
+    "billing_uuid": "billing-aifn-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "day",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 45
+  },
+  {
+    "billing_uuid": "billing-aifn-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "week",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 68.17
+  },
+  {
+    "billing_uuid": "billing-aifn-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 91.34
+  },
+  {
+    "billing_uuid": "billing-aifn-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "year",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 114.51
+  },
+  {
+    "billing_uuid": "billing-kafka-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "week",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 55
+  },
+  {
+    "billing_uuid": "billing-kafka-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 76.17
+  },
+  {
+    "billing_uuid": "billing-kafka-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 97.34
+  },
+  {
+    "billing_uuid": "billing-kafka-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "day",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 118.51
+  },
+  {
+    "billing_uuid": "billing-fs-001",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "demo",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2025-01-01T00:00:00Z",
+    "end_timestamp": "2026-01-01T00:00:00Z",
+    "price": 11
+  },
+  {
+    "billing_uuid": "billing-fs-002",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "acme",
+    "status": "running",
+    "interval": "year",
+    "start_timestamp": "2025-02-02T00:00:00Z",
+    "end_timestamp": "2026-02-02T00:00:00Z",
+    "price": 21.17
+  },
+  {
+    "billing_uuid": "billing-fs-003",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "staging-org",
+    "status": "running",
+    "interval": "day",
+    "start_timestamp": "2025-03-03T00:00:00Z",
+    "end_timestamp": "2026-03-03T00:00:00Z",
+    "price": 31.34
+  },
+  {
+    "billing_uuid": "billing-fs-004",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "qa-lab",
+    "status": "to_delete",
+    "interval": "week",
+    "start_timestamp": "2025-04-04T00:00:00Z",
+    "end_timestamp": "2026-04-04T00:00:00Z",
+    "price": 41.51
+  },
+  {
     "billing_uuid": "billing-caddy_ca-001",
     "client_uuid": "synthetic-client-001",
     "organisation_name": "demo",
