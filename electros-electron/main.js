@@ -64,7 +64,7 @@ app.on('second-instance', (event, argv) => {
 
 
 function createMainWindow() {
-    const win = WindowProvider(`electros/electros.html?deeplink=${encodeURIComponent(pendingUrl)}`,
+    const win = WindowProvider(`electros/electros.html`,
       {
           width: 1800,
           height: 1200,
@@ -80,7 +80,9 @@ function createMainWindow() {
               webSecurity: app.isPackaged,
               devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
           }
-      }, __dirname);
+      }, __dirname, {
+        'deeplink': encodeURIComponent(pendingUrl),
+      });
 
     if (platform.os === 'mac') {
         win.setWindowButtonVisibility(false);

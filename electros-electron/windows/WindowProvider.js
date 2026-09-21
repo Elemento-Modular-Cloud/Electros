@@ -22,16 +22,19 @@ function getWindowUrl(relativeHtmlPath, dirname = null) {
  * @param {string} windowFilePath
  * @param {object} options
  * @param {?string} dirname
+ * @param {?Record<string, string>} queryParams
  * @return {Electron.CrossProcessExports.BrowserWindow}
  * @constructor
  */
-export function WindowProvider(windowFilePath, options, dirname = null) {
+export function WindowProvider(windowFilePath, options, dirname = null, queryParams) {
     const win = new BrowserWindow(options);
 
     if (!app.isPackaged) {
         win.loadURL(getWindowUrl(windowFilePath, dirname));
     } else {
-        win.loadFile(getWindowUrl(windowFilePath, dirname));
+        win.loadFile(getWindowUrl(windowFilePath, dirname), {
+            query: queryParams ?? undefined,
+        });
     }
 
     return win;
