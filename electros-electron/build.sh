@@ -73,7 +73,7 @@ for platform in "${platforms[@]}"; do
           npm install sharp
         fi
 
-        npm run build -- --"$platform" --"$arch"
+        ELECTROS_VERSION="$version" npm run build -- --"$platform" --"$arch"
         mkdir -p "${build_dir}/${platform}/${arch}"
         if [ "$platform" == "mac" ]; then
             mv "${dist_dir}/Electros-${clean_version}_mac-${arch}.dmg" "${build_dir}/${platform}/${arch}/Electros-${version}-mac-${arch}.dmg"
