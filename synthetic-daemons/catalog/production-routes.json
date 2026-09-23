@@ -1,0 +1,1696 @@
+{
+  "generatedAt": "2026-09-23T10:56:17.181Z",
+  "monorepoPath": "/Users/gabrielegaetanofronze/gitstuff/elemento-monorepo-client",
+  "source": "elemento-monorepo-client mounted routers (FastAPI include_router + Flask @route + mcp custom_route)",
+  "routeCount": 211,
+  "routes": [
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/",
+      "methodPath": "GET /",
+      "id": "auth:GET /",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/local.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/account/managedmembers",
+      "methodPath": "GET /api/v1.0/account/managedmembers",
+      "id": "auth:GET /api/v1.0/account/managedmembers",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/invite/accept/{token}",
+      "methodPath": "GET /api/v1.0/invite/accept/{token}",
+      "id": "auth:GET /api/v1.0/invite/accept/{token}",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/invite.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/invite/accept/{token}/register",
+      "methodPath": "POST /api/v1.0/invite/accept/{token}/register",
+      "id": "auth:POST /api/v1.0/invite/accept/{token}/register",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/invite.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/min-ver/clients",
+      "methodPath": "GET /api/v1.0/min-ver/clients",
+      "id": "auth:GET /api/v1.0/min-ver/clients",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/min_ver.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/min-ver/electros",
+      "methodPath": "GET /api/v1.0/min-ver/electros",
+      "id": "auth:GET /api/v1.0/min-ver/electros",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/min_ver.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/org",
+      "methodPath": "POST /api/v1.0/org",
+      "id": "auth:POST /api/v1.0/org",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/orgs/{org_id}/admin",
+      "methodPath": "POST /api/v1.0/orgs/{org_id}/admin",
+      "id": "auth:POST /api/v1.0/orgs/{org_id}/admin",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/admins",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/admins",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/admins",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1.0/orgs/{org_id}/admins/{admin}",
+      "methodPath": "DELETE /api/v1.0/orgs/{org_id}/admins/{admin}",
+      "id": "auth:DELETE /api/v1.0/orgs/{org_id}/admins/{admin}",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/invite",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/invite",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/invite",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/orgs/{org_id}/invite",
+      "methodPath": "POST /api/v1.0/orgs/{org_id}/invite",
+      "id": "auth:POST /api/v1.0/orgs/{org_id}/invite",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/limits",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/limits",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "PUT",
+      "path": "/api/v1.0/orgs/{org_id}/limits",
+      "methodPath": "PUT /api/v1.0/orgs/{org_id}/limits",
+      "id": "auth:PUT /api/v1.0/orgs/{org_id}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/members",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/members",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/members",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1.0/orgs/{org_id}/members/{user}",
+      "methodPath": "DELETE /api/v1.0/orgs/{org_id}/members/{user}",
+      "id": "auth:DELETE /api/v1.0/orgs/{org_id}/members/{user}",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/members/{user}/limits",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/members/{user}/limits",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/members/{user}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "PUT",
+      "path": "/api/v1.0/orgs/{org_id}/members/{user}/limits",
+      "methodPath": "PUT /api/v1.0/orgs/{org_id}/members/{user}/limits",
+      "id": "auth:PUT /api/v1.0/orgs/{org_id}/members/{user}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/orgs/{org_id}/membership",
+      "methodPath": "POST /api/v1.0/orgs/{org_id}/membership",
+      "id": "auth:POST /api/v1.0/orgs/{org_id}/membership",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/membership/tree",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/membership/tree",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/membership/tree",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/owner",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/owner",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/owner",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/org.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs",
+      "methodPath": "POST /api/v1.0/orgs/{org_id}/suborgs",
+      "id": "auth:POST /api/v1.0/orgs/{org_id}/suborgs",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/suborg.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}",
+      "methodPath": "DELETE /api/v1.0/orgs/{org_id}/suborgs/{suborg}",
+      "id": "auth:DELETE /api/v1.0/orgs/{org_id}/suborgs/{suborg}",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/suborg.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/admin",
+      "methodPath": "POST /api/v1.0/orgs/{org_id}/suborgs/{suborg}/admin",
+      "id": "auth:POST /api/v1.0/orgs/{org_id}/suborgs/{suborg}/admin",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/suborg.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/admins",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/admins",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/admins",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/suborg.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/admins/{user}",
+      "methodPath": "DELETE /api/v1.0/orgs/{org_id}/suborgs/{suborg}/admins/{user}",
+      "id": "auth:DELETE /api/v1.0/orgs/{org_id}/suborgs/{suborg}/admins/{user}",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/suborg.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/children",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/children",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/children",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/suborg.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/limits",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/limits",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "PUT",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/limits",
+      "methodPath": "PUT /api/v1.0/orgs/{org_id}/suborgs/{suborg}/limits",
+      "id": "auth:PUT /api/v1.0/orgs/{org_id}/suborgs/{suborg}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/members",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}",
+      "methodPath": "DELETE /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}",
+      "id": "auth:DELETE /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}/limits",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}/limits",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "PUT",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}/limits",
+      "methodPath": "PUT /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}/limits",
+      "id": "auth:PUT /api/v1.0/orgs/{org_id}/suborgs/{suborg}/members/{user}/limits",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/limits.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/membership",
+      "methodPath": "POST /api/v1.0/orgs/{org_id}/suborgs/{suborg}/membership",
+      "id": "auth:POST /api/v1.0/orgs/{org_id}/suborgs/{suborg}/membership",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/orgs/{org_id}/suborgs/{suborg}/membership/tree",
+      "methodPath": "GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/membership/tree",
+      "id": "auth:GET /api/v1.0/orgs/{org_id}/suborgs/{suborg}/membership/tree",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/membership.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/subscription",
+      "methodPath": "GET /api/v1.0/subscription",
+      "id": "auth:GET /api/v1.0/subscription",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1.0/subscription/cancel",
+      "methodPath": "DELETE /api/v1.0/subscription/cancel",
+      "id": "auth:DELETE /api/v1.0/subscription/cancel",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/subscription/change-tier",
+      "methodPath": "POST /api/v1.0/subscription/change-tier",
+      "id": "auth:POST /api/v1.0/subscription/change-tier",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/subscription/history",
+      "methodPath": "GET /api/v1.0/subscription/history",
+      "id": "auth:GET /api/v1.0/subscription/history",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/subscription/org",
+      "methodPath": "GET /api/v1.0/subscription/org",
+      "id": "auth:GET /api/v1.0/subscription/org",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/subscription/payment-links",
+      "methodPath": "POST /api/v1.0/subscription/payment-links",
+      "id": "auth:POST /api/v1.0/subscription/payment-links",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/subscription/payment-links/owner",
+      "methodPath": "POST /api/v1.0/subscription/payment-links/owner",
+      "id": "auth:POST /api/v1.0/subscription/payment-links/owner",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/subscription/subscribe",
+      "methodPath": "POST /api/v1.0/subscription/subscribe",
+      "id": "auth:POST /api/v1.0/subscription/subscribe",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1.0/subscription/subscribe/bulk",
+      "methodPath": "POST /api/v1.0/subscription/subscribe/bulk",
+      "id": "auth:POST /api/v1.0/subscription/subscribe/bulk",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1.0/subscription/tiers",
+      "methodPath": "GET /api/v1.0/subscription/tiers",
+      "id": "auth:GET /api/v1.0/subscription/tiers",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/subscription.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/account/details",
+      "methodPath": "GET /api/v1/authenticate/account/details",
+      "id": "auth:GET /api/v1/authenticate/account/details",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "PATCH",
+      "path": "/api/v1/authenticate/account/details",
+      "methodPath": "PATCH /api/v1/authenticate/account/details",
+      "id": "auth:PATCH /api/v1/authenticate/account/details",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/details",
+      "methodPath": "POST /api/v1/authenticate/account/details",
+      "id": "auth:POST /api/v1/authenticate/account/details",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "PATCH",
+      "path": "/api/v1/authenticate/account/preferred-org",
+      "methodPath": "PATCH /api/v1/authenticate/account/preferred-org",
+      "id": "auth:PATCH /api/v1/authenticate/account/preferred-org",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/register",
+      "methodPath": "POST /api/v1/authenticate/account/register",
+      "id": "auth:POST /api/v1/authenticate/account/register",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/register/login",
+      "methodPath": "POST /api/v1/authenticate/account/register/login",
+      "id": "auth:POST /api/v1/authenticate/account/register/login",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/register/org",
+      "methodPath": "POST /api/v1/authenticate/account/register/org",
+      "id": "auth:POST /api/v1/authenticate/account/register/org",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/register/org/login",
+      "methodPath": "POST /api/v1/authenticate/account/register/org/login",
+      "id": "auth:POST /api/v1/authenticate/account/register/org/login",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/verify-email/confirm",
+      "methodPath": "POST /api/v1/authenticate/account/verify-email/confirm",
+      "id": "auth:POST /api/v1/authenticate/account/verify-email/confirm",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/account/verify-email/request",
+      "methodPath": "POST /api/v1/authenticate/account/verify-email/request",
+      "id": "auth:POST /api/v1/authenticate/account/verify-email/request",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/account.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/billing/{billing_uuid}/refresh-link",
+      "methodPath": "POST /api/v1/authenticate/billing/{billing_uuid}/refresh-link",
+      "id": "auth:POST /api/v1/authenticate/billing/{billing_uuid}/refresh-link",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/billing.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/billing/my/transactions",
+      "methodPath": "GET /api/v1/authenticate/billing/my/transactions",
+      "id": "auth:GET /api/v1/authenticate/billing/my/transactions",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/billing.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/cert",
+      "methodPath": "GET /api/v1/authenticate/cert",
+      "id": "auth:GET /api/v1/authenticate/cert",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/certs.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/cert/trust",
+      "methodPath": "POST /api/v1/authenticate/cert/trust",
+      "id": "auth:POST /api/v1/authenticate/cert/trust",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/certs.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/license/arm",
+      "methodPath": "POST /api/v1/authenticate/license/arm",
+      "id": "auth:POST /api/v1/authenticate/license/arm",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/license.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "DELETE",
+      "path": "/api/v1/authenticate/license/delete",
+      "methodPath": "DELETE /api/v1/authenticate/license/delete",
+      "id": "auth:DELETE /api/v1/authenticate/license/delete",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/license.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/license/list",
+      "methodPath": "GET /api/v1/authenticate/license/list",
+      "id": "auth:GET /api/v1/authenticate/license/list",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/license.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/login",
+      "methodPath": "GET /api/v1/authenticate/login",
+      "id": "auth:GET /api/v1/authenticate/login",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/login",
+      "methodPath": "POST /api/v1/authenticate/login",
+      "id": "auth:POST /api/v1/authenticate/login",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/logout",
+      "methodPath": "POST /api/v1/authenticate/logout",
+      "id": "auth:POST /api/v1/authenticate/logout",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/oauth/callback",
+      "methodPath": "GET /api/v1/authenticate/oauth/callback",
+      "id": "auth:GET /api/v1/authenticate/oauth/callback",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/oauth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/oauth/login",
+      "methodPath": "POST /api/v1/authenticate/oauth/login",
+      "id": "auth:POST /api/v1/authenticate/oauth/login",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/oauth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/oauth/providers",
+      "methodPath": "GET /api/v1/authenticate/oauth/providers",
+      "id": "auth:GET /api/v1/authenticate/oauth/providers",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/oauth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/refresh",
+      "methodPath": "GET /api/v1/authenticate/refresh",
+      "id": "auth:GET /api/v1/authenticate/refresh",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "POST",
+      "path": "/api/v1/authenticate/relogin",
+      "methodPath": "POST /api/v1/authenticate/relogin",
+      "id": "auth:POST /api/v1/authenticate/relogin",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/scopes",
+      "methodPath": "GET /api/v1/authenticate/scopes",
+      "id": "auth:GET /api/v1/authenticate/scopes",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/status",
+      "methodPath": "GET /api/v1/authenticate/status",
+      "id": "auth:GET /api/v1/authenticate/status",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/status/authenticated",
+      "methodPath": "GET /api/v1/authenticate/status/authenticated",
+      "id": "auth:GET /api/v1/authenticate/status/authenticated",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/api/v1/authenticate/status/authenticated/me",
+      "methodPath": "GET /api/v1/authenticate/status/authenticated/me",
+      "id": "auth:GET /api/v1/authenticate/status/authenticated/me",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/auth.py"
+    },
+    {
+      "daemon": "auth",
+      "method": "GET",
+      "path": "/version",
+      "methodPath": "GET /version",
+      "id": "auth:GET /version",
+      "sourceFile": "client_daemons/access_client/api_layer/routes/local.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/",
+      "methodPath": "GET /",
+      "id": "compute:GET /",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/agent/attach",
+      "methodPath": "POST /api/v1.0/client/vm/agent/attach",
+      "id": "compute:POST /api/v1.0/client/vm/agent/attach",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/agent/run",
+      "methodPath": "POST /api/v1.0/client/vm/agent/run",
+      "id": "compute:POST /api/v1.0/client/vm/agent/run",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/agent/run/{command}",
+      "methodPath": "POST /api/v1.0/client/vm/agent/run/{command}",
+      "id": "compute:POST /api/v1.0/client/vm/agent/run/{command}",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/backup",
+      "methodPath": "POST /api/v1.0/client/vm/backup",
+      "id": "compute:POST /api/v1.0/client/vm/backup",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/backup/restore",
+      "methodPath": "POST /api/v1.0/client/vm/backup/restore",
+      "id": "compute:POST /api/v1.0/client/vm/backup/restore",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/backup/schedule",
+      "methodPath": "POST /api/v1.0/client/vm/backup/schedule",
+      "id": "compute:POST /api/v1.0/client/vm/backup/schedule",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/vm/backups",
+      "methodPath": "DELETE /api/v1.0/client/vm/backups",
+      "id": "compute:DELETE /api/v1.0/client/vm/backups",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/backups",
+      "methodPath": "GET /api/v1.0/client/vm/backups",
+      "id": "compute:GET /api/v1.0/client/vm/backups",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/backups/search",
+      "methodPath": "GET /api/v1.0/client/vm/backups/search",
+      "id": "compute:GET /api/v1.0/client/vm/backups/search",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/canallocate",
+      "methodPath": "POST /api/v1.0/client/vm/canallocate",
+      "id": "compute:POST /api/v1.0/client/vm/canallocate",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/canallocate/multiple",
+      "methodPath": "POST /api/v1.0/client/vm/canallocate/multiple",
+      "id": "compute:POST /api/v1.0/client/vm/canallocate/multiple",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/host/status",
+      "methodPath": "GET /api/v1.0/client/vm/host/status",
+      "id": "compute:GET /api/v1.0/client/vm/host/status",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/last/{volume_uid}",
+      "methodPath": "POST /api/v1.0/client/vm/last/{volume_uid}",
+      "id": "compute:POST /api/v1.0/client/vm/last/{volume_uid}",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/marketprices",
+      "methodPath": "GET /api/v1.0/client/vm/marketprices",
+      "id": "compute:GET /api/v1.0/client/vm/marketprices",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/marketprices",
+      "methodPath": "POST /api/v1.0/client/vm/marketprices",
+      "id": "compute:POST /api/v1.0/client/vm/marketprices",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/migrate",
+      "methodPath": "POST /api/v1.0/client/vm/migrate",
+      "id": "compute:POST /api/v1.0/client/vm/migrate",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/network/attach",
+      "methodPath": "POST /api/v1.0/client/vm/network/attach",
+      "id": "compute:POST /api/v1.0/client/vm/network/attach",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/network/detach",
+      "methodPath": "POST /api/v1.0/client/vm/network/detach",
+      "id": "compute:POST /api/v1.0/client/vm/network/detach",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/vm/porttunnel/services",
+      "methodPath": "DELETE /api/v1.0/client/vm/porttunnel/services",
+      "id": "compute:DELETE /api/v1.0/client/vm/porttunnel/services",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/porttunnel/services",
+      "methodPath": "GET /api/v1.0/client/vm/porttunnel/services",
+      "id": "compute:GET /api/v1.0/client/vm/porttunnel/services",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/porttunnel/services",
+      "methodPath": "POST /api/v1.0/client/vm/porttunnel/services",
+      "id": "compute:POST /api/v1.0/client/vm/porttunnel/services",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/porttunnel/start",
+      "methodPath": "POST /api/v1.0/client/vm/porttunnel/start",
+      "id": "compute:POST /api/v1.0/client/vm/porttunnel/start",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/porttunnel/status",
+      "methodPath": "GET /api/v1.0/client/vm/porttunnel/status",
+      "id": "compute:GET /api/v1.0/client/vm/porttunnel/status",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/porttunnel/stop",
+      "methodPath": "POST /api/v1.0/client/vm/porttunnel/stop",
+      "id": "compute:POST /api/v1.0/client/vm/porttunnel/stop",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/porttunnel/vncWebSocket",
+      "methodPath": "GET /api/v1.0/client/vm/porttunnel/vncWebSocket",
+      "id": "compute:GET /api/v1.0/client/vm/porttunnel/vncWebSocket",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/porttunnel/vncWebSocket",
+      "methodPath": "POST /api/v1.0/client/vm/porttunnel/vncWebSocket",
+      "id": "compute:POST /api/v1.0/client/vm/porttunnel/vncWebSocket",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/porttunnel/vncWebSocket/{instance_id}",
+      "methodPath": "GET /api/v1.0/client/vm/porttunnel/vncWebSocket/{instance_id}",
+      "id": "compute:GET /api/v1.0/client/vm/porttunnel/vncWebSocket/{instance_id}",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/vm/porttunnel/vncWebSocket/stop",
+      "methodPath": "DELETE /api/v1.0/client/vm/porttunnel/vncWebSocket/stop",
+      "id": "compute:DELETE /api/v1.0/client/vm/porttunnel/vncWebSocket/stop",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/process_playbook/file",
+      "methodPath": "POST /api/v1.0/client/vm/process_playbook/file",
+      "id": "compute:POST /api/v1.0/client/vm/process_playbook/file",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/process_playbook/path",
+      "methodPath": "GET /api/v1.0/client/vm/process_playbook/path",
+      "id": "compute:GET /api/v1.0/client/vm/process_playbook/path",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/reboot",
+      "methodPath": "POST /api/v1.0/client/vm/reboot",
+      "id": "compute:POST /api/v1.0/client/vm/reboot",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/register",
+      "methodPath": "POST /api/v1.0/client/vm/register",
+      "id": "compute:POST /api/v1.0/client/vm/register",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/register/multiple",
+      "methodPath": "POST /api/v1.0/client/vm/register/multiple",
+      "id": "compute:POST /api/v1.0/client/vm/register/multiple",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/start",
+      "methodPath": "POST /api/v1.0/client/vm/start",
+      "id": "compute:POST /api/v1.0/client/vm/start",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/status",
+      "methodPath": "GET /api/v1.0/client/vm/status",
+      "id": "compute:GET /api/v1.0/client/vm/status",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/stop",
+      "methodPath": "POST /api/v1.0/client/vm/stop",
+      "id": "compute:POST /api/v1.0/client/vm/stop",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/templates",
+      "methodPath": "GET /api/v1.0/client/vm/templates",
+      "id": "compute:GET /api/v1.0/client/vm/templates",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/unregister",
+      "methodPath": "POST /api/v1.0/client/vm/unregister",
+      "id": "compute:POST /api/v1.0/client/vm/unregister",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/update",
+      "methodPath": "POST /api/v1.0/client/vm/update",
+      "id": "compute:POST /api/v1.0/client/vm/update",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "GET",
+      "path": "/api/v1.0/client/vm/usage",
+      "methodPath": "GET /api/v1.0/client/vm/usage",
+      "id": "compute:GET /api/v1.0/client/vm/usage",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/volume/attach",
+      "methodPath": "POST /api/v1.0/client/vm/volume/attach",
+      "id": "compute:POST /api/v1.0/client/vm/volume/attach",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "compute",
+      "method": "POST",
+      "path": "/api/v1.0/client/vm/volume/detach",
+      "methodPath": "POST /api/v1.0/client/vm/volume/detach",
+      "id": "compute:POST /api/v1.0/client/vm/volume/detach",
+      "sourceFile": "client_daemons/matcher_client/matcherclient.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "GET",
+      "path": "/electros/confirm-mode",
+      "methodPath": "GET /electros/confirm-mode",
+      "id": "mcp:GET /electros/confirm-mode",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "POST",
+      "path": "/electros/confirm-mode",
+      "methodPath": "POST /electros/confirm-mode",
+      "id": "mcp:POST /electros/confirm-mode",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "GET",
+      "path": "/electros/mitl-test",
+      "methodPath": "GET /electros/mitl-test",
+      "id": "mcp:GET /electros/mitl-test",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "POST",
+      "path": "/electros/mitl-test",
+      "methodPath": "POST /electros/mitl-test",
+      "id": "mcp:POST /electros/mitl-test",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "GET",
+      "path": "/ping",
+      "methodPath": "GET /ping",
+      "id": "mcp:GET /ping",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "POST",
+      "path": "/proxy/llm/agent",
+      "methodPath": "POST /proxy/llm/agent",
+      "id": "mcp:POST /proxy/llm/agent",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "GET",
+      "path": "/proxy/llm/agent/jobs/{job_id}",
+      "methodPath": "GET /proxy/llm/agent/jobs/{job_id}",
+      "id": "mcp:GET /proxy/llm/agent/jobs/{job_id}",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "GET",
+      "path": "/proxy/llm/agent/threads",
+      "methodPath": "GET /proxy/llm/agent/threads",
+      "id": "mcp:GET /proxy/llm/agent/threads",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "POST",
+      "path": "/proxy/llm/agent/threads",
+      "methodPath": "POST /proxy/llm/agent/threads",
+      "id": "mcp:POST /proxy/llm/agent/threads",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "DELETE",
+      "path": "/proxy/llm/agent/threads/{thread_id}",
+      "methodPath": "DELETE /proxy/llm/agent/threads/{thread_id}",
+      "id": "mcp:DELETE /proxy/llm/agent/threads/{thread_id}",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "GET",
+      "path": "/proxy/llm/agent/threads/{thread_id}",
+      "methodPath": "GET /proxy/llm/agent/threads/{thread_id}",
+      "id": "mcp:GET /proxy/llm/agent/threads/{thread_id}",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "mcp",
+      "method": "POST",
+      "path": "/proxy/llm/chat/completions",
+      "methodPath": "POST /proxy/llm/chat/completions",
+      "id": "mcp:POST /proxy/llm/chat/completions",
+      "sourceFile": "client_daemons/mcp_client/src/electros_mcp/server.py"
+    },
+    {
+      "daemon": "network",
+      "method": "GET",
+      "path": "/",
+      "methodPath": "GET /",
+      "id": "network:GET /",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "POST",
+      "path": "/api/v1.0/client/network/create",
+      "methodPath": "POST /api/v1.0/client/network/create",
+      "id": "network:POST /api/v1.0/client/network/create",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/network/delete",
+      "methodPath": "DELETE /api/v1.0/client/network/delete",
+      "id": "network:DELETE /api/v1.0/client/network/delete",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "POST",
+      "path": "/api/v1.0/client/network/info",
+      "methodPath": "POST /api/v1.0/client/network/info",
+      "id": "network:POST /api/v1.0/client/network/info",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "GET",
+      "path": "/api/v1.0/client/network/list",
+      "methodPath": "GET /api/v1.0/client/network/list",
+      "id": "network:GET /api/v1.0/client/network/list",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/network/portforward",
+      "methodPath": "DELETE /api/v1.0/client/network/portforward",
+      "id": "network:DELETE /api/v1.0/client/network/portforward",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "POST",
+      "path": "/api/v1.0/client/network/portforward",
+      "methodPath": "POST /api/v1.0/client/network/portforward",
+      "id": "network:POST /api/v1.0/client/network/portforward",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "GET",
+      "path": "/api/v1.0/client/network/portforwards",
+      "methodPath": "GET /api/v1.0/client/network/portforwards",
+      "id": "network:GET /api/v1.0/client/network/portforwards",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "network",
+      "method": "POST",
+      "path": "/api/v1.0/client/network/refresh",
+      "methodPath": "POST /api/v1.0/client/network/refresh",
+      "id": "network:POST /api/v1.0/client/network/refresh",
+      "sourceFile": "client_daemons/network_client/networkclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "GET",
+      "path": "/",
+      "methodPath": "GET /",
+      "id": "services:GET /",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "POST",
+      "path": "/api/v1.0/client/service/{service}/cancreate",
+      "methodPath": "POST /api/v1.0/client/service/{service}/cancreate",
+      "id": "services:POST /api/v1.0/client/service/{service}/cancreate",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "POST",
+      "path": "/api/v1.0/client/service/{service}/create",
+      "methodPath": "POST /api/v1.0/client/service/{service}/create",
+      "id": "services:POST /api/v1.0/client/service/{service}/create",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "GET",
+      "path": "/api/v1.0/client/service/{service}/credentials/{service_uuid}",
+      "methodPath": "GET /api/v1.0/client/service/{service}/credentials/{service_uuid}",
+      "id": "services:GET /api/v1.0/client/service/{service}/credentials/{service_uuid}",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/service/{service}/delete",
+      "methodPath": "DELETE /api/v1.0/client/service/{service}/delete",
+      "id": "services:DELETE /api/v1.0/client/service/{service}/delete",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "GET",
+      "path": "/api/v1.0/client/service/{service}/running",
+      "methodPath": "GET /api/v1.0/client/service/{service}/running",
+      "id": "services:GET /api/v1.0/client/service/{service}/running",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "GET",
+      "path": "/api/v1.0/client/service/{service}/running/{service_uuid}",
+      "methodPath": "GET /api/v1.0/client/service/{service}/running/{service_uuid}",
+      "id": "services:GET /api/v1.0/client/service/{service}/running/{service_uuid}",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "services",
+      "method": "GET",
+      "path": "/experimental",
+      "methodPath": "GET /experimental",
+      "id": "services:GET /experimental",
+      "sourceFile": "client_daemons/service_client/serviceclient.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "GET",
+      "path": "/",
+      "methodPath": "GET /",
+      "id": "storage:GET /",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "GET",
+      "path": "/api/v1.0/client/volume/accessible",
+      "methodPath": "GET /api/v1.0/client/volume/accessible",
+      "id": "storage:GET /api/v1.0/client/volume/accessible",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/cancreate",
+      "methodPath": "POST /api/v1.0/client/volume/cancreate",
+      "id": "storage:POST /api/v1.0/client/volume/cancreate",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/cancreate/multiple",
+      "methodPath": "POST /api/v1.0/client/volume/cancreate/multiple",
+      "id": "storage:POST /api/v1.0/client/volume/cancreate/multiple",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/ceph/create",
+      "methodPath": "POST /api/v1.0/client/volume/ceph/create",
+      "id": "storage:POST /api/v1.0/client/volume/ceph/create",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/cloudinit/create",
+      "methodPath": "POST /api/v1.0/client/volume/cloudinit/create",
+      "id": "storage:POST /api/v1.0/client/volume/cloudinit/create",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/cloudinit/metadata/{data}",
+      "methodPath": "POST /api/v1.0/client/volume/cloudinit/metadata/{data}",
+      "id": "storage:POST /api/v1.0/client/volume/cloudinit/metadata/{data}",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/create",
+      "methodPath": "POST /api/v1.0/client/volume/create",
+      "id": "storage:POST /api/v1.0/client/volume/create",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/create/multiple",
+      "methodPath": "POST /api/v1.0/client/volume/create/multiple",
+      "id": "storage:POST /api/v1.0/client/volume/create/multiple",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/destroy",
+      "methodPath": "POST /api/v1.0/client/volume/destroy",
+      "id": "storage:POST /api/v1.0/client/volume/destroy",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/import",
+      "methodPath": "POST /api/v1.0/client/volume/import",
+      "id": "storage:POST /api/v1.0/client/volume/import",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/info",
+      "methodPath": "POST /api/v1.0/client/volume/info",
+      "id": "storage:POST /api/v1.0/client/volume/info",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/iso/create/",
+      "methodPath": "POST /api/v1.0/client/volume/iso/create/",
+      "id": "storage:POST /api/v1.0/client/volume/iso/create/",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "GET",
+      "path": "/api/v1.0/client/volume/last/{volume_uuid}",
+      "methodPath": "GET /api/v1.0/client/volume/last/{volume_uuid}",
+      "id": "storage:GET /api/v1.0/client/volume/last/{volume_uuid}",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/overlay/compact",
+      "methodPath": "POST /api/v1.0/client/volume/overlay/compact",
+      "id": "storage:POST /api/v1.0/client/volume/overlay/compact",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/reset",
+      "methodPath": "POST /api/v1.0/client/volume/reset",
+      "id": "storage:POST /api/v1.0/client/volume/reset",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/update",
+      "methodPath": "POST /api/v1.0/client/volume/update",
+      "id": "storage:POST /api/v1.0/client/volume/update",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/update/convert",
+      "methodPath": "POST /api/v1.0/client/volume/update/convert",
+      "id": "storage:POST /api/v1.0/client/volume/update/convert",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "storage",
+      "method": "POST",
+      "path": "/api/v1.0/client/volume/update/resize",
+      "methodPath": "POST /api/v1.0/client/volume/update/resize",
+      "id": "storage:POST /api/v1.0/client/volume/update/resize",
+      "sourceFile": "client_daemons/storage_client/storageapi.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/",
+      "methodPath": "GET /",
+      "id": "target:GET /",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/local.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/cert",
+      "methodPath": "GET /api/v1.0/client/target/cert",
+      "id": "target:GET /api/v1.0/client/target/cert",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/certs.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/cert/trust",
+      "methodPath": "POST /api/v1.0/client/target/cert/trust",
+      "id": "target:POST /api/v1.0/client/target/cert/trust",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/certs.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/configs/{file}",
+      "methodPath": "GET /api/v1.0/client/target/configs/{file}",
+      "id": "target:GET /api/v1.0/client/target/configs/{file}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/settings.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/connections/me",
+      "methodPath": "GET /api/v1.0/client/target/connections/me",
+      "id": "target:GET /api/v1.0/client/target/connections/me",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/connections/me/connections-status",
+      "methodPath": "GET /api/v1.0/client/target/connections/me/connections-status",
+      "id": "target:GET /api/v1.0/client/target/connections/me/connections-status",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "PUT",
+      "path": "/api/v1.0/client/target/connections/me/scenario",
+      "methodPath": "PUT /api/v1.0/client/target/connections/me/scenario",
+      "id": "target:PUT /api/v1.0/client/target/connections/me/scenario",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/connections/me/target-grants",
+      "methodPath": "POST /api/v1.0/client/target/connections/me/target-grants",
+      "id": "target:POST /api/v1.0/client/target/connections/me/target-grants",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/connections/me/target-grants/{target_id}",
+      "methodPath": "DELETE /api/v1.0/client/target/connections/me/target-grants/{target_id}",
+      "id": "target:DELETE /api/v1.0/client/target/connections/me/target-grants/{target_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/grants/me",
+      "methodPath": "GET /api/v1.0/client/target/grants/me",
+      "id": "target:GET /api/v1.0/client/target/grants/me",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/grants/me/scenario/{scenario_id}",
+      "methodPath": "GET /api/v1.0/client/target/grants/me/scenario/{scenario_id}",
+      "id": "target:GET /api/v1.0/client/target/grants/me/scenario/{scenario_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/grants/me/target-grants/{target_id}",
+      "methodPath": "GET /api/v1.0/client/target/grants/me/target-grants/{target_id}",
+      "id": "target:GET /api/v1.0/client/target/grants/me/target-grants/{target_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/grants/me/target-grants/{target_id}/credentials/hypervisor",
+      "methodPath": "POST /api/v1.0/client/target/grants/me/target-grants/{target_id}/credentials/hypervisor",
+      "id": "target:POST /api/v1.0/client/target/grants/me/target-grants/{target_id}/credentials/hypervisor",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/grants/me/target-grants/{target_id}/reachable",
+      "methodPath": "GET /api/v1.0/client/target/grants/me/target-grants/{target_id}/reachable",
+      "id": "target:GET /api/v1.0/client/target/grants/me/target-grants/{target_id}/reachable",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/grants/me/target-grants/{target_id}/status",
+      "methodPath": "GET /api/v1.0/client/target/grants/me/target-grants/{target_id}/status",
+      "id": "target:GET /api/v1.0/client/target/grants/me/target-grants/{target_id}/status",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/grants/me/target-grants/{target_id}/version",
+      "methodPath": "GET /api/v1.0/client/target/grants/me/target-grants/{target_id}/version",
+      "id": "target:GET /api/v1.0/client/target/grants/me/target-grants/{target_id}/version",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/org-target",
+      "methodPath": "POST /api/v1.0/client/target/org-target",
+      "id": "target:POST /api/v1.0/client/target/org-target",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/org-target/hypervisor",
+      "methodPath": "POST /api/v1.0/client/target/org-target/hypervisor",
+      "id": "target:POST /api/v1.0/client/target/org-target/hypervisor",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/org-target/meson-private",
+      "methodPath": "POST /api/v1.0/client/target/org-target/meson-private",
+      "id": "target:POST /api/v1.0/client/target/org-target/meson-private",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/org-targets",
+      "methodPath": "GET /api/v1.0/client/target/org-targets",
+      "id": "target:GET /api/v1.0/client/target/org-targets",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/org-targets",
+      "methodPath": "POST /api/v1.0/client/target/org-targets",
+      "id": "target:POST /api/v1.0/client/target/org-targets",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/org-targets/{target_id}",
+      "methodPath": "DELETE /api/v1.0/client/target/org-targets/{target_id}",
+      "id": "target:DELETE /api/v1.0/client/target/org-targets/{target_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/org-targets/{target_id}",
+      "methodPath": "GET /api/v1.0/client/target/org-targets/{target_id}",
+      "id": "target:GET /api/v1.0/client/target/org-targets/{target_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "PATCH",
+      "path": "/api/v1.0/client/target/org-targets/{target_id}",
+      "methodPath": "PATCH /api/v1.0/client/target/org-targets/{target_id}",
+      "id": "target:PATCH /api/v1.0/client/target/org-targets/{target_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/org-targets/{target_id}/usage",
+      "methodPath": "GET /api/v1.0/client/target/org-targets/{target_id}/usage",
+      "id": "target:GET /api/v1.0/client/target/org-targets/{target_id}/usage",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/org_targets.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/refresh",
+      "methodPath": "GET /api/v1.0/client/target/refresh",
+      "id": "target:GET /api/v1.0/client/target/refresh",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/active_connections.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/scenario",
+      "methodPath": "POST /api/v1.0/client/target/scenario",
+      "id": "target:POST /api/v1.0/client/target/scenario",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/scenarios",
+      "methodPath": "DELETE /api/v1.0/client/target/scenarios",
+      "id": "target:DELETE /api/v1.0/client/target/scenarios",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/scenarios",
+      "methodPath": "GET /api/v1.0/client/target/scenarios",
+      "id": "target:GET /api/v1.0/client/target/scenarios",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/scenarios",
+      "methodPath": "POST /api/v1.0/client/target/scenarios",
+      "id": "target:POST /api/v1.0/client/target/scenarios",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/scenarios/{scenario_id}",
+      "methodPath": "DELETE /api/v1.0/client/target/scenarios/{scenario_id}",
+      "id": "target:DELETE /api/v1.0/client/target/scenarios/{scenario_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/scenarios/{scenario_id}",
+      "methodPath": "GET /api/v1.0/client/target/scenarios/{scenario_id}",
+      "id": "target:GET /api/v1.0/client/target/scenarios/{scenario_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "PATCH",
+      "path": "/api/v1.0/client/target/scenarios/{scenario_id}",
+      "methodPath": "PATCH /api/v1.0/client/target/scenarios/{scenario_id}",
+      "id": "target:PATCH /api/v1.0/client/target/scenarios/{scenario_id}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/scenarios/{scenario_id}/grants",
+      "methodPath": "GET /api/v1.0/client/target/scenarios/{scenario_id}/grants",
+      "id": "target:GET /api/v1.0/client/target/scenarios/{scenario_id}/grants",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/scenarios/{scenario_id}/grants",
+      "methodPath": "POST /api/v1.0/client/target/scenarios/{scenario_id}/grants",
+      "id": "target:POST /api/v1.0/client/target/scenarios/{scenario_id}/grants",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/scenarios/{scenario_id}/grants/{member}",
+      "methodPath": "DELETE /api/v1.0/client/target/scenarios/{scenario_id}/grants/{member}",
+      "id": "target:DELETE /api/v1.0/client/target/scenarios/{scenario_id}/grants/{member}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/scenarios.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/settings",
+      "methodPath": "GET /api/v1.0/client/target/settings",
+      "id": "target:GET /api/v1.0/client/target/settings",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/settings.py"
+    },
+    {
+      "daemon": "target",
+      "method": "PUT",
+      "path": "/api/v1.0/client/target/settings",
+      "methodPath": "PUT /api/v1.0/client/target/settings",
+      "id": "target:PUT /api/v1.0/client/target/settings",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/settings.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/target-grants",
+      "methodPath": "GET /api/v1.0/client/target/target-grants",
+      "id": "target:GET /api/v1.0/client/target/target-grants",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/target_grants.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/target-grants/{target_id}/members/{member}",
+      "methodPath": "DELETE /api/v1.0/client/target/target-grants/{target_id}/members/{member}",
+      "id": "target:DELETE /api/v1.0/client/target/target-grants/{target_id}/members/{member}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/target_grants.py"
+    },
+    {
+      "daemon": "target",
+      "method": "DELETE",
+      "path": "/api/v1.0/client/target/target-grants/members/{member}",
+      "methodPath": "DELETE /api/v1.0/client/target/target-grants/members/{member}",
+      "id": "target:DELETE /api/v1.0/client/target/target-grants/members/{member}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/target_grants.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/api/v1.0/client/target/target-grants/members/{member}",
+      "methodPath": "GET /api/v1.0/client/target/target-grants/members/{member}",
+      "id": "target:GET /api/v1.0/client/target/target-grants/members/{member}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/target_grants.py"
+    },
+    {
+      "daemon": "target",
+      "method": "POST",
+      "path": "/api/v1.0/client/target/target-grants/members/{member}",
+      "methodPath": "POST /api/v1.0/client/target/target-grants/members/{member}",
+      "id": "target:POST /api/v1.0/client/target/target-grants/members/{member}",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/privileged/target_grants.py"
+    },
+    {
+      "daemon": "target",
+      "method": "GET",
+      "path": "/version",
+      "methodPath": "GET /version",
+      "id": "target:GET /version",
+      "sourceFile": "client_daemons/target_client/api_layer/routes/local.py"
+    }
+  ]
+}

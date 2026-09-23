@@ -10,11 +10,15 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "prestart": "tsc",
+    "sync:catalog": "node scripts/sync-production-catalog.mjs",
     "generate:paas-fixtures": "node scripts/generate-paas-fixtures.mjs",
     "generate:iaas-fixtures": "node scripts/generate-iaas-fixtures.mjs",
     "generate:targets-fixtures": "node scripts/generate-targets-fixtures.mjs",
     "generate:licenses-fixtures": "node scripts/generate-licenses-fixtures.mjs",
-    "generate:fixtures": "npm run generate:targets-fixtures && npm run generate:iaas-fixtures && npm run generate:paas-fixtures && npm run generate:licenses-fixtures"
+    "generate:fixtures": "npm run generate:targets-fixtures && npm run generate:iaas-fixtures && npm run generate:paas-fixtures && npm run generate:licenses-fixtures",
+    "test:routes": "node tests/route-inventory.mjs",
+    "test:parity": "node tests/parity.mjs",
+    "test": "npm run build && npm run test:routes && npm run test:parity"
   },
   "engines": {
     "node": ">=20"

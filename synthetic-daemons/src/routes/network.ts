@@ -4,7 +4,6 @@ import type { AppConfig } from "../config.js";
 import { rk } from "../config.js";
 import type { MemoryStore, NetworkRecord, PortForwardRecord } from "../MemoryStore.js";
 import { json, ok } from "../createServer.js";
-import { createCatchAllRouter } from "../catchAll.js";
 
 function normalizeNetworkBody(body: Record<string, unknown>): NetworkRecord {
   const networkName = (body.network_name as string) ?? (body.name as string) ?? `net-${randomUUID().slice(0, 8)}`;
@@ -42,21 +41,22 @@ function normalizePortForwardBody(body: Record<string, unknown>): PortForwardRec
 export function networkRouter(store: MemoryStore, config: AppConfig): Router {
   const router = Router();
   const keys = config.restKeys;
-  const base = rk(keys, "NETWORK_CLIENT_API_URL_KEY");
 
   router.get(rk(keys, "LIST_NETWORKS_API_KEY"), (_req: Request, res: Response) => {
     json(res, store.networks);
   });
 
-  router.get(rk(keys, "INFO_NETWORK_API_KEY"), (req: Request, res: Response) => {
-    const uid = String(req.query.network_uid ?? req.query.uid ?? "");
+  const networkInfo = (req: Request, res: Response): void => {
+    const uid = String(req.body?.network_uid ?? req.query.network_uid ?? req.query.uid ?? "");
     const net = store.findNetwork(uid);
     if (!net) {
       json(res, {}, 404);
       return;
     }
     json(res, net);
-  });
+  };
+  router.get(rk(keys, "INFO_NETWORK_API_KEY"), networkInfo);
+  router.post(rk(keys, "INFO_NETWORK_API_KEY"), networkInfo);
 
   router.post(rk(keys, "CREATE_NETWORK_API_KEY"), (req: Request, res: Response) => {
     const net = normalizeNetworkBody((req.body ?? {}) as Record<string, unknown>);
@@ -94,7 +94,6 @@ export function networkRouter(store: MemoryStore, config: AppConfig): Router {
     ok(res);
   });
 
-  router.use(createCatchAllRouter(base));
-
   return router;
 }
+
