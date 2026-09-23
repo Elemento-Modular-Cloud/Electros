@@ -113,7 +113,16 @@ class BackgroundsHandler {
 
         return new Promise((resolve, reject) => {
             try {
-                fetch(url).then(res => {
+                fetch(url, {
+                    headers: {
+                        "User-Agent": "Electros/ElementoGUI (wallpaper; https://elemento.cloud)",
+                        "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+                    },
+                    redirect: "follow",
+                }).then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Failed to download background (${res.status}): ${url}`);
+                    }
                     return res.arrayBuffer()
                 }).then(imgBuf => {
                     const buffer = Buffer.from(imgBuf);
@@ -195,10 +204,10 @@ class BackgroundsHandler {
         return new Promise((resolve, reject) => {
             provider.fetchFeedData().then(feedData => {
                 const sortedFeedData = feedData.sort((a, b) => {
-                    if (a.pubDate > b.pubDate) { return -1; }
-                    if (a.pubDate < b.pubDate) { return 1; }
-                    return 0;
-                })
+                    const ta = a.pubDate instanceof Date ? a.pubDate.getTime() : 0;
+                    const tb = b.pubDate instanceof Date ? b.pubDate.getTime() : 0;
+                    return tb - ta;
+                });
                 resolve(sortedFeedData);
             }).catch(error => {
                 console.error(error);
