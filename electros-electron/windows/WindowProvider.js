@@ -1,6 +1,10 @@
 import {app, BrowserWindow} from "electron";
 import path from "path";
 
+/** Chromium net error for "nothing is listening on that port". */
+const ERR_CONNECTION_REFUSED = -102;
+const DEV_SERVER_RETRY_MS = 300;
+
 
 /**
  *
@@ -30,7 +34,17 @@ export function WindowProvider(windowFilePath, options, dirname = null, queryPar
     const win = new BrowserWindow(options);
 
     if (!app.isPackaged) {
-        win.loadURL(getWindowUrl(windowFilePath, dirname));
+        const url = getWindowUrl(windowFilePath, dirname);
+        win.loadURL(url);
+
+        // `npm start` launches Vite and Electron together, and Electron usually wins the race. Nothing is
+        // listening on 5173 yet, the load fails, and the window stays blank forever. So: keep knocking.
+        win.webContents.on('did-fail-load', (_event, errorCode, _description, _validatedURL, isMainFrame) => {
+            if (!isMainFrame || errorCode !== ERR_CONNECTION_REFUSED) { return; }
+            setTimeout(() => {
+                if (!win.isDestroyed()) { win.loadURL(url); }
+            }, DEV_SERVER_RETRY_MS);
+        });
     } else {
         win.loadFile(getWindowUrl(windowFilePath, dirname), {
             query: queryParams ?? undefined,
