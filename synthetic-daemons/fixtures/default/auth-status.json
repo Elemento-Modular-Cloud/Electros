@@ -1,5 +1,13 @@
 {
   "authenticated": true,
-  "username": "demo",
-  "org": ""
+  "username": "demo@synthetic.local",
+  "org": "Elemento Demo",
+  "org_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+  "org_name": "Elemento Demo",
+  "suborg_id": null,
+  "suborg_name": null,
+  "role": "ORGOWNER",
+  "active_subscriber": true,
+  "email_verified": true,
+  "authz_token": "synthetic-authz-token"
 }

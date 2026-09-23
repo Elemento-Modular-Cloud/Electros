@@ -26,7 +26,10 @@ const catalog = JSON.parse(readFileSync(ECD_PROVIDERS, "utf8")).ELEMENTO_SUPPORT
 const data = [
   {
     target_id: "atomos-lab",
+    target_name: "AtomOS Lab",
     target_type: "atomos_local_ip",
+    active: true,
+    trusted: "trusted",
     target_config: { ips: ["192.168.1.10"] },
     ping_status: {
       target_id: "atomos-lab",
@@ -37,7 +40,10 @@ const data = [
   },
   {
     target_id: "atomos-meson-edge",
+    target_name: "AtomOS Meson Edge",
     target_type: "atomos_local_ip",
+    active: true,
+    trusted: "trusted",
     target_config: { ips: ["10.0.0.5"] },
     ping_status: {
       target_id: "atomos-meson-edge",
@@ -48,7 +54,10 @@ const data = [
   },
   {
     target_id: "atomosphere-private-lab",
+    target_name: "Atomosphere Private Lab",
     target_type: "meson_private",
+    active: true,
+    trusted: "trusted",
     target_config: {
       provider: "ovh",
       meson_ip: "10.0.0.5",
@@ -63,7 +72,10 @@ const data = [
   },
   {
     target_id: "proxmox-hv",
+    target_name: "Proxmox Hypervisor",
     target_type: "hypervisor_proxmox",
+    active: true,
+    trusted: "trusted",
     target_config: {
       host: "https://192.168.1.20:8006",
       user: "root@pam",
@@ -78,7 +90,10 @@ const data = [
   },
   {
     target_id: "esxi-hv",
+    target_name: "ESXi Hypervisor",
     target_type: "hypervisor_esxi",
+    active: true,
+    trusted: "trusted",
     target_config: {
       host: "https://192.168.1.30",
       user: "root",
@@ -100,7 +115,11 @@ for (const [providerKey, meta] of Object.entries(catalog)) {
   const targetId = `${providerKey}-demo-public`;
   data.push({
     target_id: targetId,
+    target_name: `${meta.display_name ?? providerKey} Public Demo`,
     target_type: "meson_public",
+    // Demo landscape: all production providers start connected (under the 25 cap).
+    active: true,
+    trusted: "trusted",
     target_config: { provider: providerKey },
     ping_status: {
       target_id: targetId,

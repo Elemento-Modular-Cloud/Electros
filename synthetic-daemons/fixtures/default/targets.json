@@ -2,7 +2,10 @@
   "data": [
     {
       "target_id": "atomos-lab",
+      "target_name": "AtomOS Lab",
       "target_type": "atomos_local_ip",
+      "active": true,
+      "trusted": "trusted",
       "target_config": {
         "ips": [
           "192.168.1.10"
@@ -17,7 +20,10 @@
     },
     {
       "target_id": "atomos-meson-edge",
+      "target_name": "AtomOS Meson Edge",
       "target_type": "atomos_local_ip",
+      "active": true,
+      "trusted": "trusted",
       "target_config": {
         "ips": [
           "10.0.0.5"
@@ -32,7 +38,9 @@
     },
     {
       "target_id": "atomosphere-private-lab",
+      "target_name": "Atomosphere Private Lab",
       "target_type": "meson_private",
+      "active": true,
       "target_config": {
         "provider": "ovh",
         "meson_ip": "10.0.0.5",
@@ -46,11 +54,14 @@
         "target_type": "meson_private",
         "pingable": true,
         "trust_established": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "proxmox-hv",
+      "target_name": "Proxmox Hypervisor",
       "target_type": "hypervisor_proxmox",
+      "active": true,
       "target_config": {
         "host": "https://192.168.1.20:8006",
         "user": "root@pam",
@@ -61,11 +72,14 @@
         "target_id": "proxmox-hv",
         "target_type": "hypervisor_proxmox",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "esxi-hv",
+      "target_name": "ESXi Hypervisor",
       "target_type": "hypervisor_esxi",
+      "active": true,
       "target_config": {
         "host": "https://192.168.1.30",
         "user": "root",
@@ -76,11 +90,14 @@
         "target_id": "esxi-hv",
         "target_type": "hypervisor_esxi",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "google-demo-public",
+      "target_name": "Google Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "google"
       },
@@ -88,11 +105,14 @@
         "target_id": "google-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "azure-demo-public",
+      "target_name": "Azure Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "azure"
       },
@@ -100,11 +120,14 @@
         "target_id": "azure-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "ovh-demo-public",
+      "target_name": "OVH Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "ovh"
       },
@@ -112,11 +135,14 @@
         "target_id": "ovh-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "upcloud-demo-public",
+      "target_name": "UpCloud Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "upcloud"
       },
@@ -124,11 +150,14 @@
         "target_id": "upcloud-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "wasabi-demo-public",
+      "target_name": "Wasabi Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "wasabi"
       },
@@ -136,11 +165,14 @@
         "target_id": "wasabi-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "scaleway-demo-public",
+      "target_name": "Scaleway Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "scaleway"
       },
@@ -148,11 +180,14 @@
         "target_id": "scaleway-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
+      },
+      "trusted": "trusted"
     },
     {
       "target_id": "impossiblecloud-demo-public",
+      "target_name": "Impossible Cloud Public Demo",
       "target_type": "meson_public",
+      "active": true,
       "target_config": {
         "provider": "impossiblecloud"
       },
@@ -160,19 +195,8 @@
         "target_id": "impossiblecloud-demo-public",
         "target_type": "meson_public",
         "pingable": true
-      }
-    },
-    {
-      "target_id": "oracle-demo-public",
-      "target_type": "meson_public",
-      "target_config": {
-        "provider": "oracle"
       },
-      "ping_status": {
-        "target_id": "oracle-demo-public",
-        "target_type": "meson_public",
-        "pingable": true
-      }
+      "trusted": "trusted"
     }
   ]
 }
