@@ -5,12 +5,44 @@ import { rk } from "../config.js";
 import type { MemoryStore } from "../MemoryStore.js";
 import { json, ok } from "../createServer.js";
 
+/** Testing: spot (meson) VMs always advertise localhost so SSH can target a local listener. */
+function withTestSpotGuestIp(vm: Record<string, unknown>): Record<string, unknown> {
+  const targetType = vm.target_type;
+  if (targetType !== "meson_public" && targetType !== "meson_private") {
+    return vm;
+  }
+
+  const reqJson = (vm.req_json ?? {}) as Record<string, unknown>;
+  const existing =
+    reqJson.network_config && typeof reqJson.network_config === "object"
+      ? (reqJson.network_config as Record<string, unknown>)
+      : {};
+
+  return {
+    ...vm,
+    req_json: {
+      ...reqJson,
+      network_config: {
+        ...existing,
+        ipv4: "127.0.0.1",
+        interface: existing.interface ?? "eth0",
+        is_reachable_from_host: existing.is_reachable_from_host ?? true,
+        mac: existing.mac ?? "52:54:00:12:34:56",
+        model: existing.model ?? "virtio",
+        name: existing.name ?? "public",
+        source: existing.source ?? "public",
+        type: existing.type ?? "network",
+      },
+    },
+  };
+}
+
 export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   const router = Router();
   const keys = config.restKeys;
 
   router.get(rk(keys, "STATUS_API_KEY"), (_req: Request, res: Response) => {
-    json(res, store.vms);
+    json(res, store.vms.map((vm) => withTestSpotGuestIp(vm as Record<string, unknown>)));
   });
 
   router.get(rk(keys, "TEMPLATES_API_KEY"), (_req: Request, res: Response) => {
