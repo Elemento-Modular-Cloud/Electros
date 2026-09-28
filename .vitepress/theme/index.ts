@@ -18,13 +18,17 @@ const PAGE_BACKGROUNDS: Record<string, string> = {
   '/user-guide/11-settings': 'settings.webp',
 }
 
+const LOCALE_PREFIX = /^\/(it|fr)(?=\/|$)/
+
 function normalizePath(path: string): string {
   const bare = path.split(/[?#]/)[0] ?? path
   const noHtml = bare.replace(/\.html$/, '')
-  if (noHtml.length > 1 && noHtml.endsWith('/')) {
-    return noHtml.slice(0, -1)
+  let cleaned = noHtml
+  if (cleaned.length > 1 && cleaned.endsWith('/')) {
+    cleaned = cleaned.slice(0, -1)
   }
-  return noHtml || '/'
+  cleaned = cleaned.replace(LOCALE_PREFIX, '') || '/'
+  return cleaned
 }
 
 function applyPageBackground(path: string) {

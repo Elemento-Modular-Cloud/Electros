@@ -7,7 +7,7 @@ const ELECTROS_SITE = 'https://www.electros.cloud'
 const DOWNLOAD = 'https://elemento.cloud/electros.html#download'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const guideDir = path.resolve(__dirname, '../user-guide')
+const docsRoot = path.resolve(__dirname, '..')
 
 /** Match VitePress / markdown-it-anchor default heading ids. */
 function slugify(text: string): string {
@@ -20,7 +20,7 @@ function slugify(text: string): string {
     .replace(/\s+/g, '-')
 }
 
-function h2Sections(fileName: string): { text: string; slug: string }[] {
+function h2Sections(guideDir: string, fileName: string): { text: string; slug: string }[] {
   const filePath = path.join(guideDir, fileName)
   if (!fs.existsSync(filePath)) {
     return []
@@ -38,70 +38,235 @@ function h2Sections(fileName: string): { text: string; slug: string }[] {
   return sections
 }
 
-function pageWithSections(
-  text: string,
-  link: string,
-  fileName: string,
-  options: { collapsed?: boolean; skip?: string[] } = {},
-): DefaultTheme.SidebarItem {
-  const skip = new Set(
-    (options.skip ?? ['What this page is for', 'Read the page']).map(slugify),
-  )
-  const sections = h2Sections(fileName).filter((s) => !skip.has(s.slug))
-  if (sections.length === 0) {
-    return { text, link }
+type LocaleUi = {
+  overview: string
+  userGuide: string
+  skipDefault: string[]
+  pages: {
+    gettingStarted: string
+    dashboard: string
+    activeConnections: string
+    connections: string
+    storage: string
+    networking: string
+    virtualMachines: string
+    spotVms: string
+    paasSaas: string
+    account: string
+    settings: string
   }
+  navGuide: string
+  navWebsite: string
+  navDownload: string
+  footerMessage: string
+  footerCopyright: string
+  prev: string
+  next: string
+  description: string
+}
+
+function buildGuideSidebar(
+  linkPrefix: string,
+  guideRelDir: string,
+  ui: LocaleUi,
+): DefaultTheme.SidebarItem[] {
+  const guideDir = path.join(docsRoot, guideRelDir)
+  const prefix = linkPrefix === '/' ? '' : linkPrefix.replace(/\/$/, '')
+
+  function pageWithSections(
+    text: string,
+    linkSuffix: string,
+    fileName: string,
+    options: { collapsed?: boolean; skip?: string[] } = {},
+  ): DefaultTheme.SidebarItem {
+    const link = `${prefix}${linkSuffix}`
+    const skip = new Set((options.skip ?? ui.skipDefault).map(slugify))
+    const sections = h2Sections(guideDir, fileName).filter((s) => !skip.has(s.slug))
+    if (sections.length === 0) {
+      return { text, link }
+    }
+    return {
+      text,
+      collapsed: options.collapsed ?? true,
+      items: [
+        { text: ui.overview, link },
+        ...sections.map((s) => ({
+          text: s.text,
+          link: `${link}#${s.slug}`,
+        })),
+      ],
+    }
+  }
+
+  return [
+    {
+      text: ui.userGuide,
+      items: [
+        { text: ui.overview, link: prefix || '/' },
+        pageWithSections(ui.pages.gettingStarted, '/user-guide/01-getting-started', '01-getting-started.md', {
+          collapsed: false,
+          skip: [],
+        }),
+        pageWithSections(ui.pages.dashboard, '/user-guide/02-dashboard', '02-dashboard.md'),
+        pageWithSections(ui.pages.activeConnections, '/user-guide/03-my-clouds', '03-my-clouds.md'),
+        pageWithSections(ui.pages.connections, '/user-guide/04-connections', '04-connections.md', {
+          skip: ui.skipDefault.slice(0, 1),
+        }),
+        pageWithSections(ui.pages.storage, '/user-guide/05-iaas-storage', '05-iaas-storage.md'),
+        pageWithSections(ui.pages.networking, '/user-guide/06-iaas-networking', '06-iaas-networking.md'),
+        pageWithSections(ui.pages.virtualMachines, '/user-guide/07-iaas-virtual-machines', '07-iaas-virtual-machines.md'),
+        pageWithSections(ui.pages.spotVms, '/user-guide/08-iaas-ephemeral-vms', '08-iaas-ephemeral-vms.md'),
+        pageWithSections(ui.pages.paasSaas, '/user-guide/09-paas-saas', '09-paas-saas.md', {
+          skip: [],
+        }),
+        pageWithSections(ui.pages.account, '/user-guide/10-account', '10-account.md', { skip: [] }),
+        pageWithSections(ui.pages.settings, '/user-guide/11-settings', '11-settings.md', { skip: [] }),
+      ],
+    },
+  ]
+}
+
+function localeTheme(linkPrefix: string, guideRelDir: string, ui: LocaleUi): DefaultTheme.Config {
+  const sidebar = buildGuideSidebar(linkPrefix, guideRelDir, ui)
+  const home = linkPrefix === '/' ? '/' : `${linkPrefix.replace(/\/$/, '')}/`
   return {
-    text,
-    collapsed: options.collapsed ?? true,
-    items: [
-      { text: 'Overview', link },
-      ...sections.map((s) => ({
-        text: s.text,
-        link: `${link}#${s.slug}`,
-      })),
+    logo: { src: '/logo-mark.svg', alt: 'Electros' },
+    siteTitle: 'Electros Docs',
+    nav: [
+      { text: ui.navGuide, link: home },
+      {
+        text: ui.navWebsite,
+        link: ELECTROS_SITE,
+        target: '_blank',
+        rel: 'noopener',
+      },
+      {
+        text: ui.navDownload,
+        link: DOWNLOAD,
+        target: '_blank',
+        rel: 'noopener',
+      },
     ],
+    sidebar:
+      linkPrefix === '/'
+        ? { '/': sidebar, '/user-guide/': sidebar }
+        : {
+            [`${linkPrefix}`]: sidebar,
+            [`${linkPrefix}user-guide/`]: sidebar,
+          },
+    outline: { level: [2, 3] },
+    socialLinks: [{ icon: 'github', link: 'https://github.com/elemento-modular-cloud' }],
+    search: { provider: 'local' },
+    footer: {
+      message: ui.footerMessage,
+      copyright: ui.footerCopyright,
+    },
+    docFooter: {
+      prev: ui.prev,
+      next: ui.next,
+    },
   }
 }
 
-const guideSidebar: DefaultTheme.SidebarItem[] = [
-  {
-    text: 'User guide',
-    items: [
-      { text: 'Overview', link: '/' },
-      pageWithSections('Getting started', '/user-guide/01-getting-started', '01-getting-started.md', {
-        collapsed: false,
-        skip: [],
-      }),
-      pageWithSections('Dashboard', '/user-guide/02-dashboard', '02-dashboard.md'),
-      pageWithSections('Active Connections', '/user-guide/03-my-clouds', '03-my-clouds.md'),
-      pageWithSections('Connections', '/user-guide/04-connections', '04-connections.md', {
-        skip: ['What this page is for'],
-      }),
-      pageWithSections('IaaS Storage', '/user-guide/05-iaas-storage', '05-iaas-storage.md'),
-      pageWithSections('IaaS Networking', '/user-guide/06-iaas-networking', '06-iaas-networking.md'),
-      pageWithSections('Virtual Machines', '/user-guide/07-iaas-virtual-machines', '07-iaas-virtual-machines.md'),
-      pageWithSections('Spot / Ephemeral VMs', '/user-guide/08-iaas-ephemeral-vms', '08-iaas-ephemeral-vms.md'),
-      pageWithSections('PaaS & SaaS', '/user-guide/09-paas-saas', '09-paas-saas.md', {
-        skip: [],
-      }),
-      pageWithSections('Account', '/user-guide/10-account', '10-account.md', { skip: [] }),
-      pageWithSections('Settings', '/user-guide/11-settings', '11-settings.md', { skip: [] }),
-    ],
+const enUi: LocaleUi = {
+  overview: 'Overview',
+  userGuide: 'User guide',
+  skipDefault: ['What this page is for', 'Read the page'],
+  pages: {
+    gettingStarted: 'Getting started',
+    dashboard: 'Dashboard',
+    activeConnections: 'Active Connections',
+    connections: 'Connections',
+    storage: 'IaaS Storage',
+    networking: 'IaaS Networking',
+    virtualMachines: 'Virtual Machines',
+    spotVms: 'Spot / Ephemeral VMs',
+    paasSaas: 'PaaS & SaaS',
+    account: 'Account',
+    settings: 'Settings',
   },
-]
+  navGuide: 'Guide',
+  navWebsite: 'Website',
+  navDownload: 'Download',
+  footerMessage:
+    'Electros — the metacloud control plane · <a href="https://www.electros.cloud">www.electros.cloud</a>',
+  footerCopyright:
+    '© Elemento Srl · <a href="https://www.electros.cloud/privacy.html">Privacy</a> · <a href="https://www.electros.cloud/terms.html">Terms</a>',
+  prev: 'Previous',
+  next: 'Next',
+  description:
+    'Electros user guide — the metacloud control plane for public, private, and sovereign clouds.',
+}
+
+const itUi: LocaleUi = {
+  overview: 'Panoramica',
+  userGuide: 'Guida utente',
+  skipDefault: ['A cosa serve questa pagina', 'Leggi la pagina'],
+  pages: {
+    gettingStarted: 'Per iniziare',
+    dashboard: 'Dashboard',
+    activeConnections: 'Connessioni attive',
+    connections: 'Connessioni',
+    storage: 'Storage IaaS',
+    networking: 'Networking IaaS',
+    virtualMachines: 'Macchine virtuali',
+    spotVms: 'VM Spot / effimere',
+    paasSaas: 'PaaS e SaaS',
+    account: 'Account',
+    settings: 'Impostazioni',
+  },
+  navGuide: 'Guida',
+  navWebsite: 'Sito web',
+  navDownload: 'Download',
+  footerMessage:
+    'Electros — il control plane metacloud · <a href="https://www.electros.cloud">www.electros.cloud</a>',
+  footerCopyright:
+    '© Elemento Srl · <a href="https://www.electros.cloud/privacy.html">Privacy</a> · <a href="https://www.electros.cloud/terms.html">Termini</a>',
+  prev: 'Precedente',
+  next: 'Successivo',
+  description:
+    'Guida utente Electros — il control plane metacloud per cloud pubblici, privati e sovrani.',
+}
+
+const frUi: LocaleUi = {
+  overview: 'Aperçu',
+  userGuide: 'Guide utilisateur',
+  skipDefault: ['À quoi sert cette page', 'Lire la page'],
+  pages: {
+    gettingStarted: 'Premiers pas',
+    dashboard: 'Tableau de bord',
+    activeConnections: 'Connexions actives',
+    connections: 'Connexions',
+    storage: 'Stockage IaaS',
+    networking: 'Réseau IaaS',
+    virtualMachines: 'Machines virtuelles',
+    spotVms: 'VM Spot / éphémères',
+    paasSaas: 'PaaS et SaaS',
+    account: 'Compte',
+    settings: 'Paramètres',
+  },
+  navGuide: 'Guide',
+  navWebsite: 'Site web',
+  navDownload: 'Télécharger',
+  footerMessage:
+    'Electros — le plan de contrôle métacloud · <a href="https://www.electros.cloud">www.electros.cloud</a>',
+  footerCopyright:
+    '© Elemento Srl · <a href="https://www.electros.cloud/privacy.html">Confidentialité</a> · <a href="https://www.electros.cloud/terms.html">Conditions</a>',
+  prev: 'Précédent',
+  next: 'Suivant',
+  description:
+    'Guide utilisateur Electros — le plan de contrôle métacloud pour clouds publics, privés et souverains.',
+}
 
 export default defineConfig({
   title: 'Electros Docs',
-  description:
-    'Electros user guide — the metacloud control plane for public, private, and sovereign clouds.',
+  description: enUi.description,
   lang: 'en-US',
   cleanUrls: true,
   lastUpdated: true,
   appearance: true,
   srcExclude: ['README.md', '**/node_modules/**'],
 
-  // Deployed as docs.electros.cloud (sibling of www.electros.cloud)
   sitemap: {
     hostname: 'https://docs.electros.cloud',
   },
@@ -124,45 +289,24 @@ export default defineConfig({
     ],
   ],
 
-  themeConfig: {
-    logo: { src: '/logo-mark.svg', alt: 'Electros' },
-    siteTitle: 'Electros Docs',
-
-    nav: [
-      { text: 'Guide', link: '/' },
-      {
-        text: 'Website',
-        link: ELECTROS_SITE,
-        target: '_blank',
-        rel: 'noopener',
-      },
-      {
-        text: 'Download',
-        link: DOWNLOAD,
-        target: '_blank',
-        rel: 'noopener',
-      },
-    ],
-
-    sidebar: {
-      '/': guideSidebar,
-      '/user-guide/': guideSidebar,
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en-US',
+      description: enUi.description,
+      themeConfig: localeTheme('/', 'user-guide', enUi),
     },
-
-    outline: { level: [2, 3] },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/elemento-modular-cloud' },
-    ],
-    search: { provider: 'local' },
-    footer: {
-      message:
-        'Electros — the metacloud control plane · <a href="https://www.electros.cloud">www.electros.cloud</a>',
-      copyright:
-        '© Elemento Srl · <a href="https://www.electros.cloud/privacy.html">Privacy</a> · <a href="https://www.electros.cloud/terms.html">Terms</a>',
+    it: {
+      label: 'Italiano',
+      lang: 'it',
+      description: itUi.description,
+      themeConfig: localeTheme('/it/', 'it/user-guide', itUi),
     },
-    docFooter: {
-      prev: 'Previous',
-      next: 'Next',
+    fr: {
+      label: 'Français',
+      lang: 'fr',
+      description: frUi.description,
+      themeConfig: localeTheme('/fr/', 'fr/user-guide', frUi),
     },
   },
 
