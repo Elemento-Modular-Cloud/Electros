@@ -478,6 +478,9 @@ ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = true
 ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable) { return false; }
+    if (value == null || value === "") {
+        return false;
+    }
 
     // Convert str to buffer
     const buffer = Buffer.from(value, 'base64');

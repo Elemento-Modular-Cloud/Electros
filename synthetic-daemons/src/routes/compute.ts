@@ -4,12 +4,10 @@ import type { AppConfig } from "../config.js";
 import { rk } from "../config.js";
 import type { MemoryStore } from "../MemoryStore.js";
 import { json, ok } from "../createServer.js";
-import { createCatchAllRouter } from "../catchAll.js";
 
 export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   const router = Router();
   const keys = config.restKeys;
-  const base = rk(keys, "CLIENT_API_URL_KEY");
 
   router.get(rk(keys, "STATUS_API_KEY"), (_req: Request, res: Response) => {
     json(res, store.vms);
@@ -81,7 +79,7 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
   });
 
   router.get(rk(keys, "PORTTUNNEL_STATUS"), (_req: Request, res: Response) => {
-    json(res, store.portTunnels);
+    json(res, { status: store.portTunnels });
   });
 
   router.post(rk(keys, "PORTTUNNEL_START"), (req: Request, res: Response) => {
@@ -119,7 +117,38 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
     json(res, {});
   });
 
-  router.use(createCatchAllRouter(base));
+  router.get(rk(keys, "PORTTUNNEL_VNC_WITH_WS"), (_req: Request, res: Response) => {
+    json(res, []);
+  });
+  router.post(rk(keys, "PORTTUNNEL_VNC_WITH_WS"), (req: Request, res: Response) => {
+    const instanceId = String(req.body?.instance_id ?? randomUUID());
+    const vmUuid = String(req.body?.vm_uuid ?? req.body?.local_index ?? instanceId);
+    json(res, {
+      tunnel_port: Number(req.body?.tunnel_port ?? 6080),
+      vm_uuid: vmUuid,
+      instance_id: instanceId,
+      service: String(req.body?.service ?? "VNC"),
+    });
+  });
+  router.get(`${rk(keys, "PORTTUNNEL_VNC_WITH_WS")}/:instanceId`, (req: Request, res: Response) => {
+    json(res, {
+      tunnel_port: 6080,
+      vm_uuid: req.params.instanceId,
+      instance_id: req.params.instanceId,
+      service: "VNC",
+    });
+  });
+  router.delete(rk(keys, "PORTTUNNEL_STOP_VNC_WITH_WS"), (_req: Request, res: Response) => {
+    ok(res);
+  });
+
+  router.post(`${rk(keys, "LAST_VM_KEY")}/:volumeUid`, (req: Request, res: Response) => {
+    json(res, store.lastVmForVolume(req.params.volumeUid) ?? {});
+  });
+  router.post("/volume/attach", (_req: Request, res: Response) => { ok(res); });
+  router.post("/volume/detach", (_req: Request, res: Response) => { ok(res); });
+  router.post("/update", (_req: Request, res: Response) => { ok(res); });
 
   return router;
 }
+

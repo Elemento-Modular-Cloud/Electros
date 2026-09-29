@@ -2,9 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { randomUUID } from "node:crypto";
 import type { AppConfig } from "../config.js";
 import type { MemoryStore } from "../MemoryStore.js";
-import { createCatchAllRouter } from "../catchAll.js";
 import { json, ok } from "../createServer.js";
-import { rk } from "../config.js";
 
 function ndjsonResponse(res: Response, items: Record<string, unknown>[]): void {
   const body = items.map((item) => JSON.stringify(item)).join("\n");
@@ -13,9 +11,8 @@ function ndjsonResponse(res: Response, items: Record<string, unknown>[]): void {
   res.send(body ? `${body}\n` : "");
 }
 
-export function servicesRouter(store: MemoryStore, config: AppConfig): Router {
+export function servicesRouter(store: MemoryStore, _config: AppConfig): Router {
   const router = Router();
-  const base = rk(config.restKeys, "SERVICE_CLIENT_API_URL_KEY");
 
   router.get("/:service/running", (req: Request, res: Response) => {
     const serviceType = req.params.service;
@@ -100,7 +97,6 @@ export function servicesRouter(store: MemoryStore, config: AppConfig): Router {
     ok(res);
   });
 
-  router.use(createCatchAllRouter(base));
-
   return router;
 }
+

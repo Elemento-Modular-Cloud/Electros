@@ -3,13 +3,11 @@ import type { AppConfig } from "../config.js";
 import { rk } from "../config.js";
 import type { MemoryStore, TargetRecord } from "../MemoryStore.js";
 import { json, ok } from "../createServer.js";
-import { createCatchAllRouter } from "../catchAll.js";
 import { loadEcdJson, loadSupportedProvidersMap } from "../ecdFiles.js";
 
 export function targetRouter(store: MemoryStore, config: AppConfig): Router {
   const router = Router();
   const keys = config.restKeys;
-  const base = rk(keys, "TARGET_CLIENT_API_URL_KEY");
   const pingPath = keys.TARGET_PING_API_KEY ?? "/ping";
 
   router.get(rk(keys, "TARGET_LIST_API_KEY"), (_req: Request, res: Response) => {
@@ -29,12 +27,19 @@ export function targetRouter(store: MemoryStore, config: AppConfig): Router {
     });
   });
 
+  router.get("/connections/me/connections-status", (_req: Request, res: Response) => {
+    json(res, store.connectionsStatus());
+  });
+
   router.post(rk(keys, "TARGET_CREATE_API_KEY"), (req: Request, res: Response) => {
     const body = req.body ?? {};
     const record: TargetRecord = {
       target_id: (body.target_id as string) ?? (body.name as string) ?? "new-target",
+      target_name: (body.target_name as string) ?? (body.name as string) ?? (body.target_id as string) ?? "new-target",
       target_type: (body.target_type as string) ?? "atomos_local_ip",
       target_config: (body.target_config as Record<string, unknown>) ?? { ips: ["192.168.1.50"] },
+      active: true,
+      trusted: "trusted",
     };
     store.addTarget(record);
     json(res, { success: true, data: record });
@@ -91,8 +96,6 @@ export function targetRouter(store: MemoryStore, config: AppConfig): Router {
       json(res, {}, 404);
     }
   });
-
-  router.use(createCatchAllRouter(base));
 
   return router;
 }
