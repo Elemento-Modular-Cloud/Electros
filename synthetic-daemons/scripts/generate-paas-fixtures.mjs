@@ -179,6 +179,44 @@ for (let i = 0; i < PER_TYPE; i++) {
   addBilling("openclaw", i, billingUuid, 28 + (i % 5) * 15, i + 3);
 }
 
+const SPOT_OS = [
+  ["linux", "ubuntu"],
+  ["linux", "debian"],
+  ["linux", "rocky"],
+  ["linux", "fedora"],
+];
+
+for (let i = 0; i < PER_TYPE; i++) {
+  const n = pad3(i + 1);
+  const billingUuid = `billing-spotvm-${n}`;
+  const serviceUuid = `spotvm-synth-${n}`;
+  const region = pick(REGIONS, i + 3);
+  const provider = pick(["ovh", "scaleway", "upcloud"], i);
+  const [family, flavour] = pick(SPOT_OS, i);
+  const status = pick(VM_STATUSES, i + 1);
+  // Shape of a spot v2 `running` entry (EphemeralVmObject in the GUI).
+  services.push({
+    service_type: "spotvm",
+    service_uuid: serviceUuid,
+    billing_uuid: billingUuid,
+    vm_uuid: serviceUuid,
+    vm_name: `spot-${provider}-${region}-${n}`,
+    status,
+    region,
+    tags: [],
+    cpu: { slots: pick([2, 4, 8], i), shared_cores: true, arch: ["X86_64"] },
+    mem: { capacity_mb: pick([4096, 8192, 16384], i) },
+    os: { family, flavour },
+    storage: { boot: { name: "root", size_gb: pick([40, 80, 160], i), volume_uuid: `vol-${serviceUuid}` }, data: [] },
+    pci: { devices: [] },
+    networks: [{ kind: "public", ipv4: status === "provisioning" ? null : `51.15.${i + 10}.${(i * 7) % 250 + 2}` }],
+    cloud_init_b64: null,
+    serverurl: `${provider}.synthetic.local`,
+    provider,
+  });
+  addBilling("spotvm", i, billingUuid, 18 + (i % 3) * 14, i + 1);
+}
+
 const servicesPath = join(FIXTURES_DIR, "services.json");
 const billingPath = join(FIXTURES_DIR, "billing-transactions.json");
 

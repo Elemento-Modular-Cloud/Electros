@@ -521,7 +521,8 @@ export class MemoryStore {
     serviceType: string,
     serviceUuid: string,
     billingUuid: string,
-    body: Record<string, unknown>
+    body: Record<string, unknown>,
+    targetId?: string
   ): ServiceInstanceRecord {
     const oneYear = new Date();
     oneYear.setFullYear(oneYear.getFullYear() + 1);
@@ -571,6 +572,27 @@ export class MemoryStore {
         vm_name: (body.vm_name as string) ?? `${serviceType}-${serviceUuid.slice(0, 6)}`,
         status: "running",
         region,
+      };
+    } else if (serviceType === "spotvm") {
+      // Spot v2 `running` shape: the create body plus identity, status, provider and a public IP.
+      const { auth: _auth, ...spec } = body;
+      const networks = Array.isArray(body.networks) && body.networks.length > 0
+        ? (body.networks as Record<string, unknown>[])
+        : [{ kind: "public" }];
+      const octet = () => Math.floor(Math.random() * 250) + 2;
+      const provider = (this.targets.data.find((t) => t.target_id === targetId)?.target_config?.provider as string)
+        ?? "scaleway";
+      record = {
+        ...base,
+        ...spec,
+        vm_uuid: serviceUuid,
+        vm_name: (body.vm_name as string) ?? `spot-${serviceUuid.slice(0, 6)}`,
+        status: "running",
+        region,
+        tags: (body.tags as string[]) ?? [],
+        networks: networks.map((n) => ({ ...n, ipv4: n.kind === "public" ? `51.15.${octet()}.${octet()}` : null })),
+        serverurl: `${provider}.synthetic.local`,
+        provider,
       };
     } else {
       record = { ...base, ...body, status: (body.status as string) ?? "running" };

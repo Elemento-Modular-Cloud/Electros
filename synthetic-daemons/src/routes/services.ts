@@ -66,7 +66,7 @@ export function servicesRouter(store: MemoryStore, _config: AppConfig): Router {
     const serviceUuid = randomUUID();
     const body = (req.body ?? {}) as Record<string, unknown>;
 
-    const record = store.createServiceInstance(serviceType, serviceUuid, billingUuid, body);
+    const record = store.createServiceInstance(serviceType, serviceUuid, billingUuid, body, req.header("Target-Id"));
     json(res, {
       billing_uuid: billingUuid,
       payment_url: `https://synthetic.local/pay/${billingUuid}`,

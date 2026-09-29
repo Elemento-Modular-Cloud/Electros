@@ -826,5 +826,797 @@
     "vm_name": "claw-azure-eu-central-2-018",
     "status": "running",
     "region": "eu-central-2"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-001",
+    "billing_uuid": "billing-spotvm-001",
+    "vm_uuid": "spotvm-synth-001",
+    "vm_name": "spot-ovh-europe-west1-001",
+    "status": "running",
+    "region": "europe-west1",
+    "tags": [],
+    "cpu": {
+      "slots": 2,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 4096
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "ubuntu"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 40,
+        "volume_uuid": "vol-spotvm-synth-001"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.10.2"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "ovh.synthetic.local",
+    "provider": "ovh"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-002",
+    "billing_uuid": "billing-spotvm-002",
+    "vm_uuid": "spotvm-synth-002",
+    "vm_name": "spot-scaleway-europe-west4-002",
+    "status": "stopped",
+    "region": "europe-west4",
+    "tags": [],
+    "cpu": {
+      "slots": 4,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 8192
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "debian"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 80,
+        "volume_uuid": "vol-spotvm-synth-002"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.11.9"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.synthetic.local",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-003",
+    "billing_uuid": "billing-spotvm-003",
+    "vm_uuid": "spotvm-synth-003",
+    "vm_name": "spot-upcloud-nl-ams-003",
+    "status": "updating",
+    "region": "nl-ams",
+    "tags": [],
+    "cpu": {
+      "slots": 8,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 16384
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "rocky"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 160,
+        "volume_uuid": "vol-spotvm-synth-003"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.12.16"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "upcloud.synthetic.local",
+    "provider": "upcloud"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-004",
+    "billing_uuid": "billing-spotvm-004",
+    "vm_uuid": "spotvm-synth-004",
+    "vm_name": "spot-ovh-fi-hel2-004",
+    "status": "error",
+    "region": "fi-hel2",
+    "tags": [],
+    "cpu": {
+      "slots": 2,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 4096
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "fedora"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 40,
+        "volume_uuid": "vol-spotvm-synth-004"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.13.23"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "ovh.synthetic.local",
+    "provider": "ovh"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-005",
+    "billing_uuid": "billing-spotvm-005",
+    "vm_uuid": "spotvm-synth-005",
+    "vm_name": "spot-scaleway-de-fra1-005",
+    "status": "provisioning",
+    "region": "de-fra1",
+    "tags": [],
+    "cpu": {
+      "slots": 4,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 8192
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "ubuntu"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 80,
+        "volume_uuid": "vol-spotvm-synth-005"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": null
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.synthetic.local",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-006",
+    "billing_uuid": "billing-spotvm-006",
+    "vm_uuid": "spotvm-synth-006",
+    "vm_name": "spot-upcloud-pl-waw1-006",
+    "status": "running",
+    "region": "pl-waw1",
+    "tags": [],
+    "cpu": {
+      "slots": 8,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 16384
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "debian"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 160,
+        "volume_uuid": "vol-spotvm-synth-006"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.15.37"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "upcloud.synthetic.local",
+    "provider": "upcloud"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-007",
+    "billing_uuid": "billing-spotvm-007",
+    "vm_uuid": "spotvm-synth-007",
+    "vm_name": "spot-ovh-us-east1-007",
+    "status": "running",
+    "region": "us-east1",
+    "tags": [],
+    "cpu": {
+      "slots": 2,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 4096
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "rocky"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 40,
+        "volume_uuid": "vol-spotvm-synth-007"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.16.44"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "ovh.synthetic.local",
+    "provider": "ovh"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-008",
+    "billing_uuid": "billing-spotvm-008",
+    "vm_uuid": "spotvm-synth-008",
+    "vm_name": "spot-scaleway-eastus-008",
+    "status": "stopped",
+    "region": "eastus",
+    "tags": [],
+    "cpu": {
+      "slots": 4,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 8192
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "fedora"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 80,
+        "volume_uuid": "vol-spotvm-synth-008"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.17.51"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.synthetic.local",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-009",
+    "billing_uuid": "billing-spotvm-009",
+    "vm_uuid": "spotvm-synth-009",
+    "vm_name": "spot-upcloud-westeurope-009",
+    "status": "updating",
+    "region": "westeurope",
+    "tags": [],
+    "cpu": {
+      "slots": 8,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 16384
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "ubuntu"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 160,
+        "volume_uuid": "vol-spotvm-synth-009"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.18.58"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "upcloud.synthetic.local",
+    "provider": "upcloud"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-010",
+    "billing_uuid": "billing-spotvm-010",
+    "vm_uuid": "spotvm-synth-010",
+    "vm_name": "spot-ovh-eu-central-1-010",
+    "status": "error",
+    "region": "eu-central-1",
+    "tags": [],
+    "cpu": {
+      "slots": 2,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 4096
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "debian"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 40,
+        "volume_uuid": "vol-spotvm-synth-010"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.19.65"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "ovh.synthetic.local",
+    "provider": "ovh"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-011",
+    "billing_uuid": "billing-spotvm-011",
+    "vm_uuid": "spotvm-synth-011",
+    "vm_name": "spot-scaleway-eu-central-2-011",
+    "status": "provisioning",
+    "region": "eu-central-2",
+    "tags": [],
+    "cpu": {
+      "slots": 4,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 8192
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "rocky"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 80,
+        "volume_uuid": "vol-spotvm-synth-011"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": null
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.synthetic.local",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-012",
+    "billing_uuid": "billing-spotvm-012",
+    "vm_uuid": "spotvm-synth-012",
+    "vm_name": "spot-upcloud-uk-lon1-012",
+    "status": "running",
+    "region": "uk-lon1",
+    "tags": [],
+    "cpu": {
+      "slots": 8,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 16384
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "fedora"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 160,
+        "volume_uuid": "vol-spotvm-synth-012"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.21.79"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "upcloud.synthetic.local",
+    "provider": "upcloud"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-013",
+    "billing_uuid": "billing-spotvm-013",
+    "vm_uuid": "spotvm-synth-013",
+    "vm_name": "spot-ovh-fr-par-013",
+    "status": "running",
+    "region": "fr-par",
+    "tags": [],
+    "cpu": {
+      "slots": 2,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 4096
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "ubuntu"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 40,
+        "volume_uuid": "vol-spotvm-synth-013"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.22.86"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "ovh.synthetic.local",
+    "provider": "ovh"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-014",
+    "billing_uuid": "billing-spotvm-014",
+    "vm_uuid": "spotvm-synth-014",
+    "vm_name": "spot-scaleway-gra7-014",
+    "status": "stopped",
+    "region": "gra7",
+    "tags": [],
+    "cpu": {
+      "slots": 4,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 8192
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "debian"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 80,
+        "volume_uuid": "vol-spotvm-synth-014"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.23.93"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.synthetic.local",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-015",
+    "billing_uuid": "billing-spotvm-015",
+    "vm_uuid": "spotvm-synth-015",
+    "vm_name": "spot-upcloud-rbx-015",
+    "status": "updating",
+    "region": "rbx",
+    "tags": [],
+    "cpu": {
+      "slots": 8,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 16384
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "rocky"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 160,
+        "volume_uuid": "vol-spotvm-synth-015"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.24.100"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "upcloud.synthetic.local",
+    "provider": "upcloud"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-016",
+    "billing_uuid": "billing-spotvm-016",
+    "vm_uuid": "spotvm-synth-016",
+    "vm_name": "spot-ovh-europe-west1-016",
+    "status": "error",
+    "region": "europe-west1",
+    "tags": [],
+    "cpu": {
+      "slots": 2,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 4096
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "fedora"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 40,
+        "volume_uuid": "vol-spotvm-synth-016"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.25.107"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "ovh.synthetic.local",
+    "provider": "ovh"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-017",
+    "billing_uuid": "billing-spotvm-017",
+    "vm_uuid": "spotvm-synth-017",
+    "vm_name": "spot-scaleway-europe-west4-017",
+    "status": "provisioning",
+    "region": "europe-west4",
+    "tags": [],
+    "cpu": {
+      "slots": 4,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 8192
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "ubuntu"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 80,
+        "volume_uuid": "vol-spotvm-synth-017"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": null
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.synthetic.local",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-synth-018",
+    "billing_uuid": "billing-spotvm-018",
+    "vm_uuid": "spotvm-synth-018",
+    "vm_name": "spot-upcloud-nl-ams-018",
+    "status": "running",
+    "region": "nl-ams",
+    "tags": [],
+    "cpu": {
+      "slots": 8,
+      "shared_cores": true,
+      "arch": [
+        "X86_64"
+      ]
+    },
+    "mem": {
+      "capacity_mb": 16384
+    },
+    "os": {
+      "family": "linux",
+      "flavour": "debian"
+    },
+    "storage": {
+      "boot": {
+        "name": "root",
+        "size_gb": 160,
+        "volume_uuid": "vol-spotvm-synth-018"
+      },
+      "data": []
+    },
+    "pci": {
+      "devices": []
+    },
+    "networks": [
+      {
+        "kind": "public",
+        "ipv4": "51.15.27.121"
+      }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "upcloud.synthetic.local",
+    "provider": "upcloud"
   }
 ]
