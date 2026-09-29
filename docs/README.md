@@ -32,4 +32,4 @@ npm run docs:build
 npm run docs:preview
 ```
 
-Output is written to `docs/.vitepress/dist/`. Deploy that folder to the `docs.electros.cloud` host (or your CDN / Pages project). For GitHub Pages, the workflow on `main` builds this folder and pushes the static site to the `gh-pages` branch.
+Output is written to `docs/.vitepress/dist/`. Deploy that folder to the `docs.electros.cloud` host (or your CDN / Pages project). For GitHub Pages, the workflow on `main` builds this folder and publishes it via **GitHub Actions** (`actions/deploy-pages`).
