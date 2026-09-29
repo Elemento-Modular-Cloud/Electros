@@ -15,6 +15,7 @@ const {BuildMenuTemplate} = require("./common/MenuBar");
 const {PortHandler} = require("./common/PortHandler");
 const {Platform} = require("./common/Platform");
 const {Daemons} = require("./common/Daemons");
+const {Updater} = require("./common/Updater");
 const {Terminal} = require("./windows/Terminal");
 const {RdpWindow} = require("./windows/Rdp.js");
 const {DaemonsNotEnabledError} = require("./common/Daemons.js");
@@ -519,4 +520,16 @@ ipcMain.handle("app-version", () => {
 
 ipcMain.handle("get-daemons-log", () => {
     return Daemons.GetDaemonsLogBuffer();
+});
+
+ipcMain.handle("update-check", (event, {version, channel}) => {
+    return Updater.Check(platform, version, channel);
+});
+
+ipcMain.handle("update-download", (event) => {
+    return Updater.Download(percent => event.sender.send("update-progress", percent));
+});
+
+ipcMain.handle("update-apply", () => {
+    return Updater.Apply();
 });
