@@ -1039,7 +1039,17 @@
       "instance_flavour_catalog": "google",
       "instance_flavour": "e2-medium",
       "block_storage_gb": 30,
-      "deployment_region": "europe-west1"
+      "deployment_region": "europe-west1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1071,7 +1081,17 @@
       "instance_flavour_catalog": "google",
       "instance_flavour": "n2-standard-2",
       "block_storage_gb": 50,
-      "deployment_region": "us-central1"
+      "deployment_region": "us-central1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1103,7 +1123,17 @@
       "instance_flavour_catalog": "google",
       "instance_flavour": "e2-small",
       "block_storage_gb": 20,
-      "deployment_region": "europe-west1"
+      "deployment_region": "europe-west1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1135,7 +1165,17 @@
       "instance_flavour_catalog": "aws",
       "instance_flavour": "t3.small",
       "block_storage_gb": 20,
-      "deployment_region": "eu-west-1"
+      "deployment_region": "eu-west-1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1167,7 +1207,17 @@
       "instance_flavour_catalog": "aws",
       "instance_flavour": "t3.medium",
       "block_storage_gb": 30,
-      "deployment_region": "us-east-1"
+      "deployment_region": "us-east-1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1199,7 +1249,17 @@
       "instance_flavour_catalog": "aws",
       "instance_flavour": "t3.large",
       "block_storage_gb": 50,
-      "deployment_region": "eu-central-1"
+      "deployment_region": "eu-central-1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1231,7 +1291,17 @@
       "instance_flavour_catalog": "azure",
       "instance_flavour": "B2s",
       "block_storage_gb": 16,
-      "deployment_region": "westeurope"
+      "deployment_region": "westeurope",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1263,7 +1333,17 @@
       "instance_flavour_catalog": "azure",
       "instance_flavour": "D2s_v5",
       "block_storage_gb": 30,
-      "deployment_region": "northeurope"
+      "deployment_region": "northeurope",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1295,7 +1375,17 @@
       "instance_flavour_catalog": "azure",
       "instance_flavour": "E2s_v5",
       "block_storage_gb": 40,
-      "deployment_region": "eastus"
+      "deployment_region": "eastus",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1327,7 +1417,17 @@
       "instance_flavour_catalog": "ovh",
       "instance_flavour": "b2-7",
       "block_storage_gb": 25,
-      "deployment_region": "gra"
+      "deployment_region": "gra",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1359,7 +1459,17 @@
       "instance_flavour_catalog": "ovh",
       "instance_flavour": "c2-7",
       "block_storage_gb": 25,
-      "deployment_region": "sbg"
+      "deployment_region": "sbg",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1391,7 +1501,17 @@
       "instance_flavour_catalog": "scaleway",
       "instance_flavour": "DEV1-M",
       "block_storage_gb": 20,
-      "deployment_region": "fr-par-1"
+      "deployment_region": "fr-par-1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1423,7 +1543,17 @@
       "instance_flavour_catalog": "scaleway",
       "instance_flavour": "GP1-S",
       "block_storage_gb": 40,
-      "deployment_region": "nl-ams-1"
+      "deployment_region": "nl-ams-1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
@@ -1455,7 +1585,17 @@
       "instance_flavour_catalog": "upcloud",
       "instance_flavour": "1xCPU-2GB",
       "block_storage_gb": 25,
-      "deployment_region": "de-fra1"
+      "deployment_region": "de-fra1",
+      "network_config": {
+        "ipv4": "127.0.0.1",
+        "interface": "eth0",
+        "is_reachable_from_host": true,
+        "mac": "52:54:00:12:34:56",
+        "model": "virtio",
+        "name": "public",
+        "source": "public",
+        "type": "network"
+      }
     },
     "is_gateway": false,
     "xml": ""
