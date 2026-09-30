@@ -26,12 +26,14 @@
 # #------------------------------------------------------------------------------#
 #
 
-FROM node:24.9.0 AS bundler
+FROM node:24.11.0 AS bundler
 
 WORKDIR /build
 COPY /elemento-gui-new /build
 
 RUN npm i
+#ENV JS_INCLUDE_MAPS=true
+ENV USE_LOCAL_ACCOUNT_SERVICES=true
 RUN npm run build:atomos-gui
 
 RUN mv dist-atomos-gui/electros/electrosOnAtomos.html dist-atomos-gui/electros/electros.html
