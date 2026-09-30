@@ -406,11 +406,13 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         event.sender.ssh_port = ssh_port;
 
         sshWindow.webContents.on('did-finish-load', () => {
+            const safeName = String(connectionDetails.vmName ?? "SSH").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
             const sshTitlebarJS = PreloadedContent.Js.Titlebar.replace(
               'titleElement.textContent = document.title;',
-              `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
+              `titleElement.textContent = "SSH · ${safeName}";`
             );
             sshWindow.webContents.executeJavaScript(sshTitlebarJS);
+            sshWindow.setTitle(`SSH · ${connectionDetails.vmName ?? "SSH"}`);
         });
 
         // Add connection cleanup on window close
@@ -440,7 +442,28 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         });
 
         // Load the SSH client page with connection details and port
-        await sshWindow.loadURL(`http://localhost:${ssh_port}/?host=${encodeURIComponent(connectionDetails.ip)}&username=${encodeURIComponent(connectionDetails.username)}&password=${encodeURIComponent(connectionDetails.password)}`);
+        const details = connectionDetails.details && typeof connectionDetails.details === "object"
+            ? connectionDetails.details
+            : {};
+        const detailParams = [
+            ["vmName", connectionDetails.vmName ?? "SSH"],
+            ["host", connectionDetails.ip ?? ""],
+            ["username", connectionDetails.username ?? ""],
+            ["password", connectionDetails.password ?? ""],
+            ["flavour", details.flavour ?? ""],
+            ["provider", details.provider ?? ""],
+            ["region", details.region ?? ""],
+            ["os", details.os ?? ""],
+            ["osFamily", details.osFamily ?? ""],
+            ["osFlavour", details.osFlavour ?? ""],
+            ["state", details.state ?? ""],
+            ["cpu", details.cpu ?? ""],
+            ["ram", details.ram ?? ""],
+        ]
+            .map(([key, value]) => `${key}=${encodeURIComponent(String(value ?? ""))}`)
+            .join("&");
+
+        await sshWindow.loadURL(`http://localhost:${ssh_port}/?${detailParams}`);
 
         return sshWindow.id;
     } catch (error) {
@@ -478,6 +501,9 @@ ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = true
 ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable) { return false; }
+    if (value == null || value === "") {
+        return false;
+    }
 
     // Convert str to buffer
     const buffer = Buffer.from(value, 'base64');

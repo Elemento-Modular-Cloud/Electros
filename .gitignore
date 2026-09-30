@@ -7,3 +7,6 @@ electros-electron/venv
 .env
 logs/
 env/
+docs/node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
