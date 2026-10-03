@@ -26,6 +26,7 @@ Every one of these pages shares the same chrome:
 - A **Create** button under the title. It opens a form, then a host picker. Region and price come from the host you select.
 - Six gauges: **Total**, **Running**, **Stopped**, **Errors**, **Pending**, and **Other**.
 - **Reload**.
+- On the **Pro** plan, a **Vendor** health chip next to the toolbar (and next to the provider column) shows Hypermonitor’s status for that product on the clouds you use. Instance **Status** in the table is still the resource itself (running, stopped, provisioning).
 - A table. **Delete** is always in Actions and asks you to confirm.
 
 What changes is the columns and the extra action.

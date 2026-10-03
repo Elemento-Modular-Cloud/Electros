@@ -26,6 +26,7 @@ Chacune de ces pages partage le même habillage :
 - Un bouton **Create** sous le titre. Il ouvre un formulaire, puis un sélecteur d'hôte. La région et le prix viennent de l'hôte que vous sélectionnez.
 - Six jauges : **Total**, **Running**, **Stopped**, **Errors**, **Pending** et **Other**.
 - **Reload**.
+- Avec le plan **Pro**, un chip **Vendor** dans la barre d'outils (et à côté de la colonne provider) affiche l'état Hypermonitor de ce produit sur les clouds utilisés. Le **Status** d'instance dans le tableau reste celui de la ressource (running, stopped, provisioning).
 - Un tableau. **Delete** est toujours dans Actions et demande une confirmation.
 
 Ce qui change, ce sont les colonnes et l'action supplémentaire.

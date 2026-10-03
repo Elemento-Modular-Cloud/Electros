@@ -55,6 +55,8 @@ Leggi da sinistra a destra, poi la colonna a destra.
 
 **Cloud targets** è l’elenco di raggiungibilità. Un punto verde significa che Electros può parlare con quell’host. Un punto rosso significa unreachable — le creazioni che necessitano di quell’host falliranno o lo ometteranno. Sistema la rete, il daemon o la registrazione del target prima di riprovare un wizard.
 
+Con il piano **Pro**, le righe meson (cloud pubblico) mostrano anche un chip di salute del vendor da Hypermonitor: operational, maintenance, degraded o outage. È lo stato del prodotto del cloud, non se Electros raggiunge l’host. Apri **Cloud status** nella barra laterale per la tabella completa provider × servizio.
+
 Le righe in basso ripetono i numeri di testa in frasi (ad esempio quante VM sono in esecuzione, quanti target sono giù).
 
 ## Quando la dashboard sembra vuota

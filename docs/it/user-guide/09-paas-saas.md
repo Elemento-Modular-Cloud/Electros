@@ -26,6 +26,7 @@ Ognuna di queste pagine condivide lo stesso chrome:
 - Un pulsante **Create** sotto il titolo. Apre un modulo, poi un selettore host. Region e prezzo arrivano dall’host che selezioni.
 - Sei gauge: **Total**, **Running**, **Stopped**, **Errors**, **Pending** e **Other**.
 - **Reload**.
+- Con il piano **Pro**, un chip **Vendor** nella toolbar (e accanto alla colonna provider) mostra lo stato Hypermonitor di quel prodotto sui cloud che usi. Lo **Status** dell’istanza in tabella resta quello della risorsa (running, stopped, provisioning).
 - Una tabella. **Delete** è sempre in Actions e ti chiede di confermare.
 
 Ciò che cambia sono le colonne e l’azione extra.

@@ -55,6 +55,8 @@ Lisez de gauche à droite, puis la colonne de droite.
 
 **Cloud targets** est la liste de joignabilité. Un point vert signifie qu'Electros peut parler à cet hôte. Un point rouge signifie unreachable — les créations qui ont besoin de cet hôte échoueront ou l'omettront. Corrigez le réseau, le daemon ou l'enregistrement de la cible avant de réessayer un assistant.
 
+Avec le plan **Pro**, les lignes meson (cloud public) affichent aussi un chip de santé fournisseur via Hypermonitor : operational, maintenance, degraded ou outage. C'est l'état produit du cloud, pas la joignabilité Electros. Ouvrez **Cloud status** dans la barre latérale pour la table complète fournisseur × service.
+
 Les lignes en bas répètent les chiffres principaux en phrases (par exemple combien de VM sont en cours d'exécution, combien de cibles sont hors service).
 
 ## Quand le tableau de bord paraît vide

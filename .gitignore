@@ -5,6 +5,7 @@ electros-nwjs/nwjs-sdk-*
 .DS_Store
 electros-electron/venv
 .env
+elemento-gui-new/electros/configs/flags.local.json
 logs/
 env/
 docs/node_modules/

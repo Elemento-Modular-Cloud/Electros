@@ -55,6 +55,8 @@ Read left to right, then the column on the right.
 
 **Cloud targets** is the reachability list. A green dot means Electros can talk to that host. A red dot means unreachable — creates that need that host will fail or omit it. Fix the network, the daemon, or the target registration before you retry a wizard.
 
+On the **Pro** plan, meson (public cloud) rows also show a vendor health chip from Hypermonitor: operational, maintenance, degraded, or outage. That is the cloud vendor’s product status, not whether Electros can reach the host. Open **Cloud status** in the sidebar for the full provider × service table.
+
 The lines at the bottom repeat the headline numbers in sentences (for example how many VMs are running, how many targets are down).
 
 ## When the dashboard looks empty

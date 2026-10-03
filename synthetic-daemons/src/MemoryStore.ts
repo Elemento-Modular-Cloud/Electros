@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import type { AppConfig } from "./config.js";
+import { hypermonitorEnabled } from "./routes/subscription.js";
 
 export interface AuthStatus {
   authenticated: boolean;
@@ -91,6 +92,7 @@ export class MemoryStore {
   services: ServiceInstanceRecord[];
   billingTransactions: BillingTransactionRecord[];
   licenses: LicensesListResponse;
+  billingTiersData: Record<string, unknown>[] = [];
   /** Demo scenarios shown on Active Connections (matches target-client SingleScenarioResponse). */
   scenarios: Array<{
     id: string;
@@ -187,6 +189,12 @@ export class MemoryStore {
       }
       this.licenses = loadFixture(fixturesDir, "licenses.json");
     }
+
+    try {
+      this.billingTiersData = loadFixture(fixturesDir, "billing-tiers.json");
+    } catch {
+      this.billingTiersData = [];
+    }
   }
 
   private snapshot(): void {
@@ -266,6 +274,46 @@ export class MemoryStore {
         cancreate_net_fully_isolated: true,
         cancreate_net_with_static_routes: true,
       },
+    };
+  }
+
+  billingTiers(): Record<string, unknown>[] {
+    const enabled = hypermonitorEnabled();
+    return this.billingTiersData.map((tier) => {
+      const feature = {
+        ...(tier.feature as Record<string, boolean> | undefined),
+        hypermonitor: enabled && Boolean((tier.feature as Record<string, boolean> | undefined)?.hypermonitor),
+      };
+      if (tier.name === "base") {
+        feature.hypermonitor = false;
+      }
+      return { ...tier, feature };
+    });
+  }
+
+  currentSubscription(): Record<string, unknown> {
+    const enabled = hypermonitorEnabled();
+    const tier = this.billingTiers().find((t) => t.name === (enabled ? "pro" : "base"))
+      ?? this.billingTiers()[0];
+    const s = this.authStatus;
+    return {
+      id: "synthetic-subscription",
+      account_id: "synthetic-account",
+      email: s.username,
+      organisation_id: s.org_id,
+      tier_id: tier?.id ?? "tier-pro",
+      tier_name: tier?.name ?? "pro",
+      billing_frequency: "monthly",
+      status: "active",
+      subscribed_at: new Date().toISOString(),
+      current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      cancel_at_period_end: false,
+      cancelled_at: null,
+      stripe_subscription_id: "sub_synthetic",
+      max_connections: (tier?.max_connections as number | undefined) ?? 25,
+      current_connections: this.targets.data.filter((t) => t.active).length,
+      pending_tier_id: null,
+      pending_tier_name: null,
     };
   }
 

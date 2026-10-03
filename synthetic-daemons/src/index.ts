@@ -4,6 +4,7 @@ import { MemoryStore } from "./MemoryStore.js";
 import { createDaemonServer, mountRouter, json } from "./createServer.js";
 import { fillCatalogGaps, type HandlerMap } from "./mountFromCatalog.js";
 import { authRouter } from "./routes/auth.js";
+import { subscriptionRouter } from "./routes/subscription.js";
 import { computeRouter } from "./routes/compute.js";
 import { storageRouter } from "./routes/storage.js";
 import { networkRouter } from "./routes/network.js";
@@ -132,6 +133,7 @@ function start(): void {
       port: networking.AUTH_CLIENT_REST_API_PORT,
       mountRouters: (app) => {
         mountRouter(app, rk(restKeys, "AUTH_CLIENT_API_URL_KEY"), authRouter(store, config));
+        mountRouter(app, "/api/v1.0/subscription", subscriptionRouter(store));
         fillCatalogGaps(app, "auth", authOverrides());
       },
     }),

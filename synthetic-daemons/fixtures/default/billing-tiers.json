@@ -1,0 +1,34 @@
+[
+  {
+    "id": "tier-base",
+    "name": "base",
+    "display_name": "Base",
+    "price_monthly": 0,
+    "price_yearly": 0,
+    "currency": "EUR",
+    "max_connections": 5,
+    "feature": {
+      "ai_proxy": false,
+      "hypermonitor": false
+    },
+    "public": true,
+    "active": true,
+    "level": 1
+  },
+  {
+    "id": "tier-pro",
+    "name": "pro",
+    "display_name": "Pro",
+    "price_monthly": 4900,
+    "price_yearly": 49000,
+    "currency": "EUR",
+    "max_connections": 25,
+    "feature": {
+      "ai_proxy": true,
+      "hypermonitor": true
+    },
+    "public": true,
+    "active": true,
+    "level": 2
+  }
+]
