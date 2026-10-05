@@ -24,6 +24,9 @@ contextBridge.exposeInMainWorld('electron', {
             'safestorage-encrypt',
             'safestorage-decrypt',
             'get-daemons-log',
+            'update-check',
+            'update-download',
+            'update-apply',
             'background-list',
             'background-delete',
             'background-fetch',
@@ -47,7 +50,7 @@ contextBridge.exposeInMainWorld('electron', {
             }
         },
         on: (channel, callback) => {
-            const validChannels = ['window-close', 'rdp-process-closed'];
+            const validChannels = ['window-close', 'rdp-process-closed', 'update-progress'];
             if (validChannels.includes(channel)) {
                 ipcRenderer.on(channel, callback);
             }
