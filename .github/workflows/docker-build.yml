@@ -3,19 +3,19 @@ name: Build and Push Electros docker image
 on:
     workflow_dispatch:
 
-permissions:
-    contents: write
-    packages: write
-
 jobs:
     build-and-push:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
+
         steps:
 
             # build and push the docker image to ghcr.io
 
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                 token: ${{ secrets.CI_TOKEN }}
                 submodules: recursive
@@ -27,7 +27,7 @@ jobs:
                 ./populate_daemons.sh --platform linux --arch x64 --develop
 
             - name: Login to GHCR
-              uses: docker/login-action@v2
+              uses: docker/login-action@v4
               with:
                 registry: ghcr.io
                 username: ${{ github.actor }}
