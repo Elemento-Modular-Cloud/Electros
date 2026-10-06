@@ -473,12 +473,15 @@ jobs:
   build-and-push:
       name: Build AtomOS-GUI docker image
       runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        packages: write
       steps:
 
           # build and push the docker image to ghcr.io
 
           - name: Checkout code
-            uses: actions/checkout@v4
+            uses: actions/checkout@v6
             with:
               token: ${{ secrets.CI_TOKEN }}
               submodules: recursive
@@ -490,11 +493,11 @@ jobs:
               ./populate_daemons.sh --platform linux --arch x64
 
           - name: Login to GHCR
-            uses: docker/login-action@v2
+            uses: docker/login-action@v4
             with:
               registry: ghcr.io
               username: ${{ github.actor }}
-              password: ${{ secrets.REPO_KEY }}
+              password: ${{ secrets.GITHUB_TOKEN }}
 
           - name: Build and push Docker image
             run: |
