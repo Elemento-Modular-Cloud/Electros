@@ -1,6 +1,6 @@
 # Synthetic HTTP Client Daemons
 
-Standalone mock servers that emulate Elemento **client daemons** on the ECD localhost ports. Use them to run the Electros UI without native `elemento_client_daemons` binaries.
+Standalone mock servers that emulate Elemento **client daemons** on the ECD localhost ports. They track the production surface from `elemento-monorepo-client` (`daemons_0.2`) via a generated route catalog. Use them to run Electros without native `elemento_client_daemons` binaries.
 
 ## Quick start
 
@@ -45,6 +45,32 @@ Ensure [`elemento-gui-new/electros/configs/flags.json`](../elemento-gui-new/elec
 
 API paths come from [`elemento-gui-new/electros/ecd/restkeys.json`](../elemento-gui-new/electros/ecd/restkeys.json).
 
+Cloud targets are **centralised**. The target daemon does not mount local `/list` / `/create` CRUD. The source of truth is the in-memory portal:
+
+- `GET /api/v1.0/client/target/grants/me`
+- `GET /api/v1.0/client/target/connections/me`
+- `GET /api/v1.0/client/target/connections/me/connections-status`
+- Org-admin: `/org-targets`, `/target-grants`, `/scenarios`
+
+Auth is portal-shaped on the same process: `/api/v1/authenticate/*` plus `/api/v1.0` orgs, membership, limits, invites, and subscriptions.
+
+## Keeping pace with production (catalog)
+
+The mounted production surface is checked in as [`catalog/production-routes.json`](catalog/production-routes.json). Regenerating it is the main evolution workflow:
+
+```bash
+# Point at your elemento-monorepo-client checkout (default: ../elemento-monorepo-client)
+export ELEMENTO_MONOREPO_CLIENT=/path/to/elemento-monorepo-client
+npm run sync:catalog
+npm test
+```
+
+1. `sync:catalog` scrapes **mounted** FastAPI routers (`api_layer/router.py` includes only — middev `/list` stays out), Flask `@route` handlers, and MCP `custom_route`s.
+2. `npm test` runs route inventory + **parity**: every catalog route must be reachable (handler or typed envelope). Application `404` for unknown IDs is fine; Express “Cannot METHOD …” is not.
+3. New production routes → re-sync → red parity → add a real handler under `src/routes/**` or a typed override in `src/index.ts` / `src/envelopes/`.
+
+Runtime mounting: smart routers first, then [`fillCatalogGaps`](src/mountFromCatalog.ts) registers every remaining catalog path with a MemoryStore handler override or a shallow envelope (replaces the old catch-all).
+
 ## CLI options
 
 | Flag | Description |
@@ -64,13 +90,15 @@ curl -s http://127.0.0.1:47777/api/v1/authenticate/status
 # Licenses (Settings → Licenses)
 curl -s http://127.0.0.1:47777/api/v1/authenticate/license/list
 
+# Cloud targets (grants + active connections — not /list)
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/grants/me
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/connections/me
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/connections/me/connections-status
+curl -s http://127.0.0.1:57777/api/v1.0/client/target/org-targets
+
 # VM list
 curl -s http://127.0.0.1:17777/api/v1.0/client/vm/status
-
-# Targets
-curl -s http://127.0.0.1:57777/api/v1.0/client/target/list
-
-# Volumes
+curl -s http://127.0.0.1:17777/api/v1.0/client/vm/porttunnel/status
 curl -s http://127.0.0.1:27777/api/v1.0/client/volume/accessible
 
 # Networks
@@ -80,7 +108,9 @@ curl -s http://127.0.0.1:37777/api/v1.0/client/network/list
 curl -s http://127.0.0.1:37777/api/v1.0/client/network/portforwards
 ```
 
-Then open Dashboard, My Clouds, VMs, Storage, Networking, and Settings → Licenses in Electros.
+Then open Dashboard, Account, Organisation, Billing, **My Clouds**, VMs, Storage, Networking, and Settings → Licenses in Electros.
+
+Default demo session: `demo@synthetic.local` / `demo`, role `ORGOWNER`, email verified, active **pro** subscriber of org **Elemento Demo**.
 
 ## Default scenario
 
@@ -130,13 +160,18 @@ Also mocked: `cancreate`, `create`, `delete`, `credentials`, and `GET /api/v1/au
 
 - **`TargetDaemons.getLegacyHosts`** uses Electron IPC (`read-hosts`), not HTTP — returns empty outside Electron host file setup.
 - **`registerUser`** still calls `portal.elemento.cloud` on the real internet.
-- Unimplemented ECD routes return safe empty defaults and log a warning (see server console).
+- Catalogued routes without a deep MemoryStore implementation return typed envelopes and log `[envelope]`.
+- Deep backends (libvirt, Ceph, live VNC websockets, Stripe, IdP, real LLMs) are stubs.
+- Unimplemented ECD routes fall through to catalog envelopes.
 
 ## Development
 
 ```bash
+npm run sync:catalog # refresh catalog/production-routes.json from monorepo
 npm run dev          # build + start
 npm run build        # compile only
+npm test             # build + route-inventory + catalog parity
+npm run test:parity  # catalog coverage only
 ```
 
 From `electros-electron`:

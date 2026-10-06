@@ -1,8 +1,8 @@
 function initializeTitlebar(options = { minimizeOnly: false }) {
     const titlebar = document.querySelector('.electros-titlebar');
-    const platform = navigator.userAgent.includes('Mac') ? 'mac' : 
-                     navigator.userAgent.includes('Win') ? 'win' :
-                     'linux';
+    const platform = navigator.userAgent.includes('Mac') ? 'mac' :
+        navigator.userAgent.includes('Win') ? 'win' :
+            'linux';
 
     titlebar.classList.add(platform);
 
@@ -51,3 +51,16 @@ function initializeTitlebar(options = { minimizeOnly: false }) {
         }
     });
 }
+
+
+window.titlebar = {
+    setContent: (element) => {
+        element.dataset.element = "titlebar-content";
+        document.querySelector('[data-element="titlebar-content"]').replaceWith(element);
+    },
+    setHeight: (height = window.titlebar.defaultHeight) => {
+        document.body.style.setProperty("--titlebar-height", `${height}px`);
+    },
+    defaultHeight: 34
+}
+

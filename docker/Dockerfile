@@ -26,12 +26,14 @@
 # #------------------------------------------------------------------------------#
 #
 
-FROM node:24.9.0 AS bundler
+FROM node:24.11.0 AS bundler
 
 WORKDIR /build
 COPY /elemento-gui-new /build
 
 RUN npm i
+#ENV JS_INCLUDE_MAPS=true
+ENV USE_LOCAL_ACCOUNT_SERVICES=true
 RUN npm run build:atomos-gui
 
 RUN mv dist-atomos-gui/electros/electrosOnAtomos.html dist-atomos-gui/electros/electros.html
@@ -51,7 +53,7 @@ COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
 # Stage 2: Install dependencies
 RUN apt-get update -y
-RUN apt-get install -y socat=1.8.0.3-1 \
+RUN apt-get install -y socat=1.8.0.3-1+deb13u1 \
   python3=3.13.5-1
 
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*

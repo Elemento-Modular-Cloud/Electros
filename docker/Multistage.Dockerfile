@@ -51,7 +51,7 @@ COPY ./docker/logger_stream.sh /opt/app/logger_stream.sh
 
 # Stage 2: Install dependencies
 RUN apt-get update -y
-RUN apt-get install -y socat=1.8.0.3-1 \
+RUN apt-get install -y socat=1.8.0.3-1+deb13u1 \
   python3=3.13.5-1
 
 RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*

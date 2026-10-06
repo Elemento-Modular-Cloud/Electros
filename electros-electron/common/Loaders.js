@@ -43,12 +43,13 @@ export class Loaders {
             document.head.appendChild(style);
 
             // Create titlebar div and title element
-            var titlebar = document.createElement('div');
+            const titlebar = document.createElement('div');
             titlebar.className = 'electros-titlebar';
 
-            var titleElement = document.createElement('div');
+            const titleElement = document.createElement('div');
             titleElement.className = 'electros-titlebar-title';
             titleElement.textContent = document.title;
+            titleElement.dataset.element = "titlebar-content";
 
             document.body.insertBefore(titlebar, document.body.firstChild);
 

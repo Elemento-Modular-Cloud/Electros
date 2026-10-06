@@ -1,6 +1,5 @@
 const {app, BrowserWindow, ipcMain, Menu, nativeTheme, shell, safeStorage} = require('electron');
 
-app.commandLine.appendSwitch('force-device-scale-factor', '1');
 const path = require('path');
 const {spawn} = require('child_process');
 const net = require('net');
@@ -15,6 +14,7 @@ const {BuildMenuTemplate} = require("./common/MenuBar");
 const {PortHandler} = require("./common/PortHandler");
 const {Platform} = require("./common/Platform");
 const {Daemons} = require("./common/Daemons");
+const {Updater} = require("./common/Updater");
 const {Terminal} = require("./windows/Terminal");
 const {RdpWindow} = require("./windows/Rdp.js");
 const {DaemonsNotEnabledError} = require("./common/Daemons.js");
@@ -36,9 +36,35 @@ if (process.env.NODE_ENV === 'development') {
     app.setAsDefaultProtocolClient('electros');
 }
 
+let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
+
+
+// macOS URL handling
+app.on('open-url', (event, url) => {
+    event.preventDefault();
+    console.log('App opened with URL:', url);
+    try {
+        sendUrlToRenderer(url);
+    } catch (e) {
+        console.warn(e);
+    }
+
+    pendingUrl = url;
+});
+
+// Windows/Linux URL handling - ensure single instance and handle second instance URLs
+app.requestSingleInstanceLock();
+app.on('second-instance', (event, argv) => {
+    const url = argv.find(arg => arg.startsWith('electros://'));
+    if (url) {
+        console.log('Second instance opened with URL:', url);
+        sendUrlToRenderer(url);
+    }
+});
+
 
 function createMainWindow() {
-    const win = WindowProvider("electros/electros.html",
+    const win = WindowProvider(`electros/electros.html`,
       {
           width: 1800,
           height: 1200,
@@ -54,7 +80,9 @@ function createMainWindow() {
               webSecurity: app.isPackaged,
               devTools: !app.isPackaged || process.argv.includes("--enable-devtools"),
           }
-      }, __dirname);
+      }, __dirname, {
+        'deeplink': encodeURIComponent(pendingUrl),
+      });
 
     if (platform.os === 'mac') {
         win.setWindowButtonVisibility(false);
@@ -203,26 +231,6 @@ ipcMain.handle('create-popup', async (event, options = {}) => {
         throw error;
     }
 });
-
-// macOS URL handling
-app.on('open-url', (event, url) => {
-    event.preventDefault();
-    console.log('App opened with URL:', url);
-    sendUrlToRenderer(url);
-});
-
-// Windows/Linux URL handling - ensure single instance and handle second instance URLs
-app.requestSingleInstanceLock();
-app.on('second-instance', (event, argv) => {
-    const url = argv.find(arg => arg.startsWith('electros://'));
-    if (url) {
-        console.log('Second instance opened with URL:', url);
-        sendUrlToRenderer(url);
-    }
-});
-
-let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
-
 
 app.on('before-quit', () => {
     console.log('Quitting app, killing processes');
@@ -398,11 +406,13 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         event.sender.ssh_port = ssh_port;
 
         sshWindow.webContents.on('did-finish-load', () => {
+            const safeName = String(connectionDetails.vmName ?? "SSH").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
             const sshTitlebarJS = PreloadedContent.Js.Titlebar.replace(
               'titleElement.textContent = document.title;',
-              `titleElement.textContent = "SSH connection to ${connectionDetails.vmName}";`
+              `titleElement.textContent = "SSH · ${safeName}";`
             );
             sshWindow.webContents.executeJavaScript(sshTitlebarJS);
+            sshWindow.setTitle(`SSH · ${connectionDetails.vmName ?? "SSH"}`);
         });
 
         // Add connection cleanup on window close
@@ -432,7 +442,28 @@ ipcMain.handle('open-ssh', async (event, connectionDetails) => {
         });
 
         // Load the SSH client page with connection details and port
-        await sshWindow.loadURL(`http://localhost:${ssh_port}/?host=${encodeURIComponent(connectionDetails.ip)}&username=${encodeURIComponent(connectionDetails.username)}&password=${encodeURIComponent(connectionDetails.password)}`);
+        const details = connectionDetails.details && typeof connectionDetails.details === "object"
+            ? connectionDetails.details
+            : {};
+        const detailParams = [
+            ["vmName", connectionDetails.vmName ?? "SSH"],
+            ["host", connectionDetails.ip ?? ""],
+            ["username", connectionDetails.username ?? ""],
+            ["password", connectionDetails.password ?? ""],
+            ["flavour", details.flavour ?? ""],
+            ["provider", details.provider ?? ""],
+            ["region", details.region ?? ""],
+            ["os", details.os ?? ""],
+            ["osFamily", details.osFamily ?? ""],
+            ["osFlavour", details.osFlavour ?? ""],
+            ["state", details.state ?? ""],
+            ["cpu", details.cpu ?? ""],
+            ["ram", details.ram ?? ""],
+        ]
+            .map(([key, value]) => `${key}=${encodeURIComponent(String(value ?? ""))}`)
+            .join("&");
+
+        await sshWindow.loadURL(`http://localhost:${ssh_port}/?${detailParams}`);
 
         return sshWindow.id;
     } catch (error) {
@@ -456,20 +487,27 @@ app.on('child-process-gone', (event, details) => {
 ipcMain.handle("safestorage-encrypt", async (event, { value, refuseUnsafe = true }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable && refuseUnsafe) {
-        return false;
+        console.warn("Encryption refused due to lack of keychain support");
+        throw new Error("Encryption refused due to lack of keychain support");
     } else if (!isAvailable && !refuseUnsafe) {
-        console.warn("Value was not encrypted because the OS has no support for keychains.")
+        console.warn("Value was not encrypted because the OS has no support for keychains.");
         return value;
     }
 
-    return safeStorage.encryptString(value)
+    const v = safeStorage.encryptString(value);
+    return v.toString('base64');
 });
 
 ipcMain.handle("safestorage-decrypt", async (event, { value }) => {
     const isAvailable = safeStorage.isEncryptionAvailable();
     if (!isAvailable) { return false; }
+    if (value == null || value === "") {
+        return false;
+    }
 
-    return safeStorage.decryptString(value)
+    // Convert str to buffer
+    const buffer = Buffer.from(value, 'base64');
+    return safeStorage.decryptString(buffer);
 });
 
 ipcMain.handle("app-version", () => {
@@ -481,4 +519,16 @@ ipcMain.handle("app-version", () => {
 
 ipcMain.handle("get-daemons-log", () => {
     return Daemons.GetDaemonsLogBuffer();
+});
+
+ipcMain.handle("update-check", (event, {version, channel}) => {
+    return Updater.Check(platform, version, channel);
+});
+
+ipcMain.handle("update-download", (event) => {
+    return Updater.Download(percent => event.sender.send("update-progress", percent));
+});
+
+ipcMain.handle("update-apply", () => {
+    return Updater.Apply();
 });

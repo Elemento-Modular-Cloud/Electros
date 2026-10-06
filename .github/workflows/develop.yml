@@ -7,7 +7,11 @@ on:
     paths-ignore:
       - "**.md"
   pull_request:
-    branches: [develop] # Trigger on PRs to main/master
+    branches: [develop] # Trigger on PRs to develop
+    paths-ignore:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+      - '**.md'
   workflow_dispatch: # Allow manual trigger
 
 permissions:

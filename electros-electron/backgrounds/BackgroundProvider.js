@@ -101,7 +101,14 @@ class BackgroundProvider {
      */
     fetchFeedData() {
         return new Promise(async(resolve, reject) => {
-            const req = await fetch(this.feedUrl);
+            const req = await fetch(this.feedUrl, {
+                headers: {
+                    "User-Agent": "Electros/ElementoGUI (wallpaper; https://elemento.cloud)",
+                    "Accept": this.format === "application/json"
+                        ? "application/json"
+                        : "application/atom+xml, application/rss+xml, application/xml, text/xml;q=0.9,*/*;q=0.8",
+                },
+            });
 
             if (!req.ok) {
                 reject(new Error(await req.text()))
@@ -189,19 +196,68 @@ class BackgroundProvider {
      */
     _mapXml(feedObject) {
         let imgUrl = this._handleXmlKey(feedObject, this.itemStructure.imgUrl);
+        let thumbUrl = this._handleXmlKey(feedObject, this.itemStructure.thumbUrl);
 
         if (this.name === "wikimedia") {
-            imgUrl = imgUrl.replace('/thumb', '').replace(/[^/]*$/, '').replace(/\/$/, '');
+            imgUrl = this._wikimediaFullImageUrl(imgUrl) ?? this._wikimediaFullImageUrl(thumbUrl);
+            thumbUrl = this._firstUrlToken(thumbUrl) ?? thumbUrl;
+        } else {
+            imgUrl = this._firstUrlToken(imgUrl) ?? imgUrl;
+            thumbUrl = this._firstUrlToken(thumbUrl) ?? thumbUrl;
         }
 
         return {
             title: this._handleXmlKey(feedObject, this.itemStructure.title),
             description: this._handleXmlKey(feedObject, this.itemStructure.description),
             imgUrl: imgUrl,
-            thumbUrl: this._handleXmlKey(feedObject, this.itemStructure.thumbUrl),
-            pubDate: this.dateParser.parse(this._handleXmlKey(feedObject, this.itemStructure.pubDate)),
+            thumbUrl: thumbUrl,
+            pubDate: (() => {
+                try {
+                    const raw = this._handleXmlKey(feedObject, this.itemStructure.pubDate);
+                    return raw ? this.dateParser.parse(raw) : null;
+                } catch (e) {
+                    console.warn(`Unable to parse pubDate for provider ${this.name}:`, e);
+                    return null;
+                }
+            })(),
             copyright: this._handleXmlKey(feedObject, this.itemStructure.copyright)
         };
+    }
+
+    /**
+     * srcset / CSS-like values may include density descriptors ("… 2x").
+     * @param {unknown} value
+     * @returns {string|undefined}
+     * @private
+     */
+    _firstUrlToken(value) {
+        if (typeof value !== "string" || !value.trim()) { return undefined; }
+        return value.trim().split(/\s+/)[0].split("?")[0];
+    }
+
+    /**
+     * Convert Commons thumbnail URLs (upload.wikimedia.org or thumb.wikimedia.org)
+     * into the full-resolution file on upload.wikimedia.org.
+     * @param {unknown} value
+     * @returns {string|undefined}
+     * @private
+     */
+    _wikimediaFullImageUrl(value) {
+        const url = this._firstUrlToken(value);
+        if (!url) { return undefined; }
+
+        const thumbPath = url.match(/\/wikipedia\/commons\/thumb\/([^/]+\/[^/]+\/[^/]+)\/\d+px-/i);
+        if (thumbPath) {
+            return `https://upload.wikimedia.org/wikipedia/commons/${thumbPath[1]}`;
+        }
+
+        // Already a non-thumb commons file URL.
+        if (/\/wikipedia\/commons\/[^/]+\/[^/]+\/[^/]+$/i.test(url) && !url.includes("/thumb/")) {
+            if (url.startsWith("http")) { return url; }
+            return `https://upload.wikimedia.org${url.startsWith("/") ? "" : "/"}${url}`;
+        }
+
+        return url;
     }
 
     _handleXmlKey(feedObject, key) {
