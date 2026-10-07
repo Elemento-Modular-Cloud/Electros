@@ -22,11 +22,17 @@ the Github Actions Nightly workflow. It can only be run against `develop`.
 
 ## Synthetic mock daemons (UI development)
 
-To run the UI with HTTP mock servers instead of native client daemons, use `--synthetic-daemons` so Electros starts [`synthetic-daemons/`](synthetic-daemons/) via `npm start` alongside the GUI. See [synthetic-daemons/README.md](synthetic-daemons/README.md) for ports, fixtures, and verification steps.
+To run the UI with HTTP mock servers instead of native client daemons, use `--synthetic-daemons`. In development, Electros starts [`synthetic-daemons/`](synthetic-daemons/) via `npm start` alongside the GUI. A packaged build starts the copy bundled under the app's resources. See [synthetic-daemons/README.md](synthetic-daemons/README.md) for ports, fixtures, and verification steps.
 
 ```bash
 cd synthetic-daemons && npm install   # once
 cd electros-electron && npm start -- --synthetic-daemons
+```
+
+On a packaged app, pass the same flag to the binary (macOS example):
+
+```zsh
+/Applications/Electros.app/Contents/MacOS/Electros --synthetic-daemons
 ```
 
 From the **Developer** menu you can switch at runtime between **Use Native Daemons** (`CmdOrCtrl+Shift+Alt+N`) and **Use Synthetic Daemons** (`CmdOrCtrl+Shift+Alt+S`) in unpackaged builds or when `--enable-devtools` is set.
@@ -43,7 +49,7 @@ cd electros-electron && npm start -- --no-daemons
 Electros has a set of custom command line switches other than the Electron switches:
 
 - `--enable-devtools` enables the devtools for the application
-- `--synthetic-daemons` launches [`synthetic-daemons/`](synthetic-daemons/) via `npm start` instead of the native client daemons (unpackaged/dev only)
+- `--synthetic-daemons` launches synthetic daemons instead of the native client daemons. Unpackaged runs use `npm start` in [`synthetic-daemons/`](synthetic-daemons/). Packaged builds start the bundled copy with Electron's Node, for example `/Applications/Electros.app/Contents/MacOS/Electros --synthetic-daemons`
 - `--no-daemons` disables the execution of the embedded daemons (use when running synthetic-daemons yourself)
 
 > [!NOTE]
