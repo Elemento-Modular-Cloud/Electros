@@ -47,6 +47,9 @@ type LocaleUi = {
     dashboard: string
     activeConnections: string
     connections: string
+    privateMeson: string
+    privateMesonHub: string
+    privateMesonProviders: Record<string, string>
     storage: string
     networking: string
     virtualMachines: string
@@ -64,6 +67,18 @@ type LocaleUi = {
   next: string
   description: string
 }
+
+const PRIVATE_MESON_PROVIDER_IDS = [
+  'google',
+  'azure',
+  'ovh',
+  'upcloud',
+  'wasabi',
+  'scaleway',
+  'impossiblecloud',
+  'oracle',
+  'aws',
+] as const
 
 function buildGuideSidebar(
   linkPrefix: string,
@@ -109,9 +124,39 @@ function buildGuideSidebar(
         }),
         pageWithSections(ui.pages.dashboard, '/user-guide/02-dashboard', '02-dashboard.md'),
         pageWithSections(ui.pages.activeConnections, '/user-guide/03-my-clouds', '03-my-clouds.md'),
-        pageWithSections(ui.pages.connections, '/user-guide/04-connections', '04-connections.md', {
-          skip: ui.skipDefault.slice(0, 1),
-        }),
+        (() => {
+          const connections = pageWithSections(
+            ui.pages.connections,
+            '/user-guide/04-connections',
+            '04-connections.md',
+            { skip: ui.skipDefault.slice(0, 1) },
+          )
+          const privateMeson: DefaultTheme.SidebarItem = {
+            text: ui.pages.privateMeson,
+            collapsed: true,
+            items: [
+              { text: ui.pages.privateMesonHub, link: `${prefix}/user-guide/private-meson/` },
+              ...PRIVATE_MESON_PROVIDER_IDS.map((id) => ({
+                text: ui.pages.privateMesonProviders[id],
+                link: `${prefix}/user-guide/private-meson/${id}`,
+              })),
+            ],
+          }
+          if ('items' in connections && Array.isArray(connections.items)) {
+            return {
+              ...connections,
+              items: [...connections.items, privateMeson],
+            }
+          }
+          return {
+            text: ui.pages.connections,
+            collapsed: true,
+            items: [
+              { text: ui.overview, link: `${prefix}/user-guide/04-connections` },
+              privateMeson,
+            ],
+          }
+        })(),
         pageWithSections(ui.pages.storage, '/user-guide/05-iaas-storage', '05-iaas-storage.md'),
         pageWithSections(ui.pages.networking, '/user-guide/06-iaas-networking', '06-iaas-networking.md'),
         pageWithSections(ui.pages.virtualMachines, '/user-guide/07-iaas-virtual-machines', '07-iaas-virtual-machines.md'),
@@ -177,6 +222,19 @@ const enUi: LocaleUi = {
     dashboard: 'Dashboard',
     activeConnections: 'Active Connections',
     connections: 'Connections',
+    privateMeson: 'Private Meson',
+    privateMesonHub: 'Overview',
+    privateMesonProviders: {
+      google: 'Google',
+      azure: 'Azure',
+      ovh: 'OVH',
+      upcloud: 'UpCloud',
+      wasabi: 'Wasabi',
+      scaleway: 'Scaleway',
+      impossiblecloud: 'Impossible Cloud',
+      oracle: 'Oracle Cloud',
+      aws: 'AWS',
+    },
     storage: 'IaaS Storage',
     networking: 'IaaS Networking',
     virtualMachines: 'Virtual Machines',
@@ -207,6 +265,19 @@ const itUi: LocaleUi = {
     dashboard: 'Dashboard',
     activeConnections: 'Connessioni attive',
     connections: 'Connessioni',
+    privateMeson: 'Meson privato',
+    privateMesonHub: 'Panoramica',
+    privateMesonProviders: {
+      google: 'Google',
+      azure: 'Azure',
+      ovh: 'OVH',
+      upcloud: 'UpCloud',
+      wasabi: 'Wasabi',
+      scaleway: 'Scaleway',
+      impossiblecloud: 'Impossible Cloud',
+      oracle: 'Oracle Cloud',
+      aws: 'AWS',
+    },
     storage: 'Storage IaaS',
     networking: 'Networking IaaS',
     virtualMachines: 'Macchine virtuali',
@@ -237,6 +308,19 @@ const frUi: LocaleUi = {
     dashboard: 'Tableau de bord',
     activeConnections: 'Connexions actives',
     connections: 'Connexions',
+    privateMeson: 'Meson privé',
+    privateMesonHub: 'Aperçu',
+    privateMesonProviders: {
+      google: 'Google',
+      azure: 'Azure',
+      ovh: 'OVH',
+      upcloud: 'UpCloud',
+      wasabi: 'Wasabi',
+      scaleway: 'Scaleway',
+      impossiblecloud: 'Impossible Cloud',
+      oracle: 'Oracle Cloud',
+      aws: 'AWS',
+    },
     storage: 'Stockage IaaS',
     networking: 'Réseau IaaS',
     virtualMachines: 'Machines virtuelles',
