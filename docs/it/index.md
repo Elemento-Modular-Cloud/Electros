@@ -32,6 +32,12 @@ Nuovo nellâ€™app? Inizia da [Per iniziare](/it/user-guide/01-getting-started) â€
   <span class="guide-card-desc">Registra host AtomOS, hypervisor, provider cloud e scenari.</span>
 </a>
 
+<a class="guide-card" href="/it/user-guide/private-meson/" style="--card-bg: url(/page-backgrounds/connections.webp)">
+  <span class="guide-card-kicker">BYO</span>
+  <strong class="guide-card-title">Meson privato</strong>
+  <span class="guide-card-desc">Crea le credenziali cloud per Google, Azure, AWS e altri provider Meson privati.</span>
+</a>
+
 <a class="guide-card" href="/it/user-guide/05-iaas-storage" style="--card-bg: url(/page-backgrounds/storage.webp)">
   <span class="guide-card-kicker">IaaS</span>
   <strong class="guide-card-title">Storage</strong>

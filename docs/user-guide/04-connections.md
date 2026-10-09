@@ -68,12 +68,12 @@ Use this when your organisation already allows a shared public-cloud demo or acc
 
 #### Private account
 
-Use this for your own cloud credentials.
+Use this for your own cloud credentials (bring your own account). Step-by-step guides for each provider live under [Private Meson credentials](./private-meson/).
 
 1. Choose **Private**.
 2. Select **one** provider.
 3. **Target name** — required.
-4. Fill the credential form. The fields depend on the provider (API keys, project IDs, and so on). Treat every value as a secret.
+4. Fill the credential form. The fields depend on the provider (API keys, project IDs, and so on). Treat every value as a secret. See [Google](./private-meson/google), [Azure](./private-meson/azure), [OVH](./private-meson/ovh), [UpCloud](./private-meson/upcloud), [Wasabi](./private-meson/wasabi), [Scaleway](./private-meson/scaleway), [Impossible Cloud](./private-meson/impossiblecloud), [Oracle Cloud](./private-meson/oracle), or [AWS](./private-meson/aws).
 5. **Conclude**.
 
 ---
