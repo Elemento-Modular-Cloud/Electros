@@ -73,7 +73,7 @@ Utilisez ceci pour vos propres identifiants cloud (bring your own account). Les 
 1. Choisissez **Private**.
 2. Sélectionnez **un** fournisseur.
 3. **Target name** — obligatoire.
-4. Remplissez le formulaire d'identifiants. Les champs dépendent du fournisseur (clés API, ID de projet, etc.). Traitez chaque valeur comme un secret. Voir [Google](./private-meson/google), [Azure](./private-meson/azure), [OVH](./private-meson/ovh), [UpCloud](./private-meson/upcloud), [Wasabi](./private-meson/wasabi), [Scaleway](./private-meson/scaleway), [Impossible Cloud](./private-meson/impossiblecloud), [Oracle Cloud](./private-meson/oracle) ou [AWS](./private-meson/aws).
+4. Remplissez le formulaire d'identifiants. Les champs dépendent du fournisseur (clés API, ID de projet, etc.). Traitez chaque valeur comme un secret. Voir [Google](./private-meson/google), [Azure](./private-meson/azure), [OVH](./private-meson/ovh), [UpCloud](./private-meson/upcloud), [Scaleway](./private-meson/scaleway) ou [AWS](./private-meson/aws).
 5. **Conclude**.
 
 ---

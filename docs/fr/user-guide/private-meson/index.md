@@ -26,10 +26,7 @@ Ces guides expliquent comment créer les identifiants que Electros demande. Choi
 | Azure | [azure](./azure) |
 | OVH | [ovh](./ovh) |
 | UpCloud | [upcloud](./upcloud) |
-| Wasabi | [wasabi](./wasabi) |
 | Scaleway | [scaleway](./scaleway) |
-| Impossible Cloud | [impossiblecloud](./impossiblecloud) |
-| Oracle Cloud | [oracle](./oracle) |
 | AWS | [aws](./aws) |
 
 N’envoyez pas les identifiants par e-mail ou chat. Saisissez-les uniquement dans Electros.

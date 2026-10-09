@@ -73,7 +73,7 @@ Usalo per le tue credenziali cloud (bring your own account). Le guide passo pass
 1. Scegli **Private**.
 2. Seleziona **un** provider.
 3. **Target name** — obbligatorio.
-4. Compila il modulo delle credenziali. I campi dipendono dal provider (chiavi API, project ID e così via). Tratta ogni valore come un segreto. Vedi [Google](./private-meson/google), [Azure](./private-meson/azure), [OVH](./private-meson/ovh), [UpCloud](./private-meson/upcloud), [Wasabi](./private-meson/wasabi), [Scaleway](./private-meson/scaleway), [Impossible Cloud](./private-meson/impossiblecloud), [Oracle Cloud](./private-meson/oracle) o [AWS](./private-meson/aws).
+4. Compila il modulo delle credenziali. I campi dipendono dal provider (chiavi API, project ID e così via). Tratta ogni valore come un segreto. Vedi [Google](./private-meson/google), [Azure](./private-meson/azure), [OVH](./private-meson/ovh), [UpCloud](./private-meson/upcloud), [Scaleway](./private-meson/scaleway) o [AWS](./private-meson/aws).
 5. **Conclude**.
 
 ---

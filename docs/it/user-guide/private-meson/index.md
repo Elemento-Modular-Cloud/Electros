@@ -26,10 +26,7 @@ Queste guide spiegano come creare le credenziali che Electros richiede. Scegli i
 | Azure | [azure](./azure) |
 | OVH | [ovh](./ovh) |
 | UpCloud | [upcloud](./upcloud) |
-| Wasabi | [wasabi](./wasabi) |
 | Scaleway | [scaleway](./scaleway) |
-| Impossible Cloud | [impossiblecloud](./impossiblecloud) |
-| Oracle Cloud | [oracle](./oracle) |
 | AWS | [aws](./aws) |
 
 Non inviare credenziali via email o chat. Inseriscile solo in Electros.

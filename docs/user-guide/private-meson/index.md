@@ -26,10 +26,7 @@ These guides explain how to create the provider credentials Electros asks for. P
 | Azure | [azure](./azure) |
 | OVH | [ovh](./ovh) |
 | UpCloud | [upcloud](./upcloud) |
-| Wasabi | [wasabi](./wasabi) |
 | Scaleway | [scaleway](./scaleway) |
-| Impossible Cloud | [impossiblecloud](./impossiblecloud) |
-| Oracle Cloud | [oracle](./oracle) |
 | AWS | [aws](./aws) |
 
 Do not send credentials by email or chat. Enter them only in Electros.
