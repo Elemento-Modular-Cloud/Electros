@@ -8,6 +8,7 @@ const {globalShortcut} = require('electron');
 // Import handlers from separate files. They are apparently unused since called by name in the preload.js
 const configHandlers = require('./js/config-ipc');
 const titlebarHandlers = require('./js/titlebar-ipc');
+const kubeHandlers = require('./js/kube-ipc');
 const {Loaders} = require("./common/Loaders");
 const {WindowOptions} = require("./common/WindowOptions");
 const {BuildMenuTemplate} = require("./common/MenuBar");

@@ -34,7 +34,11 @@ contextBridge.exposeInMainWorld('electron', {
             'background-import',
             'background-providers',
             'read-ai-config',
-            'write-ai-config'
+            'write-ai-config',
+            'kube-list',
+            'kube-import',
+            'kube-delete',
+            'kube-request'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

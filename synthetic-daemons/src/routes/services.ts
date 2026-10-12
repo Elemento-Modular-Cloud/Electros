@@ -77,6 +77,23 @@ export function servicesRouter(store: MemoryStore, _config: AppConfig): Router {
 
   router.get("/:service/credentials/:itemUuid", (req: Request, res: Response) => {
     const item = store.findService(req.params.service, req.params.itemUuid);
+
+    // Kubernetes credentials are a kubeconfig, which Electros saves and opens in its cluster manager
+    if (req.params.service === "kaas") {
+      const name = item?.cluster_name ?? req.params.itemUuid;
+      res.status(200);
+      res.setHeader("Content-Type", "text/plain");
+      res.send([
+        "apiVersion: v1",
+        "kind: Config",
+        `current-context: ${name}`,
+        `clusters: [{name: ${name}, cluster: {server: "${process.env.SYNTHETIC_KUBE_SERVER ?? "https://127.0.0.1:6443"}"}}]`,
+        `users: [{name: ${name}-admin, user: {token: synthetic-token}}]`,
+        `contexts: [{name: ${name}, context: {cluster: ${name}, user: ${name}-admin}}]`,
+      ].join("\n"));
+      return;
+    }
+
     const lines = [
       "# Synthetic PaaS credentials",
       `service=${req.params.service}`,
