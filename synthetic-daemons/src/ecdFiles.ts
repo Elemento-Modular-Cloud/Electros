@@ -1,8 +1,9 @@
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEcdDir } from "./config.js";
 
-const ECD_DIR = join(dirname(fileURLToPath(import.meta.url)), "../../elemento-gui-new/electros/ecd");
+const ECD_DIR = resolveEcdDir(dirname(fileURLToPath(import.meta.url)));
 
 export function loadEcdJson(filename: string): unknown {
   const path = join(ECD_DIR, filename.endsWith(".json") ? filename : `${filename}.json`);

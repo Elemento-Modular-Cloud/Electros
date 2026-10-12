@@ -3,3 +3,4 @@ build
 dist
 electros-daemons
 package-lock.json
+synthetic-daemons-bundle

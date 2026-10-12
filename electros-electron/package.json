@@ -50,7 +50,8 @@
             "!**/docs/*",
             "!**/node_modules/*/{benchmark,coverage,example,examples}/**/*",
             "!**/node_modules/**/*.{ts,map,md,txt,log,yml,yaml}",
-            "!**/*.sh"
+            "!**/*.sh",
+            "!synthetic-daemons-bundle/**/*"
         ],
         "asarUnpack": [
             "**/node_modules/sharp/**/*",
@@ -138,6 +139,13 @@
             {
                 "from": "configs/BackgroundProviders.json",
                 "to": "configs/BackgroundProviders.json"
+            },
+            {
+                "from": "synthetic-daemons-bundle",
+                "to": "synthetic-daemons",
+                "filter": [
+                    "**/*"
+                ]
             }
         ]
     },

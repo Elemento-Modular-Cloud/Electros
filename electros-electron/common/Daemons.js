@@ -49,8 +49,9 @@ export class Daemons {
     }
 
     /**
-     * Switch to synthetic-daemons via `npm start` (Developer menu).
+     * Switch to synthetic-daemons (Developer menu).
      * Terminates any existing daemon process first.
+     * Unpackaged builds run `npm start`; packaged builds run the bundled copy.
      * @param {string} [electronDir]
      */
     static async LaunchSynthetic(electronDir) {
@@ -120,14 +121,34 @@ export class Daemons {
     }
 
     static _LaunchSynthetic(__dirname) {
+        const syntheticRoot = Daemons._GetSyntheticPath(__dirname);
+        const isWin = process.platform === 'win32';
+
+        Daemons._ElectronDir = __dirname;
+
         if (app.isPackaged) {
-            const msg = "[ERROR] Synthetic daemons are only available in unpackaged (dev) builds.";
-            console.error(msg);
-            Terminal.Write(msg);
-            throw new Error("Synthetic daemons unavailable in packaged builds");
+            const entry = path.join(syntheticRoot, 'dist', 'index.js');
+            if (!fs.existsSync(entry)) {
+                const msg = `[ERROR] synthetic-daemons not found at ${entry}`;
+                console.error(msg);
+                Terminal.Write(msg);
+                throw new Error(msg);
+            }
+
+            Terminal.Write(`[INFO] Starting bundled synthetic-daemons (${entry})`);
+            console.log("Launching synthetic-daemons from", entry);
+
+            Daemons._IsSynthetic = true;
+            Daemons._SpawnProcess(process.execPath, [entry], {
+                cwd: syntheticRoot,
+                env: {...process.env, ELECTRON_RUN_AS_NODE: '1', GUI_APP: '1'},
+                stdio: ['pipe', 'pipe', 'pipe'],
+                // New process group on Unix so Terminate can kill the child
+                detached: !isWin,
+            });
+            return;
         }
 
-        const syntheticRoot = Daemons._GetSyntheticPath(__dirname);
         const packageJson = path.join(syntheticRoot, 'package.json');
         if (!fs.existsSync(packageJson)) {
             const msg = `[ERROR] synthetic-daemons not found at ${syntheticRoot}`;
@@ -139,10 +160,8 @@ export class Daemons {
         Terminal.Write(`[INFO] Starting synthetic-daemons via npm start (${syntheticRoot})`);
         console.log("Launching synthetic-daemons from", syntheticRoot);
 
-        const isWin = process.platform === 'win32';
         const npmCmd = isWin ? 'npm.cmd' : 'npm';
 
-        Daemons._ElectronDir = __dirname;
         Daemons._IsSynthetic = true;
         Daemons._SpawnProcess(npmCmd, ['start'], {
             cwd: syntheticRoot,
@@ -155,6 +174,9 @@ export class Daemons {
     }
 
     static _GetSyntheticPath(electronDir) {
+        if (app.isPackaged) {
+            return path.join(process.resourcesPath, 'synthetic-daemons');
+        }
         return path.join(electronDir, '..', 'synthetic-daemons');
     }
 
