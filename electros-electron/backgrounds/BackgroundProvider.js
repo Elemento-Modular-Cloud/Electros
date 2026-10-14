@@ -185,7 +185,7 @@ class BackgroundProvider {
             images.push(this._mapXml(item));
         });
 
-        return images;
+        return images.filter(img => img.imgUrl);
     }
 
     /**
@@ -267,6 +267,8 @@ class BackgroundProvider {
         let item = feedObject;
 
         path.forEach(key => {
+            // Missing node (e.g. APOD video days have no <enclosure>): propagate undefined
+            if (item === undefined || item === null) { return; }
             if (key.includes("[") && key.includes("]")) {
                 const actualKey = key.split('[')[0];
                 const index = key.split('[')[1].split(']')[0];
@@ -275,7 +277,7 @@ class BackgroundProvider {
                 item = item[key];
             }
 
-            if (item["attr_type"] !== undefined) {
+            if (item?.["attr_type"] !== undefined) {
                 if (item["attr_type"] === "html") {
                     const parser = new XMLParser({
                         ignoreAttributes: false,
@@ -286,7 +288,7 @@ class BackgroundProvider {
             }
         });
 
-        return (attr !== null) ? item[attr] : item;
+        return (attr !== null) ? item?.[attr] : item;
     }
 
     toFrontendJson() {
