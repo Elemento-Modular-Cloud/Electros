@@ -1,10 +1,13 @@
 #! /bin/bash
+set -eo pipefail
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 if [ -z "${GITHUB_ACTIONS}" ]; then
     source "${script_dir}/venv/bin/activate" || exit 1
 fi
 
 version=""
+platforms=()
+user_archs=()
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in

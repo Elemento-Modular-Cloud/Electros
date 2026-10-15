@@ -56,6 +56,7 @@ function stageSyntheticDaemons() {
     }
     mkdirSync(SYNTHETIC_BUNDLE, { recursive: true });
 
+    run("npm ci", SYNTHETIC_ROOT);
     run("npm run build", SYNTHETIC_ROOT);
 
     for (const name of ["dist", "fixtures", "catalog"]) {

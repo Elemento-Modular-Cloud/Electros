@@ -1,4 +1,5 @@
 #! /bin/bash
+set -eo pipefail
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 build_dir="${script_dir}/build"
 dist_dir="${script_dir}/dist"
@@ -22,6 +23,7 @@ setup_daemons() {
 
 platforms=()
 archs=()
+user_archs=()
 version=""
 
 # Parse command line arguments for platform and architecture
