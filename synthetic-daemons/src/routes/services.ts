@@ -66,10 +66,13 @@ export function servicesRouter(store: MemoryStore, _config: AppConfig): Router {
     const serviceUuid = randomUUID();
     const body = (req.body ?? {}) as Record<string, unknown>;
 
-    const record = store.createServiceInstance(serviceType, serviceUuid, billingUuid, body, req.header("Target-Id"));
+    const targetId = req.header("Target-Id");
+    const record = store.createServiceInstance(serviceType, serviceUuid, billingUuid, body, targetId);
+    // Private meson targets are not billed: no checkout
+    const isPrivate = store.targets.data.some((t) => t.target_id === targetId && t.target_type === "meson_private");
     json(res, {
       billing_uuid: billingUuid,
-      payment_url: `https://synthetic.local/pay/${billingUuid}`,
+      ...(isPrivate ? {} : { payment_url: `https://synthetic.local/pay/${billingUuid}` }),
       service_uuid: serviceUuid,
       ...record,
     });
