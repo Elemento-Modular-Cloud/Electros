@@ -14,6 +14,16 @@ npm start -- --synthetic-daemons
 
 Or from the Electros **Developer** menu: **Use Synthetic Daemons** (`CmdOrCtrl+Shift+Alt+S`) / **Use Native Daemons** (`CmdOrCtrl+Shift+Alt+N`) to switch at runtime.
 
+### Packaged build
+
+`electros-electron` production builds ship a prebuilt copy of this package as `synthetic-daemons` under the app resources. Pass the same flag to the binary:
+
+```bash
+/Applications/Electros.app/Contents/MacOS/Electros --synthetic-daemons
+```
+
+On a packaged app the Developer menu is available when the process is started with `--enable-devtools`.
+
 ### Manual (two terminals)
 
 ```bash
