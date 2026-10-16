@@ -6,6 +6,7 @@ if [ -z "${GITHUB_ACTIONS}" ]; then
 fi
 
 version=""
+channel=""
 platforms=()
 user_archs=()
 
@@ -14,6 +15,7 @@ while [[ "$#" -gt 0 ]]; do
         --platform) platforms+=("$2"); shift ;;
         --arch) user_archs+=("$2"); shift ;;
         --version) version="$2"; shift ;;
+        --channel) channel="$2"; shift ;;
     esac
     shift
 done
@@ -37,6 +39,9 @@ if [ ${#user_archs[@]} -gt 0 ]; then
 fi
 if [ -n "$version" ]; then
     build_args+=(--version "$version")
+fi
+if [ -n "$channel" ]; then
+    build_args+=(--channel "$channel")
 fi
 
 if [ ${#build_args[@]} -gt 0 ]; then

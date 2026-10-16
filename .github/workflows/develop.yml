@@ -186,7 +186,7 @@ jobs:
           # Clean up
           cd ./electros-electron
           chmod +x ./autobuild.sh
-          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --version ${{ needs.set-tag.outputs.tag_name }}
+          ./autobuild.sh --platform ${{ matrix.os }} --arch ${{ matrix.arch }} --version ${{ needs.set-tag.outputs.tag_name }} --channel beta
         shell: bash
 
       - name: Upload un-notarized & un-stapled DMG artifact

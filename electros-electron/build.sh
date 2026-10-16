@@ -25,6 +25,7 @@ platforms=()
 archs=()
 user_archs=()
 version=""
+channel=""
 
 # Parse command line arguments for platform and architecture
 while [[ "$#" -gt 0 ]]; do
@@ -32,6 +33,7 @@ while [[ "$#" -gt 0 ]]; do
         --platform) platforms+=("$2"); shift ;;
         --arch) user_archs+=("$2"); shift ;;
         --version) version="$2"; shift ;;
+        --channel) channel="$2"; shift ;;
     esac
     shift
 done
@@ -42,6 +44,11 @@ if [ -z "$version" ]; then
 fi
 
 clean_version=${version#v}
+
+# Update channel baked into the GUI (release|beta|development), vite defaults to beta
+if [ -n "$channel" ]; then
+    export ELECTROS_CHANNEL="$channel"
+fi
 #clean_version=${clean_version%%[-+]*}
 
 # Default to all platforms if none specified
