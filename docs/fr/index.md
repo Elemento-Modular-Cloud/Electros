@@ -32,6 +32,12 @@ Nouveau dans l'application ? Commencez par [Premiers pas](/fr/user-guide/01-gett
   <span class="guide-card-desc">Enregistrez des hôtes AtomOS, des hyperviseurs, des fournisseurs cloud et des scénarios.</span>
 </a>
 
+<a class="guide-card" href="/fr/user-guide/private-meson/" style="--card-bg: url(/page-backgrounds/connections.webp)">
+  <span class="guide-card-kicker">BYO</span>
+  <strong class="guide-card-title">Meson privé</strong>
+  <span class="guide-card-desc">Créez les identifiants cloud pour Google, Azure, AWS et les autres fournisseurs Meson privés.</span>
+</a>
+
 <a class="guide-card" href="/fr/user-guide/05-iaas-storage" style="--card-bg: url(/page-backgrounds/storage.webp)">
   <span class="guide-card-kicker">IaaS</span>
   <strong class="guide-card-title">Storage</strong>

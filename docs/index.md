@@ -32,6 +32,12 @@ New to the app? Start with [Getting started](/user-guide/01-getting-started) —
   <span class="guide-card-desc">Register AtomOS hosts, hypervisors, cloud providers, and scenarios.</span>
 </a>
 
+<a class="guide-card" href="/user-guide/private-meson/" style="--card-bg: url(/page-backgrounds/connections.webp)">
+  <span class="guide-card-kicker">BYO</span>
+  <strong class="guide-card-title">Private Meson</strong>
+  <span class="guide-card-desc">Create cloud credentials for Google, Azure, AWS, and other private Meson providers.</span>
+</a>
+
 <a class="guide-card" href="/user-guide/05-iaas-storage" style="--card-bg: url(/page-backgrounds/storage.webp)">
   <span class="guide-card-kicker">IaaS</span>
   <strong class="guide-card-title">Storage</strong>
