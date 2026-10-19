@@ -85,7 +85,7 @@ export function targetRouter(store: MemoryStore, config: AppConfig): Router {
 
     try {
       if (filename === "supported_providers") {
-        json(res, loadSupportedProvidersMap());
+        json(res, loadSupportedProvidersMap(store.scenarioName));
         return;
       }
 

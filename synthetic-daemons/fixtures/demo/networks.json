@@ -1,0 +1,56 @@
+[
+  {
+    "servers": ["192.168.50.10"],
+    "network_name": "lan-sede",
+    "type": "libvirt",
+    "mode": "nat",
+    "private": true,
+    "network_uid": "net-lan-sede",
+    "creator_uid": "synthetic",
+    "device_name": "virbr-sede",
+    "libvirt_network": "lan-sede",
+    "ip": {
+      "address": "192.168.50.1/24",
+      "net_bits": 24,
+      "dhcp": {
+        "start": "192.168.50.100",
+        "end": "192.168.50.200",
+        "hosts": [
+          {
+            "mac": "52:54:00:50:00:10",
+            "address": "192.168.50.10",
+            "name": "modello-ai-locale"
+          }
+        ]
+      }
+    },
+    "routes": [
+      {
+        "address": "0.0.0.0/0",
+        "gateway": "192.168.50.1",
+        "prefix": "0"
+      }
+    ]
+  },
+  {
+    "servers": ["192.168.50.10"],
+    "network_name": "vpn-ai-locale",
+    "type": "tailscale",
+    "mode": null,
+    "private": true,
+    "network_uid": "net-vpn-ai-locale",
+    "creator_uid": "synthetic",
+    "device_name": "ts-ai",
+    "libvirt_network": "",
+    "ip": {
+      "address": "100.80.1.10/16",
+      "net_bits": 16,
+      "dhcp": null
+    },
+    "headscale": {
+      "address": "https://vpn.cloud-ibrido.local",
+      "headscale_user": "chatbot",
+      "api_key": "demo-vpn-ai"
+    }
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 1,
+      "slots": 8
+    },
+    "ram": {
+      "ramsize": 32,
+      "reqECC": true
+    },
+    "info": {
+      "name": "ai-worker",
+      "description": "8 vCPU, 32 GiB, GPU — local AI model"
+    },
+    "pci": [
+      {
+        "vendor": "NVIDIA",
+        "model": "L4",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "cpu": {
+      "allowSMT": true,
+      "flags": [],
+      "overprovision": 1,
+      "slots": 2
+    },
+    "ram": {
+      "ramsize": 4,
+      "reqECC": false
+    },
+    "info": {
+      "name": "app-node",
+      "description": "2 vCPU, 4 GiB — application node"
+    },
+    "pci": []
+  }
+]

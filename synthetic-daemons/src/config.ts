@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -61,9 +61,52 @@ export function parseCliArgs(argv: string[]): { scenario: string; persistState: 
   return { scenario, persistState };
 }
 
+export function scenarioFixturesDir(scenario: string): string {
+  return join(FIXTURES_ROOT, scenario);
+}
+
+export interface PublishedFixtureOrg {
+  scenario: string;
+  dir: string;
+  orgId: string;
+  orgName: string;
+}
+
+/** One organisation per fixture directory, taken from that set's auth-status.json. */
+export function listPublishedFixtureOrgs(): PublishedFixtureOrg[] {
+  const names = readdirSync(FIXTURES_ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+
+  const orgs: PublishedFixtureOrg[] = [];
+  for (const scenario of names) {
+    const dir = scenarioFixturesDir(scenario);
+    const authPath = join(dir, "auth-status.json");
+    if (!existsSync(authPath)) {
+      continue;
+    }
+    const auth = JSON.parse(readFileSync(authPath, "utf8")) as {
+      org_id?: string;
+      org_name?: string;
+      org?: string;
+    };
+    if (!auth.org_id) {
+      continue;
+    }
+    orgs.push({
+      scenario,
+      dir,
+      orgId: auth.org_id,
+      orgName: auth.org_name ?? auth.org ?? scenario,
+    });
+  }
+  return orgs;
+}
+
 export function loadConfig(argv: string[] = process.argv.slice(2)): AppConfig {
   const { scenario, persistState } = parseCliArgs(argv);
-  const fixturesDir = join(FIXTURES_ROOT, scenario);
+  const fixturesDir = scenarioFixturesDir(scenario);
 
   return {
     scenario,

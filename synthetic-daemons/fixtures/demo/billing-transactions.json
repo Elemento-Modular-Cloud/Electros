@@ -1,0 +1,52 @@
+[
+  {
+    "billing_uuid": "billing-app-par1",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "cloud-ibrido",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2026-09-01T00:00:00Z",
+    "end_timestamp": "2027-09-01T00:00:00Z",
+    "price": 42
+  },
+  {
+    "billing_uuid": "billing-app-par2",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "cloud-ibrido",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2026-09-01T00:00:00Z",
+    "end_timestamp": "2027-09-01T00:00:00Z",
+    "price": 42
+  },
+  {
+    "billing_uuid": "billing-app-par3",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "cloud-ibrido",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2026-09-01T00:00:00Z",
+    "end_timestamp": "2027-09-01T00:00:00Z",
+    "price": 42
+  },
+  {
+    "billing_uuid": "billing-postgres-vpc-paris",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "cloud-ibrido",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2026-09-01T00:00:00Z",
+    "end_timestamp": "2027-09-01T00:00:00Z",
+    "price": 89
+  },
+  {
+    "billing_uuid": "billing-postgres-backup",
+    "client_uuid": "synthetic-client-001",
+    "organisation_name": "cloud-ibrido",
+    "status": "running",
+    "interval": "month",
+    "start_timestamp": "2026-09-01T00:00:00Z",
+    "end_timestamp": "2027-09-01T00:00:00Z",
+    "price": 15
+  }
+]

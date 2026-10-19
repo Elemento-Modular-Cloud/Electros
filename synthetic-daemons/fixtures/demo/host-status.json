@@ -1,0 +1,54 @@
+{
+  "allocated_cores_count": 1,
+  "allocated_slots_count": 8,
+  "bridge_interfaces": [],
+  "client_id_count": 1,
+  "core_allocation_percentage": 50,
+  "core_provisioning": [
+    {
+      "available_slots": 8,
+      "core_id": 0,
+      "max_overprovision": 1,
+      "provisioned_vms": ["modello-ai-locale"],
+      "provisioned_vms_count": 1
+    }
+  ],
+  "direct_interfaces": [],
+  "dom_displays": {
+    "ports": [5900],
+    "protocols": ["vnc"]
+  },
+  "nic_count": 2,
+  "os_families": {
+    "linux": {
+      "count": 1,
+      "flavours": [
+        {
+          "name": "ubuntu",
+          "count": 1
+        }
+      ]
+    },
+    "windows": {
+      "count": 0,
+      "flavours": []
+    }
+  },
+  "slot_allocation_percentage": 25,
+  "storage_count": 1,
+  "storages": [
+    {
+      "bus": "virtio",
+      "format": "qcow2",
+      "sizeGB": "200",
+      "vm_uuids": ["c1d00000-0000-4000-8000-000000000001"],
+      "volume_id": "vol-ai-model"
+    }
+  ],
+  "total_allocated_ram_mib": 32768,
+  "total_allocated_storage_size_gb": 200,
+  "total_cores_count": 16,
+  "total_slots_count": 32,
+  "total_used_ram_mib": 32768,
+  "vm_count": 1
+}

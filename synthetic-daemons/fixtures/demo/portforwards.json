@@ -1,0 +1,13 @@
+[
+  {
+    "serverurl": "192.168.50.10",
+    "protocol": "tcp",
+    "port": 443,
+    "target": "modello-ai-locale",
+    "target_vm_uid": "c1d00000-0000-4000-8000-000000000001",
+    "target_port": 8080,
+    "tailscale": true,
+    "force": false,
+    "forward_uid": "pf-ai-locale"
+  }
+]

@@ -1,0 +1,99 @@
+[
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-app-par1",
+    "billing_uuid": "billing-app-par1",
+    "vm_uuid": "spotvm-app-par1",
+    "vm_name": "vm-app-par1",
+    "status": "running",
+    "region": "fr-par",
+    "tags": ["az:par-1", "app", "vpc"],
+    "cpu": { "slots": 2, "shared_cores": false, "arch": ["X86_64"] },
+    "mem": { "capacity_mb": 4096 },
+    "os": { "family": "linux", "flavour": "ubuntu" },
+    "storage": {
+      "boot": { "name": "root", "size_gb": 40, "volume_uuid": "vol-app-par1" },
+      "data": []
+    },
+    "pci": { "devices": [] },
+    "networks": [
+      { "kind": "public", "ipv4": "51.15.20.11" },
+      { "kind": "private", "ipv4": "10.40.1.11" }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.meson.elemento.cloud",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-app-par2",
+    "billing_uuid": "billing-app-par2",
+    "vm_uuid": "spotvm-app-par2",
+    "vm_name": "vm-app-par2",
+    "status": "running",
+    "region": "fr-par",
+    "tags": ["az:par-2", "app", "vpc"],
+    "cpu": { "slots": 2, "shared_cores": false, "arch": ["X86_64"] },
+    "mem": { "capacity_mb": 4096 },
+    "os": { "family": "linux", "flavour": "ubuntu" },
+    "storage": {
+      "boot": { "name": "root", "size_gb": 40, "volume_uuid": "vol-app-par2" },
+      "data": []
+    },
+    "pci": { "devices": [] },
+    "networks": [
+      { "kind": "public", "ipv4": "51.15.20.12" },
+      { "kind": "private", "ipv4": "10.40.1.12" }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.meson.elemento.cloud",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "spotvm",
+    "service_uuid": "spotvm-app-par3",
+    "billing_uuid": "billing-app-par3",
+    "vm_uuid": "spotvm-app-par3",
+    "vm_name": "vm-app-par3",
+    "status": "running",
+    "region": "fr-par",
+    "tags": ["az:par-3", "app", "vpc"],
+    "cpu": { "slots": 2, "shared_cores": false, "arch": ["X86_64"] },
+    "mem": { "capacity_mb": 4096 },
+    "os": { "family": "linux", "flavour": "ubuntu" },
+    "storage": {
+      "boot": { "name": "root", "size_gb": 40, "volume_uuid": "vol-app-par3" },
+      "data": []
+    },
+    "pci": { "devices": [] },
+    "networks": [
+      { "kind": "public", "ipv4": "51.15.20.13" },
+      { "kind": "private", "ipv4": "10.40.1.13" }
+    ],
+    "cloud_init_b64": null,
+    "serverurl": "scaleway.meson.elemento.cloud",
+    "provider": "scaleway"
+  },
+  {
+    "service_type": "dbaas",
+    "service_uuid": "dbaas-postgres-vpc-paris",
+    "billing_uuid": "billing-postgres-vpc-paris",
+    "name": "postgres-vpc-paris",
+    "status": "running",
+    "provider": "scaleway",
+    "region": "fr-par",
+    "engine": "postgres",
+    "backup_time": 1760803200,
+    "disk_size": 107374182400,
+    "nodes_number": "1"
+  },
+  {
+    "service_type": "objectstorage",
+    "service_uuid": "os-postgres-backup",
+    "billing_uuid": "billing-postgres-backup",
+    "name": "postgres-backup",
+    "endpoint": "https://s3.fr-par.scw.cloud",
+    "region": "fr-par",
+    "active_storage": 53687091200
+  }
+]

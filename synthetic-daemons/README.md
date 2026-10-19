@@ -86,6 +86,7 @@ Runtime mounting: smart routers first, then [`fillCatalogGaps`](src/mountFromCat
 | Flag | Description |
 |------|-------------|
 | `--scenario=default` | Fixture set under `fixtures/<scenario>/` |
+| `--scenario=demo` | Paris hybrid-cloud walkthrough (`fixtures/demo/`) |
 | `--persist-state` | Save mutable state to `/tmp/synthetic-daemons-state.json` |
 
 ## Verification checklist
@@ -121,6 +122,10 @@ curl -s http://127.0.0.1:37777/api/v1.0/client/network/portforwards
 Then open Dashboard, Account, Organisation, Billing, **My Clouds**, VMs, Storage, Networking, and Settings → Licenses in Electros.
 
 Default demo session: `demo@synthetic.local` / `demo`, role `ORGOWNER`, email verified, active **pro** subscriber of org **Elemento Demo**.
+
+## Demo scenario
+
+`npm start -- --scenario=demo` loads `fixtures/demo/`: the Paris hybrid-cloud walkthrough (Scaleway VPC, three app VMs, private PostgreSQL, S3 backup, local AI on Server Dell over VPN). That scenario also advertises Database on Scaleway `fr-par`, which the production catalog does not, so the Database page can list `postgres-vpc-paris`. Login stays `demo@synthetic.local`. The org switcher lists every fixture organisation: **Elemento Demo** is the standard `default` landscape, **Cloud Ibrido** is this Paris demo. Choosing one reloads that fixture. Electros itself still starts the `default` set.
 
 ## Default scenario
 

@@ -14,9 +14,42 @@ export function loadEcdJson(filename: string): unknown {
 }
 
 /** Shape returned by TargetDaemons.getFile("supported_providers"). */
-export function loadSupportedProvidersMap(): Record<string, unknown> {
+export function loadSupportedProvidersMap(scenario?: string): Record<string, unknown> {
   const full = loadEcdJson("supported_providers.json") as {
     ELEMENTO_SUPPORTED_PROVIDERS: Record<string, unknown>;
   };
-  return full.ELEMENTO_SUPPORTED_PROVIDERS ?? {};
+  const providers = full.ELEMENTO_SUPPORTED_PROVIDERS ?? {};
+  if (scenario !== "demo") {
+    return providers;
+  }
+  return withDemoScalewayDatabase(providers);
+}
+
+/**
+ * The production catalog does not offer DBaaS on Scaleway, so the Database page
+ * stays unavailable. The Paris demo needs that page for the managed PostgreSQL.
+ */
+function withDemoScalewayDatabase(providers: Record<string, unknown>): Record<string, unknown> {
+  const clone = structuredClone(providers);
+  const scaleway = clone.scaleway as { services?: Array<Record<string, unknown>> } | undefined;
+  if (!scaleway?.services || scaleway.services.some((service) => service.sub_type === "dbaas")) {
+    return clone;
+  }
+
+  scaleway.services.push({
+    name: "dbaas",
+    display_name: "Database as a Service",
+    type: "service",
+    sub_type: "dbaas",
+    support_level: "full",
+    regions: {
+      "fr-par": {
+        country: "France",
+        location: "Paris",
+        plus_code: "",
+        certifications: [],
+      },
+    },
+  });
+  return clone;
 }

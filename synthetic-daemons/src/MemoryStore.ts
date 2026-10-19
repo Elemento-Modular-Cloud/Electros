@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import type { AppConfig } from "./config.js";
+import { listPublishedFixtureOrgs, type AppConfig } from "./config.js";
 
 export interface AuthStatus {
   authenticated: boolean;
@@ -60,6 +60,35 @@ function loadFixture<T>(dir: string, name: string): T {
   return JSON.parse(readFileSync(path, "utf8")) as T;
 }
 
+function defaultScenarios(): MemoryStore["scenarios"] {
+  return [
+    {
+      id: "scenario-lab",
+      name: "Lab Stack",
+      org_id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      active: false,
+      pools: ["atomos-lab", "proxmox-hv", "esxi-hv"],
+      users: [],
+    },
+    {
+      id: "scenario-public-cloud",
+      name: "Public Cloud Demo",
+      org_id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      active: false,
+      pools: ["google-demo-public", "azure-demo-public", "ovh-demo-public"],
+      users: [],
+    },
+  ];
+}
+
+function loadOptionalFixture<T>(dir: string, name: string): T | undefined {
+  const path = join(dir, name);
+  if (!existsSync(path)) {
+    return undefined;
+  }
+  return JSON.parse(readFileSync(path, "utf8")) as T;
+}
+
 /** Ensure GUI CloudTargetFromJson always receives target_name (+ sensible defaults). */
 function normalizeTarget(raw: Partial<TargetRecord> & { target_id?: string }): TargetRecord {
   const targetId = raw.target_id ?? raw.target_name ?? `target-${Date.now()}`;
@@ -91,7 +120,11 @@ export class MemoryStore {
   services: ServiceInstanceRecord[];
   billingTransactions: BillingTransactionRecord[];
   licenses: LicensesListResponse;
-  /** Demo scenarios shown on Active Connections (matches target-client SingleScenarioResponse). */
+  /** Active fixture set. Org switch reloads this when the chosen org maps to another directory. */
+  scenarioName: string;
+  /** Starred org in the switcher. Independent of the org whose landscape is loaded. */
+  preferredOrgId: string | null = null;
+  /** Scenarios shown on Active Connections (matches target-client SingleScenarioResponse). */
   scenarios: Array<{
     id: string;
     name: string;
@@ -99,24 +132,7 @@ export class MemoryStore {
     active: boolean;
     pools: string[];
     users: string[];
-  }> = [
-    {
-      id: "scenario-lab",
-      name: "Lab Stack",
-      org_id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-      active: false,
-      pools: ["atomos-lab", "proxmox-hv", "esxi-hv"],
-      users: [],
-    },
-    {
-      id: "scenario-public-cloud",
-      name: "Public Cloud Demo",
-      org_id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-      active: false,
-      pools: ["google-demo-public", "azure-demo-public", "ovh-demo-public"],
-      users: [],
-    },
-  ];
+  }> = defaultScenarios();
 
   private readonly persistState: boolean;
 
@@ -139,10 +155,14 @@ export class MemoryStore {
 
   constructor(config: AppConfig) {
     const { fixturesDir, persistState } = config;
+    this.scenarioName = config.scenario;
     this.persistState = persistState;
+
+    let savedScenarios: MemoryStore["scenarios"] | undefined;
 
     if (persistState && existsSync(STATE_PATH)) {
       const saved = JSON.parse(readFileSync(STATE_PATH, "utf8")) as Partial<MemoryStore>;
+      savedScenarios = saved.scenarios;
       this.authStatus = this.normalizeAuthStatus(
         (saved.authStatus as AuthStatus) ?? loadFixture(fixturesDir, "auth-status.json")
       );
@@ -187,6 +207,78 @@ export class MemoryStore {
       }
       this.licenses = loadFixture(fixturesDir, "licenses.json");
     }
+
+    this.applyScenarioFixture(fixturesDir, savedScenarios);
+  }
+
+  /**
+   * Load another fixture when the org switcher selects an organisation that
+   * belongs to a different scenario. The signed-in user stays the same.
+   */
+  switchOrganisation(orgId: string): void {
+    const org = listPublishedFixtureOrgs().find((entry) => entry.orgId === orgId);
+    if (!org) {
+      this.authStatus.org_id = orgId;
+      this.touch();
+      return;
+    }
+
+    if (org.scenario !== this.scenarioName) {
+      const session = { ...this.authStatus };
+      this.scenarioName = org.scenario;
+      this.loadFreshFixtures(org.dir);
+      this.authStatus.authenticated = session.authenticated;
+      this.authStatus.username = session.username;
+      this.authStatus.role = session.role;
+      this.authStatus.email_verified = session.email_verified;
+      this.authStatus.active_subscriber = session.active_subscriber;
+      this.authStatus.authz_token = session.authz_token;
+      this.applyScenarioFixture(org.dir);
+    }
+
+    this.authStatus.org_id = org.orgId;
+    this.authStatus.org_name = org.orgName;
+    this.authStatus.org = org.orgName;
+    this.touch();
+  }
+
+  setPreferredOrg(orgId: string): void {
+    this.preferredOrgId = orgId;
+    this.touch();
+  }
+
+  private loadFreshFixtures(fixturesDir: string): void {
+    this.authStatus = this.normalizeAuthStatus(loadFixture(fixturesDir, "auth-status.json"));
+    this.targets = normalizeTargetsList(loadFixture(fixturesDir, "targets.json"));
+    this.vms = loadFixture(fixturesDir, "vms.json");
+    this.volumes = loadFixture(fixturesDir, "volumes.json");
+    this.networks = loadFixture(fixturesDir, "networks.json");
+    this.templates = loadFixture(fixturesDir, "templates.json");
+    this.hostStatus = loadFixture(fixturesDir, "host-status.json");
+    try {
+      this.portForwards = loadFixture(fixturesDir, "portforwards.json");
+    } catch {
+      this.portForwards = [];
+    }
+    this.portTunnels = [];
+    this.services = loadFixture(fixturesDir, "services.json");
+    try {
+      this.billingTransactions = loadFixture(fixturesDir, "billing-transactions.json");
+    } catch {
+      this.billingTransactions = [];
+    }
+    this.licenses = loadFixture(fixturesDir, "licenses.json");
+  }
+
+  private applyScenarioFixture(fixturesDir: string, saved?: MemoryStore["scenarios"]): void {
+    const scenarioFixture = loadOptionalFixture<MemoryStore["scenarios"]>(fixturesDir, "scenarios.json");
+    if (saved?.length) {
+      this.scenarios = saved;
+    } else if (scenarioFixture?.length) {
+      this.scenarios = scenarioFixture;
+    } else {
+      this.scenarios = defaultScenarios();
+    }
   }
 
   private snapshot(): void {
@@ -208,6 +300,7 @@ export class MemoryStore {
         services: this.services,
         billingTransactions: this.billingTransactions,
         licenses: this.licenses,
+        scenarios: this.scenarios,
       }, null, 2)
     );
   }
@@ -270,24 +363,27 @@ export class MemoryStore {
   }
 
   scopesPayload(): Record<string, unknown> {
-    const orgId = this.authStatus.org_id || "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
-    const orgName = this.authStatus.org_name || this.authStatus.org || "Elemento Demo";
+    const preferredId = this.preferredOrgId ?? this.authStatus.org_id;
+    const published = listPublishedFixtureOrgs();
+    const scopes = (published.length > 0 ? published : [{
+      orgId: this.authStatus.org_id,
+      orgName: this.authStatus.org_name || this.authStatus.org || "Elemento Demo",
+    }]).map((org) => ({
+      org_id: org.orgId,
+      org_name: org.orgName,
+      suborg_id: null,
+      suborg_name: null,
+      selectable: true,
+      role: this.authStatus.role ?? "ORGOWNER",
+      is_trial: false,
+      member: true,
+      preferred: org.orgId === preferredId,
+      suborgs: [],
+    }));
+
     return {
       username: this.authStatus.username,
-      scopes: [
-        {
-          org_id: orgId,
-          org_name: orgName,
-          suborg_id: null,
-          suborg_name: null,
-          selectable: true,
-          role: this.authStatus.role ?? "ORGOWNER",
-          is_trial: false,
-          member: true,
-          preferred: true,
-          suborgs: [],
-        },
-      ],
+      scopes,
     };
   }
 

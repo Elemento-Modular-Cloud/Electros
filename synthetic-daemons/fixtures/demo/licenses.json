@@ -1,0 +1,17 @@
+{
+  "licenses": [
+    {
+      "license_key": "DEMO-PARIS-ELEC-1001-2001",
+      "is_armed": true,
+      "hmac": "synthetic-hmac-demo-paris-000000000001",
+      "duration": 365,
+      "support_json": {
+        "tier": "professional",
+        "email": "support@synthetic.local",
+        "docs": "https://docs.elemento.cloud/licenses"
+      },
+      "expire": 1800000000,
+      "reseller_entity": "Elemento Direct"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "authenticated": true,
+  "username": "demo@synthetic.local",
+  "org": "Cloud Ibrido",
+  "org_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+  "org_name": "Cloud Ibrido",
+  "suborg_id": null,
+  "suborg_name": null,
+  "role": "ORGOWNER",
+  "active_subscriber": true,
+  "email_verified": true,
+  "authz_token": "synthetic-authz-token"
+}

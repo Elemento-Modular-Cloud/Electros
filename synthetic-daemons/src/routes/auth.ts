@@ -32,8 +32,7 @@ export function authRouter(store: MemoryStore, config: AppConfig): Router {
     const orgId = req.body?.org_id as string | undefined;
     store.setAuthenticated(true, username);
     if (orgId) {
-      store.authStatus.org_id = orgId;
-      store.touch();
+      store.switchOrganisation(orgId);
     }
     json(res, { authenticated: true });
   });
@@ -44,9 +43,7 @@ export function authRouter(store: MemoryStore, config: AppConfig): Router {
       return;
     }
     if (req.body?.org_id) {
-      store.authStatus.org_id = String(req.body.org_id);
-      store.authStatus.org_name = store.authStatus.org_name || "Elemento Demo";
-      store.authStatus.org = store.authStatus.org_name;
+      store.switchOrganisation(String(req.body.org_id));
     }
     if (req.body?.suborg_id !== undefined) {
       store.authStatus.suborg_id = req.body.suborg_id ? String(req.body.suborg_id) : null;
@@ -133,8 +130,7 @@ export function authRouter(store: MemoryStore, config: AppConfig): Router {
 
   router.patch("/account/preferred-org", (req: Request, res: Response) => {
     if (req.body?.org_id) {
-      store.authStatus.org_id = String(req.body.org_id);
-      store.touch();
+      store.setPreferredOrg(String(req.body.org_id));
     }
     json(res, store.statusPayload());
   });

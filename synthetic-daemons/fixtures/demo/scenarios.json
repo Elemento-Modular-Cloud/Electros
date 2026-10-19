@@ -1,0 +1,10 @@
+[
+  {
+    "id": "scenario-cloud-ibrido-paris",
+    "name": "Cloud Ibrido Paris",
+    "org_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+    "active": true,
+    "pools": ["scaleway-paris", "server-dell"],
+    "users": []
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "data": [
+    {
+      "target_id": "scaleway-paris",
+      "target_name": "Scaleway Paris",
+      "target_type": "meson_public",
+      "active": true,
+      "trusted": "trusted",
+      "target_config": {
+        "provider": "scaleway"
+      },
+      "ping_status": {
+        "target_id": "scaleway-paris",
+        "target_type": "meson_public",
+        "pingable": true,
+        "trust_established": true
+      }
+    },
+    {
+      "target_id": "server-dell",
+      "target_name": "Server Dell",
+      "target_type": "atomos_local_ip",
+      "active": true,
+      "trusted": "trusted",
+      "target_config": {
+        "ips": ["192.168.50.10"]
+      },
+      "ping_status": {
+        "target_id": "server-dell",
+        "target_type": "atomos_local_ip",
+        "pingable": true,
+        "trust_established": true
+      }
+    }
+  ]
+}
