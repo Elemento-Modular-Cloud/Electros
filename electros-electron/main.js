@@ -370,7 +370,104 @@ ipcMain.handle('open-dot-config', async (event, {file = null}) => {
 });
 
 
+function simulatedSshPage() {
+    const baseDir = app.isPackaged ? process.resourcesPath : __dirname;
+    return path.join(
+        baseDir,
+        app.isPackaged ? "app.asar.unpacked" : "",
+        "electros", "remotes", "ssh", "simulated.html"
+    );
+}
+
+function sshQuery(connectionDetails) {
+    const details = connectionDetails.details && typeof connectionDetails.details === "object"
+        ? connectionDetails.details
+        : {};
+    return {
+        vmName: String(connectionDetails.vmName ?? "SSH"),
+        host: String(connectionDetails.ip ?? ""),
+        username: String(connectionDetails.username ?? ""),
+        provider: String(details.provider ?? ""),
+        region: String(details.region ?? ""),
+        os: String(details.os ?? ""),
+        osFlavour: String(details.osFlavour ?? ""),
+        state: String(details.state ?? ""),
+    };
+}
+
+function applySshTitle(sshWindow, vmName) {
+    sshWindow.webContents.on("did-finish-load", () => {
+        const safeName = String(vmName ?? "SSH").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+        const sshTitlebarJS = PreloadedContent.Js.Titlebar.replace(
+            "titleElement.textContent = document.title;",
+            `titleElement.textContent = "SSH · ${safeName}";`
+        );
+        sshWindow.webContents.executeJavaScript(sshTitlebarJS);
+        sshWindow.setTitle(`SSH · ${vmName ?? "SSH"}`);
+    });
+}
+
+async function openSimulatedSsh(connectionDetails) {
+    const page = simulatedSshPage();
+    if (!fs.existsSync(page)) {
+        throw new Error(`Simulated SSH page not found at ${page}`);
+    }
+
+    const sshWindow = new BrowserWindow({
+        width: 1024,
+        height: 768,
+        ...WindowOptions.Common,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: path.join(__dirname, "preload.js"),
+            webSecurity: false,
+            zoomFactor: 1,
+            backgroundThrottling: false,
+            enableRemoteModule: false,
+            experimentalFeatures: false
+        }
+    });
+
+    applySshTitle(sshWindow, connectionDetails.vmName);
+    sshWindow.on("close", (event) => {
+        event.preventDefault();
+        if (!sshWindow.isDestroyed()) {
+            sshWindow.destroy();
+        }
+    });
+    await sshWindow.loadFile(page, { query: sshQuery(connectionDetails) });
+    if (!sshWindow.isDestroyed()) {
+        sshWindow.show();
+        sshWindow.focus();
+    }
+    return sshWindow.id;
+}
+
+/** True when this process launched synthetic daemons, or a synthetic daemon is already bound to the compute port. */
+async function daemonsAreSynthetic() {
+    if (Daemons.IsSynthetic()) {
+        return true;
+    }
+    try {
+        const response = await fetch("http://127.0.0.1:17777/version", {
+            signal: AbortSignal.timeout(800),
+        });
+        if (!response.ok) {
+            return false;
+        }
+        const body = await response.json();
+        return String(body?.version ?? "").startsWith("synthetic");
+    } catch {
+        return false;
+    }
+}
+
 ipcMain.handle('open-ssh', async (event, connectionDetails) => {
+    if (connectionDetails?.simulated || await daemonsAreSynthetic()) {
+        return openSimulatedSsh(connectionDetails);
+    }
+
     const sshWindow = new BrowserWindow({
         width: 1024,
         height: 768,

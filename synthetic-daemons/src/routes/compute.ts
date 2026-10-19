@@ -160,6 +160,7 @@ export function computeRouter(store: MemoryStore, config: AppConfig): Router {
       vm_uuid: vmUuid,
       instance_id: instanceId,
       service: String(req.body?.service ?? "VNC"),
+      simulated: true,
     });
   });
   router.get(`${rk(keys, "PORTTUNNEL_VNC_WITH_WS")}/:instanceId`, (req: Request, res: Response) => {
