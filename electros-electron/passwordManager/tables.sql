@@ -21,6 +21,7 @@ CREATE TABLE credentials (
 
     FOREIGN KEY (owner)
         REFERENCES userProfiles(id)
+        ON UPDATE CASCADE
         ON DELETE CASCADE
 );
 
@@ -33,23 +34,36 @@ CREATE TABLE sshKeys (
 
     FOREIGN KEY (owner)
         REFERENCES userProfiles(id)
+        ON UPDATE CASCADE
         ON DELETE CASCADE
 );
 
 CREATE TABLE hosts (
-    resourceUuid TEXT PRIMARY KEY,
-    resourceType TEXT,
-
-    credential INTEGER NOT NULL,
+    resourceUuid TEXT NOT NULL PRIMARY KEY,
+    resourceType TEXT DEFAULT NULL,
     owner TEXT NOT NULL,
 
     FOREIGN KEY (owner)
         REFERENCES userProfiles(id)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (credential, owner)
-        REFERENCES credentials(id, owner)
         ON UPDATE CASCADE
         ON DELETE CASCADE
+);
+
+CREATE TABLE hostsCredentials
+(
+    resourceUuid TEXT    NOT NULL,
+    credential   INTEGER NOT NULL,
+
+    PRIMARY KEY (resourceUuid, credential),
+
+    FOREIGN KEY (resourceUuid)
+        REFERENCES hosts (resourceUuid)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (credential)
+        REFERENCES credentials (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
