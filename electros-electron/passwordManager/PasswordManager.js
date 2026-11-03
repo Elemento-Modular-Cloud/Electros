@@ -33,6 +33,8 @@ class PasswordManager {
             this.database.pragma('journal_mode = WAL');
         }
     }
+
+
 }
 
 exports.PasswordManager = PasswordManager;
