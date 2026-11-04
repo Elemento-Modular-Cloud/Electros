@@ -57,18 +57,14 @@ DROP TABLE IF EXISTS userProfiles;
         `);
     }
 
-    /** @returns Promise<number> */
+    /** @returns number */
     #registerUser(userUuid, orgUuid) {
         if (typeof userUuid !== 'string' || typeof orgUuid !== 'string') { throw new TypeError("Parameters userUuid and orgUuid must be strings"); }
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        return new Promise((resolve) => {
-            const insert = this.database.prepare(`INSERT INTO userProfiles VALUES (NULL, ?, ?);`);
-            this.database.transaction(() => {
-                const info = insert.run(userUuid, orgUuid)
-                resolve(info.lastInsertRowid);
-            })();
-        });
+        const insert = this.database.prepare(`INSERT INTO userProfiles VALUES (NULL, ?, ?);`);
+        const info = insert.run(userUuid, orgUuid)
+        return info.lastInsertRowid;
     }
 
     createCredential(
@@ -78,58 +74,46 @@ DROP TABLE IF EXISTS userProfiles;
 
         const stmt = this.database.prepare(`INSERT INTO credentials VALUES (null, ?, ?, ?, ?);`);
 
-        return new Promise((resolve) => {
-            this.#getOwnerId(user, organisation).then((ownerId) => {
-                this.#getSshKeyId(ownerId, sshKey).then((keyId) => {
-                    const info = stmt.run(username, password, keyId, ownerId)
-                    resolve(info.lastInsertRowid);
-                });
-            });
-        });
+        const ownerId = this.#getOwnerId(user, organisation);
+        const keyId = this.#getSshKeyId(ownerId, sshKey);
+        const info = stmt.run(username, password, keyId, ownerId)
+        return info.lastInsertRowid;
     }
 
-    /** @returns Promise<number> */
+    /** @returns number */
     #createSshKey(ownerId, { key, passphrase }) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        return new Promise((resolve) => {
-            const insert = this.database.prepare(`INSERT INTO sshKeys VALUES (NULL, ?, ?, ?);`);
-            this.database.transaction(() => {
-                const info = insert.run(key, passphrase, ownerId);
-                resolve(info.lastInsertRowid);
-            })();
-        });
+        const insert = this.database.prepare(`INSERT INTO sshKeys VALUES (NULL, ?, ?, ?);`);
+        const info = insert.run(key, passphrase, ownerId);
+        return info.lastInsertRowid;
     }
 
-    /** @returns Promise<number> */
+    /** @returns { number | null } */
     #getSshKeyId(ownerId, sshKey) {
-        return new Promise((resolve) => {
-            if (typeof sshKey !== "number" && Object.keys(sshKey) === ['identifier']) {
-                resolve(sshKey.identifier);
-            } else if (typeof sshKey !== 'number') {
-                this.#createSshKey(ownerId, sshKey).then(resolve);
-            } else {
-                resolve(sshKey);
-            }
-            resolve(null);
-        });
+        if (typeof sshKey !== "number" && Object.keys(sshKey) === ['identifier']) {
+            return sshKey.identifier;
+        } else if (typeof sshKey !== 'number') {
+            return this.#createSshKey(ownerId, sshKey);
+        } else if (typeof sshKey === 'number') {
+            return sshKey;
+        }
+        return null;
     }
 
-    /** @returns Promise<number> */
+    /** @returns number */
     #getOwnerId(user, org) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        return new Promise((resolve) => {
-            const userId = this.database
-                .prepare(`SELECT id
-                          FROM main.userProfiles
-                          WHERE ownerUuid = ?
-                            AND organisation = ?;`)
-                .get(user, org);
+        const userId = this.database
+            .prepare(`SELECT id
+                      FROM main.userProfiles
+                      WHERE ownerUuid = ?
+                        AND organisation = ?;`)
+            .get(user, org);
 
-            if (typeof userId === "number") { resolve(userId); }
-            this.#registerUser(user, org).then(resolve);
-        });
+        if (typeof userId === "number") { return userId; }
+        return this.#registerUser(user, org);
     }
 
     dumpUsers() {
