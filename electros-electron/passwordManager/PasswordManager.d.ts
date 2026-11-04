@@ -62,5 +62,9 @@ export declare class PasswordManager {
         credentialIdentifier: number,
         data: Partial<Omit<Credential, 'identifier' | 'resources'>>
     ): void;
+
+    public registerUser(userUuid: string, orgUuid: string): void;
+
+    public close(): void;
 }
 
