@@ -11,7 +11,7 @@ declare interface Credential {
     identifier: number;
     username: string;
     password?: string;
-    sshKey?: SshKey;
+    sshKey?: Partial<SshKey> | number;
     resources?: { [key: string]: string | null };
 }
 
@@ -20,7 +20,8 @@ export declare class PasswordManager {
 
     constructor(elementoHome: string);
 
-    private static getKey(dbKeyFile: string): Buffer;
+    // @ts-expect-error ES target 2022+
+    static #getKey(dbKeyFile: string): Buffer;
 
     public clearUserData(user: string, organisation?: string): void;
 
@@ -31,13 +32,20 @@ export declare class PasswordManager {
         resourceType?: string
     ): Omit<Credential, 'resources'>[];
 
-    public createResourceCredential(
+    /**
+     * Register a credential in the DB for a user/org.
+     *
+     * @param user UUID
+     * @param organisation UUID
+     * @param credential Credentials to store
+     *
+     * @returns Credential Identifier
+     */
+    public createCredential(
         user: string,
         organisation: string,
-        resourceUuid: string,
-        credential: Omit<Credential, 'identifier' | 'resources'>,
-        resourceType?: string,
-    ): void;
+        credential: Omit<Credential, 'identifier' | 'resources'>
+    ): Promise<number>;
 
     public getUserCredentials(user: string, organisation: string): Credential[];
 
@@ -62,8 +70,6 @@ export declare class PasswordManager {
         credentialIdentifier: number,
         data: Partial<Omit<Credential, 'identifier' | 'resources'>>
     ): void;
-
-    public registerUser(userUuid: string, orgUuid: string): void;
 
     public close(): void;
 }

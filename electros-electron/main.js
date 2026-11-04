@@ -42,6 +42,17 @@ let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
 
 const passwdManager = new PasswordManager(path.join(os.homedir(), '.elemento'));
 
+passwdManager.createCredential("simone", "org", {
+    username: "srobaldo",
+    password: "passwd",
+    sshKey: {
+        key: "my-key",
+        passphrase: null
+    }
+}).then(() => {
+    passwdManager.dumpUsers();
+});
+
 // macOS URL handling
 app.on('open-url', (event, url) => {
     event.preventDefault();

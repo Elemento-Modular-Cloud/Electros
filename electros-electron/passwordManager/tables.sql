@@ -1,21 +1,23 @@
 
 
-CREATE TABLE userProfiles(
+CREATE TABLE IF NOT EXISTS userProfiles(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ownerUuid TEXT NOT NULL,
-    organisation TEXT NOT NULL
+    organisation TEXT NOT NULL,
+
+    UNIQUE (ownerUuid, organisation) ON CONFLICT IGNORE
 );
 
-CREATE TABLE credentials (
+CREATE TABLE IF NOT EXISTS credentials (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT DEFAULT NULL,
     password TEXT DEFAULT NULL,
 
     sshKey INTEGER DEFAULT NULL,
-    owner TEXT NOT NULL,
+    owner INTEGER NOT NULL,
 
-    FOREIGN KEY (sshKey, owner)
-        REFERENCES sshKeys(id, owner)
+    FOREIGN KEY (sshKey)
+        REFERENCES sshKeys(id)
         ON UPDATE CASCADE
         ON DELETE SET DEFAULT,
 
@@ -25,12 +27,12 @@ CREATE TABLE credentials (
         ON DELETE CASCADE
 );
 
-CREATE TABLE sshKeys (
+CREATE TABLE IF NOT EXISTS sshKeys (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT NOT NULL,
     passphrase TEXT DEFAULT NULL,
 
-    owner TEXT NOT NULL,
+    owner INTEGER NOT NULL,
 
     FOREIGN KEY (owner)
         REFERENCES userProfiles(id)
@@ -38,10 +40,10 @@ CREATE TABLE sshKeys (
         ON DELETE CASCADE
 );
 
-CREATE TABLE hosts (
+CREATE TABLE IF NOT EXISTS hosts (
     resourceUuid TEXT NOT NULL PRIMARY KEY,
     resourceType TEXT DEFAULT NULL,
-    owner TEXT NOT NULL,
+    owner INTEGER NOT NULL,
 
     FOREIGN KEY (owner)
         REFERENCES userProfiles(id)
@@ -49,8 +51,7 @@ CREATE TABLE hosts (
         ON DELETE CASCADE
 );
 
-CREATE TABLE hostsCredentials
-(
+CREATE TABLE IF NOT EXISTS hostsCredentials (
     resourceUuid TEXT    NOT NULL,
     credential   INTEGER NOT NULL,
 
