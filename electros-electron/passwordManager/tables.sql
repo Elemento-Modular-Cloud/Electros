@@ -68,3 +68,5 @@ CREATE TABLE IF NOT EXISTS hostsCredentials (
         ON UPDATE CASCADE
 );
 
+CREATE INDEX IF NOT EXISTS idx_hostsCredentials_credential
+    ON hostsCredentials(credential);
