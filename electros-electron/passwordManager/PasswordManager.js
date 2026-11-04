@@ -10,10 +10,10 @@ class PasswordManager {
             const randomData = crypto.randomBytes(32).toString('hex');
             const ciphered = safeStorage.encryptString(randomData);
             fs.writeFileSync(dbKeyFile, ciphered, { flush: true });
-            return randomData;
+            return Buffer.from(randomData);
         } else {
-            const binCiphered = fs.readFileSync(dbKeyFile, 'binary');
-            return safeStorage.decryptString(binCiphered);
+            const binCiphered = fs.readFileSync(dbKeyFile);
+            return Buffer.from(safeStorage.decryptString(binCiphered));
         }
     }
 
@@ -28,8 +28,8 @@ class PasswordManager {
                 console.info("[INFO] Database file missing, creating.");
             }
             this.database = require("better-sqlite3-multiple-ciphers")(targetDbFile);
-            this.database.pragma(`rekey='${PasswordManager.getKey(`${targetDbFile}.key`)}'`);
             this.database.pragma('cipher_memory_security = ON');
+            this.database.key(PasswordManager.getKey(`${targetDbFile}.key`));
             this.database.pragma('journal_mode = WAL');
         }
     }

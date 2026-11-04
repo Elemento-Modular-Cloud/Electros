@@ -15,12 +15,12 @@ declare interface Credential {
     resources?: { [key: string]: string | null };
 }
 
-declare class PasswordManager {
+export declare class PasswordManager {
     private readonly database: Database;
 
     constructor(elementoHome: string);
 
-    private static getKey(dbKeyFile: string): string;
+    private static getKey(dbKeyFile: string): Buffer;
 
     public clearUserData(user: string, organisation?: string): void;
 
