@@ -50,19 +50,21 @@ class PasswordManager {
 
         const ownerId = this.#getOwnerId(user, organisation);
         const keyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
-        const info = stmt.run(username, password, keyId, ownerId)
+        const info = stmt.run(username ?? null, password ?? null, keyId, ownerId)
         return info.lastInsertRowid;
     }
 
     getUserCredentials(user, organisation) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
         const ownerId = this.#getOwnerId(user, organisation);
+        console.debug("Owner id ", ownerId);
 
         const stmt = this.database.prepare(`
 SELECT
     credentials.id,
     credentials.username,
     credentials.password,
+    sshKeys.id,
     sshKeys.key,
     COUNT(hC.resourceUuid) as hostCredentials
 FROM credentials
@@ -87,12 +89,13 @@ GROUP BY
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
         const insert = this.database.prepare(`INSERT INTO sshKeys VALUES (NULL, ?, ?, ?);`);
-        const info = insert.run(key, passphrase, ownerId);
+        const info = insert.run(key, passphrase ?? null, ownerId);
         return info.lastInsertRowid;
     }
 
     /** @returns { number | null } */
     #getOrCreateSshKeyId(ownerId, sshKey) {
+        if (sshKey === null || sshKey === undefined) { return null; }
         if (typeof sshKey !== "number" && Object.keys(sshKey) === ['identifier']) {
             return sshKey.identifier;
         } else if (typeof sshKey !== 'number') {
@@ -114,7 +117,7 @@ GROUP BY
                         AND organisation = ?;`)
             .get(user, org);
 
-        if (typeof userId === "number") { return userId; }
+        if (userId && userId.id) { return userId.id; }
         return this.#registerUser(user, org);
     }
 
