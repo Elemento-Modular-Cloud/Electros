@@ -45,7 +45,7 @@ export declare class PasswordManager {
         user: string,
         organisation: string,
         credential: Omit<Credential, 'identifier' | 'resources'>
-    ): Promise<number>;
+    ): number;
 
     public getUserCredentials(user: string, organisation: string): Credential[];
 

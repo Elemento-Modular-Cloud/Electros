@@ -41,32 +41,6 @@ class PasswordManager {
         }
     }
 
-    #initDbTables() {
-        const tablesSqlFile = join(__dirname, 'tables.sql');
-        const contents = fs.readFileSync(tablesSqlFile, 'utf8').toString();
-        this.database.exec(contents);
-    }
-
-    #clearDbTables() {
-        this.database.exec(`
-DROP TABLE IF EXISTS hostsCredentials;
-DROP TABLE IF EXISTS hosts;
-DROP TABLE IF EXISTS sshKeys;
-DROP TABLE IF EXISTS credentials;
-DROP TABLE IF EXISTS userProfiles;
-        `);
-    }
-
-    /** @returns number */
-    #registerUser(userUuid, orgUuid) {
-        if (typeof userUuid !== 'string' || typeof orgUuid !== 'string') { throw new TypeError("Parameters userUuid and orgUuid must be strings"); }
-        if (this.database === null) { throw new DatabaseUnavailableException(); }
-
-        const insert = this.database.prepare(`INSERT INTO userProfiles VALUES (NULL, ?, ?);`);
-        const info = insert.run(userUuid, orgUuid)
-        return info.lastInsertRowid;
-    }
-
     createCredential(
         user, organisation, { username, password, sshKey }
     ) {
@@ -75,9 +49,37 @@ DROP TABLE IF EXISTS userProfiles;
         const stmt = this.database.prepare(`INSERT INTO credentials VALUES (null, ?, ?, ?, ?);`);
 
         const ownerId = this.#getOwnerId(user, organisation);
-        const keyId = this.#getSshKeyId(ownerId, sshKey);
+        const keyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
         const info = stmt.run(username, password, keyId, ownerId)
         return info.lastInsertRowid;
+    }
+
+    getUserCredentials(user, organisation) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+SELECT
+    credentials.id,
+    credentials.username,
+    credentials.password,
+    sshKeys.key,
+    COUNT(hC.resourceUuid) as hostCredentials
+FROM credentials
+LEFT OUTER JOIN sshKeys
+    ON sshKeys.id = credentials.sshKey
+LEFT OUTER JOIN hostsCredentials hC
+    on credentials.id = hC.credential
+WHERE credentials.owner = ?
+GROUP BY
+    credentials.id,
+    credentials.username,
+    credentials.password,
+    sshKeys.key;
+        `);
+
+        const results = stmt.all(ownerId);
+        console.dir(results);
     }
 
     /** @returns number */
@@ -90,7 +92,7 @@ DROP TABLE IF EXISTS userProfiles;
     }
 
     /** @returns { number | null } */
-    #getSshKeyId(ownerId, sshKey) {
+    #getOrCreateSshKeyId(ownerId, sshKey) {
         if (typeof sshKey !== "number" && Object.keys(sshKey) === ['identifier']) {
             return sshKey.identifier;
         } else if (typeof sshKey !== 'number') {
@@ -114,6 +116,32 @@ DROP TABLE IF EXISTS userProfiles;
 
         if (typeof userId === "number") { return userId; }
         return this.#registerUser(user, org);
+    }
+
+    /** @returns number */
+    #registerUser(userUuid, orgUuid) {
+        if (typeof userUuid !== 'string' || typeof orgUuid !== 'string') { throw new TypeError("Parameters userUuid and orgUuid must be strings"); }
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const insert = this.database.prepare(`INSERT INTO userProfiles VALUES (NULL, ?, ?);`);
+        const info = insert.run(userUuid, orgUuid)
+        return info.lastInsertRowid;
+    }
+
+    #initDbTables() {
+        const tablesSqlFile = join(__dirname, 'tables.sql');
+        const contents = fs.readFileSync(tablesSqlFile, 'utf8').toString();
+        this.database.exec(contents);
+    }
+
+    #clearDbTables() {
+        this.database.exec(`
+DROP TABLE IF EXISTS hostsCredentials;
+DROP TABLE IF EXISTS hosts;
+DROP TABLE IF EXISTS sshKeys;
+DROP TABLE IF EXISTS credentials;
+DROP TABLE IF EXISTS userProfiles;
+        `);
     }
 
     dumpUsers() {
