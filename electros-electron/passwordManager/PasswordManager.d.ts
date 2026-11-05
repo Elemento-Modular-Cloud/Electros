@@ -71,6 +71,10 @@ export declare class PasswordManager {
         data: Partial<Omit<Credential, 'identifier' | 'resources'>>
     ): void;
 
+    public getUserSshKeys(user: string, organisation: string): SshKey[];
+    public updateSshKey(user: string, organisation: string, keyIdentifier: number, data: Partial<SshKey>): number;
+    public deleteSshKey(user: string, organisation: string, keyIdentifier: number): void;
+
     public close(): void;
 }
 

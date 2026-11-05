@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS userProfiles
 (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    ownerUuid    TEXT NOT NULL,
+    userUuid    TEXT NOT NULL,
     organisation TEXT NOT NULL,
 
-    UNIQUE (ownerUuid, organisation) -- DO UPDATE SET on Conflict
+    UNIQUE (userUuid, organisation) -- DO UPDATE SET on Conflict
 );
 
 
-CREATE INDEX IF NOT EXISTS idx_userProfiles_owner ON userProfiles (ownerUuid);
+CREATE INDEX IF NOT EXISTS idx_userProfiles_owner ON userProfiles (userUuid);
 
 
 CREATE TABLE IF NOT EXISTS sshKeys

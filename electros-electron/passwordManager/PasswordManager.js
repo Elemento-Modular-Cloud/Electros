@@ -41,31 +41,62 @@ class PasswordManager {
         }
     }
 
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {PasswordManagerCredentialCreateParameters} param2
+     * @return {number | bigint}
+     */
     createCredential(
-        user, organisation, { username, password, sshKey }
+        user,
+        organisation, {
+            username = null,
+            password = null,
+            sshKey = null,
+            userMetadata = {},
+            internalMetadata = {},
+            tags = []
+        }
     ) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        const stmt = this.database.prepare(`INSERT INTO credentials VALUES (null, ?, ?, ?, ?);`);
+        const stmt = this.database.prepare(`
+INSERT INTO credentials (username, passwordEncrypted, sshKey, owner, userMetadata, internalMetadata, tags)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+        `);
 
         const ownerId = this.#getOwnerId(user, organisation);
         const keyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
-        const info = stmt.run(username ?? null, password ?? null, keyId, ownerId)
+        const info = stmt.run(
+            username ?? null,
+            password ?? null,
+            keyId,
+            ownerId,
+            JSON.stringify(userMetadata),
+            JSON.stringify(internalMetadata),
+            JSON.stringify(tags)
+        )
         return info.lastInsertRowid;
     }
 
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @returns { CredentialsListingEntry[] }
+     */
     getUserCredentials(user, organisation) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
         const ownerId = this.#getOwnerId(user, organisation);
-        console.debug("Owner id ", ownerId);
 
         const stmt = this.database.prepare(`
 SELECT
-    credentials.id,
-    credentials.username,
-    credentials.password,
-    sshKeys.id,
-    sshKeys.key,
+    credentials.id AS credentialId,
+    credentials.username AS username,
+    credentials.userMetadata AS userMetadata,
+    credentials.internalMetadata AS internalMetadata,
+    credentials.tags AS credentialTags,
+    sshKeys.id AS sshKeyId,
+    sshKeys.name AS sshKeyName,
     COUNT(hC.resourceUuid) as hostCredentials
 FROM credentials
 LEFT OUTER JOIN sshKeys
@@ -76,27 +107,61 @@ WHERE credentials.owner = ?
 GROUP BY
     credentials.id,
     credentials.username,
-    credentials.password,
-    sshKeys.key;
+    credentials.passwordEncrypted,
+    sshKeys.name;
         `);
 
-        const results = stmt.all(ownerId);
-        console.dir(results);
+        return stmt.all(ownerId).map(r => {
+            return {
+                identifier: r.credentialId,
+                username: r.username,
+                userMetadata: JSON.parse(r.userMetadata),
+                internalMetadata: JSON.parse(r.internalMetadata),
+                tags: JSON.parse(r.credentialTags),
+                sshKeyId: r.sshKeyId,
+                sshKeyName: r.sshKeyName,
+            };
+        });
     }
 
-    /** @returns number */
-    #createSshKey(ownerId, { key, passphrase }) {
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {PasswordManagerCredentialCreateParameters} param3
+     */
+    updateCredentials(user, organisation, credentialIdentifier, { username, password, sshKey }) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        const insert = this.database.prepare(`INSERT INTO sshKeys VALUES (NULL, ?, ?, ?);`);
-        const info = insert.run(key, passphrase ?? null, ownerId);
+        const ownerId = this.#getOwnerId(user, organisation);
+
+    }
+
+    /**
+     * @param {number} ownerId
+     * @param {SshKeyCreateParameters} param1
+     * @return {number | bigint}
+     */
+    #createSshKey(ownerId, { key, passphrase, name }) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const insert = this.database.prepare(`
+INSERT INTO sshKeys (name, keyEncrypted, passphraseEncrypted, owner)
+VALUES (?, ?, ?, ?);
+        `);
+        const info = insert.run(name ?? null, key, passphrase ?? null, ownerId);
         return info.lastInsertRowid;
     }
 
-    /** @returns { number | null } */
+    /**
+     *
+     * @param {number} ownerId
+     * @param {SshKeyReference} sshKey
+     * @return {number|bigint|null}
+     */
     #getOrCreateSshKeyId(ownerId, sshKey) {
         if (sshKey === null || sshKey === undefined) { return null; }
-        if (typeof sshKey !== "number" && Object.keys(sshKey) === ['identifier']) {
+        if (typeof sshKey !== "number" && Object.keys(sshKey).includes('identifier')) {
             return sshKey.identifier;
         } else if (typeof sshKey !== 'number') {
             return this.#createSshKey(ownerId, sshKey);
@@ -106,14 +171,18 @@ GROUP BY
         return null;
     }
 
-    /** @returns number */
+    /**
+     * @param {string} user
+     * @param {string} org
+     * @return {number|bigint}
+     */
     #getOwnerId(user, org) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
         const userId = this.database
             .prepare(`SELECT id
                       FROM main.userProfiles
-                      WHERE ownerUuid = ?
+                      WHERE userUuid = ?
                         AND organisation = ?;`)
             .get(user, org);
 
@@ -121,12 +190,16 @@ GROUP BY
         return this.#registerUser(user, org);
     }
 
-    /** @returns number */
+    /**
+     * @param {string} userUuid
+     * @param {string} orgUuid
+     * @return {number|bigint}
+     */
     #registerUser(userUuid, orgUuid) {
         if (typeof userUuid !== 'string' || typeof orgUuid !== 'string') { throw new TypeError("Parameters userUuid and orgUuid must be strings"); }
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        const insert = this.database.prepare(`INSERT INTO userProfiles VALUES (NULL, ?, ?);`);
+        const insert = this.database.prepare(`INSERT INTO userProfiles (userUuid, organisation) VALUES (?, ?);`);
         const info = insert.run(userUuid, orgUuid)
         return info.lastInsertRowid;
     }
@@ -138,13 +211,17 @@ GROUP BY
     }
 
     #clearDbTables() {
-        this.database.exec(`
-DROP TABLE IF EXISTS hostsCredentials;
-DROP TABLE IF EXISTS hosts;
-DROP TABLE IF EXISTS sshKeys;
-DROP TABLE IF EXISTS credentials;
-DROP TABLE IF EXISTS userProfiles;
-        `);
+        try {
+            this.database.exec(`
+                DROP TABLE IF EXISTS userProfiles;
+                DROP TABLE IF EXISTS sshKeys;
+                DROP TABLE IF EXISTS hosts;
+                DROP TABLE IF EXISTS credentials;
+                DROP TABLE IF EXISTS hostsCredentials;
+            `);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     dumpUsers() {

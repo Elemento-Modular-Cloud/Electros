@@ -44,14 +44,29 @@ const passwdManager = new PasswordManager(path.join(os.homedir(), '.elemento'));
 
 passwdManager.createCredential("simone", "org", {
     username: "srobaldo",
-    password: "passwd",
+    tags: [ "Super secure" ],
     sshKey: {
+        name: "An ssh key",
         key: "my-key",
-        passphrase: null
+        passphrase: "passhprase",
     }
-}).then(() => {
-    passwdManager.dumpUsers();
 });
+
+passwdManager.createCredential("simone", "org", {
+    username: "srobaldo@pam",
+    password: "passwd-no-key",
+    userMetadata: { accessLevel: "no" }
+});
+
+passwdManager.createCredential("simone", "org", {
+    username: "srobaldo@with-pre-existing-key",
+    sshKey: 1,
+    internalMetadata: { internal: "not really" }
+});
+
+console.dir(passwdManager.getUserCredentials("simone", "org"));
+passwdManager.dumpUsers()
+// passwdManager.dumpUsers();
 
 // macOS URL handling
 app.on('open-url', (event, url) => {
