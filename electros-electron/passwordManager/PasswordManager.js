@@ -195,22 +195,23 @@ WHERE credentials.owner = ? AND credentials.id = ?
 
         const stmt = this.database.prepare(`
 UPDATE credentials
-SET credentials.tags = COALESCE(@tags, credentials.tags) AND
-    credentials.userMetadata = COALESCE(@userMeta, credentials.userMetadata) AND
-    credentials.internalMetadata = COALESCE(@userMeta, credentials.internalMetadata) AND
-    credentials.username = @username AND
-    credentials.passwordEncrypted = @password AND
-    credentials.sshKey = @sshKeyId
-WHERE credentials.id = @credId
-  AND credentials.owner = @ownerId;`);
+SET tags = COALESCE(@tags, tags),
+    userMetadata = COALESCE(@userMetadata, userMetadata),
+    internalMetadata = COALESCE(@internalMetadata, internalMetadata),
+    username = @username,
+    passwordEncrypted = @password,
+    sshKey = @sshKeyId,
+    updatedAt = CURRENT_TIMESTAMP
+WHERE id = @credId
+  AND owner = @ownerId;`);
 
         stmt.run({
             username: username ?? null,
             password: password ?? null,
-            sshKey: newKeyId ?? null,
-            internalMetadata: JSON.stringify(internalMetadata),
-            userMetadata: JSON.stringify(userMetadata),
-            tags: JSON.stringify(tags),
+            sshKeyId: newKeyId ?? null,
+            internalMetadata: internalMetadata === null ? null : JSON.stringify(internalMetadata),
+            userMetadata: userMetadata === null ? null : JSON.stringify(userMetadata),
+            tags: tags === null ? null : JSON.stringify(tags),
             credId: credentialIdentifier,
             ownerId: ownerId,
         });
@@ -338,15 +339,39 @@ WHERE owner = ?
         user,
         organisation,
         keyId, {
-            name,
-            key,
+            name = null,
+            key = null,
             passphrase,
-            userMetadata,
-            internalMetadata,
-            tags
+            userMetadata = null,
+            internalMetadata = null,
+            tags = null
         }
     ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
 
+        const stmt = this.database.prepare(`
+UPDATE sshKeys
+SET name = COALESCE(@name, name),
+    keyEncrypted = COALESCE(@key, keyEncrypted),
+    passphraseEncrypted = @passphrase,
+    userMetadata = COALESCE(@userMetadata, userMetadata),
+    internalMetadata = COALESCE(@internalMetadata, internalMetadata),
+    tags = COALESCE(@tags, tags),
+    updatedAt = CURRENT_TIMESTAMP
+WHERE id = @keyId
+  AND owner = @ownerId;`);
+
+        stmt.run({
+            name: name ?? null,
+            key: key ?? null,
+            passphrase: passphrase ?? null,
+            userMetadata: userMetadata === null ? null : JSON.stringify(userMetadata),
+            internalMetadata: internalMetadata === null ? null : JSON.stringify(internalMetadata),
+            tags: tags === null ? null : JSON.stringify(tags),
+            keyId: keyId,
+            ownerId: ownerId,
+        });
     }
 
     /**
