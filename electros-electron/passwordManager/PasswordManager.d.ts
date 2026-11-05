@@ -48,6 +48,16 @@ export declare class PasswordManager {
     ): number;
 
     public getUserCredentials(user: string, organisation: string): Credential[];
+    public getUserCredential(user: string, organisation: string, credentialIdentifier: number): Credential;
+
+    public updateCredentials(
+        user: string,
+        organisation: string,
+        credentialIdentifier: number,
+        data: Partial<Omit<Credential, 'identifier' | 'resources'>>
+    ): void;
+
+    public deleteCredential(user: string, organisation: string, credentialIdentifier: number): void;
 
     public addResourceForCredential(
         user: string,
@@ -62,13 +72,6 @@ export declare class PasswordManager {
         organisation: string,
         credentialIdentifier: number,
         resourceUuid: string
-    ): void;
-
-    public updateCredentials(
-        user: string,
-        organisation: string,
-        credentialIdentifier: number,
-        data: Partial<Omit<Credential, 'identifier' | 'resources'>>
     ): void;
 
     public getUserSshKeys(user: string, organisation: string): SshKey[];

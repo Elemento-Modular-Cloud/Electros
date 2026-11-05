@@ -1,4 +1,3 @@
-import {Join} from "sharp";
 
 export {};
 
@@ -8,6 +7,11 @@ declare global {
             userMetadata: Record<string, any>;
             internalMetadata: Record<string, any>;
             tags: string[];
+        }
+
+        interface PasswordManagerHost {
+            uuid: string;
+            type: string | null;
         }
 
         interface SshKeyConfiguration extends PasswordManagerMetadata {
@@ -29,6 +33,7 @@ declare global {
 
         type PasswordManagerCredentialCreateParameters = Omit<PasswordManagerCredential, 'identifier'>;
         type PasswordManagerCredentialUpdateParameters = Required<Omit<PasswordManagerCredential, 'identifier'>>;
+        type PasswordManagerCredentialDetail = PasswordManagerCredential & { hosts: PasswordManagerHost[] }
 
         type CredentialsListingEntry = Omit<PasswordManagerCredential, 'sshKey' | 'password'> & { sshKeyId: number | null, sshKeyName: string | null };
     }

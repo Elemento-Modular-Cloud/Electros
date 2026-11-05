@@ -126,6 +126,54 @@ GROUP BY credentials.id,
      * @param {string} user
      * @param {string} organisation
      * @param {number} credentialIdentifier
+     * @returns {PasswordManagerCredentialDetail | null}
+     */
+    getUserCredential(user, organisation, credentialIdentifier) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+SELECT credentials.id AS credentialId,
+       credentials.username AS username,
+       credentials.passwordEncrypted AS password,
+       credentials.userMetadata AS userMetadata,
+       credentials.internalMetadata AS internalMetadata,
+       credentials.tags AS tags,
+       sshKeys.id AS sshKeyId,
+       sshKeys.name AS sshKeyName,
+       h.resourceUuid AS resourceUuid,
+       h.resourceType AS resourceType
+FROM credentials
+         LEFT OUTER JOIN sshKeys
+                         ON sshKeys.id = credentials.sshKey
+         LEFT OUTER JOIN hostsCredentials hC
+                         ON credentials.id = hC.credential
+         LEFT OUTER JOIN hosts h
+                         ON hC.resourceUuid = h.resourceUuid
+WHERE credentials.owner = ? AND credentials.id = ?
+        `);
+
+        const results = stmt.all(ownerId, credentialIdentifier);
+
+        if (results.length === 0) { return null; }
+
+        const hosts = results.map(r => { return { uuid: r.resourceUuid, type: r.resourceType }; });
+        return {
+            identifier: results[0].credentialId,
+            username: results[0].username,
+            password: results[0].password,
+            sshKey: { identifier: results[0].sshKeyId, name: results[0].sshKeyName },
+            hosts: hosts,
+            tags: JSON.parse(results[0].tags),
+            internalMetadata: JSON.parse(results[0].internalMetadata),
+            userMetadata: JSON.parse(results[0].userMetadata)
+        };
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
      * @param {PasswordManagerCredentialUpdateParameters} param3
      */
     updateCredentials(
