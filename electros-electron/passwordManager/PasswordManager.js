@@ -89,26 +89,24 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
         const ownerId = this.#getOwnerId(user, organisation);
 
         const stmt = this.database.prepare(`
-SELECT
-    credentials.id AS credentialId,
-    credentials.username AS username,
-    credentials.userMetadata AS userMetadata,
-    credentials.internalMetadata AS internalMetadata,
-    credentials.tags AS credentialTags,
-    sshKeys.id AS sshKeyId,
-    sshKeys.name AS sshKeyName,
-    COUNT(hC.resourceUuid) as hostCredentials
+SELECT credentials.id               AS credentialId,
+       credentials.username         AS username,
+       credentials.userMetadata     AS userMetadata,
+       credentials.internalMetadata AS internalMetadata,
+       credentials.tags             AS credentialTags,
+       sshKeys.id                   AS sshKeyId,
+       sshKeys.name                 AS sshKeyName,
+       COUNT(hC.resourceUuid)       as hostCredentials
 FROM credentials
-LEFT OUTER JOIN sshKeys
-    ON sshKeys.id = credentials.sshKey
-LEFT OUTER JOIN hostsCredentials hC
-    on credentials.id = hC.credential
+         LEFT OUTER JOIN sshKeys
+                         ON sshKeys.id = credentials.sshKey
+         LEFT OUTER JOIN hostsCredentials hC
+                         on credentials.id = hC.credential
 WHERE credentials.owner = ?
-GROUP BY
-    credentials.id,
-    credentials.username,
-    credentials.passwordEncrypted,
-    sshKeys.name;
+GROUP BY credentials.id,
+         credentials.username,
+         credentials.passwordEncrypted,
+         sshKeys.name;
         `);
 
         return stmt.all(ownerId).map(r => {
@@ -128,13 +126,46 @@ GROUP BY
      * @param {string} user
      * @param {string} organisation
      * @param {number} credentialIdentifier
-     * @param {PasswordManagerCredentialCreateParameters} param3
+     * @param {PasswordManagerCredentialUpdateParameters} param3
      */
-    updateCredentials(user, organisation, credentialIdentifier, { username, password, sshKey }) {
+    updateCredentials(
+        user,
+        organisation,
+        credentialIdentifier, {
+            username,
+            password,
+            sshKey,
+            userMetadata = {},
+            internalMetadata = {},
+            tags = []
+        }
+    ) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
         const ownerId = this.#getOwnerId(user, organisation);
+        const newKeyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
 
+        const stmt = this.database.prepare(`
+UPDATE credentials
+SET credentials.tags = COALESCE(@tags, credentials.tags) AND
+    credentials.userMetadata = COALESCE(@userMeta, credentials.userMetadata) AND
+    credentials.internalMetadata = COALESCE(@userMeta, credentials.internalMetadata) AND
+    credentials.username = @username AND
+    credentials.passwordEncrypted = @password AND
+    credentials.sshKey = @sshKeyId
+WHERE credentials.id = @credId
+  AND credentials.owner = @ownerId;`);
+
+        stmt.run({
+            username: username ?? null,
+            password: password ?? null,
+            sshKey: newKeyId ?? null,
+            internalMetadata: JSON.stringify(internalMetadata),
+            userMetadata: JSON.stringify(userMetadata),
+            tags: JSON.stringify(tags),
+            credId: credentialIdentifier,
+            ownerId: ownerId,
+        });
     }
 
     /**

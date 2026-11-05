@@ -18,16 +18,17 @@ declare global {
         }
 
         type SshKeyCreateParameters = Omit<SshKeyConfiguration, 'identifier'>;
-        type SshKeyReference = number | Pick<SshKeyConfiguration, 'identifier'> | SshKeyCreateParameters;
+        type SshKeyReference = number | Pick<SshKeyConfiguration, 'identifier'> | SshKeyCreateParameters | null;
 
         interface PasswordManagerCredential extends PasswordManagerMetadata {
             identifier: number;
-            username?: string;
-            password?: string;
+            username?: string | null;
+            password?: string | null;
             sshKey?: SshKeyReference;
         }
 
         type PasswordManagerCredentialCreateParameters = Omit<PasswordManagerCredential, 'identifier'>;
+        type PasswordManagerCredentialUpdateParameters = Required<Omit<PasswordManagerCredential, 'identifier'>>;
 
         type CredentialsListingEntry = Omit<PasswordManagerCredential, 'sshKey' | 'password'> & { sshKeyId: number | null, sshKeyName: string | null };
     }
