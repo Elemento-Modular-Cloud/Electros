@@ -1,6 +1,41 @@
 import {Database} from "better-sqlite3";
 
 
+interface PasswordManagerMetadata {
+    userMetadata: Record<string, any>;
+    internalMetadata: Record<string, any>;
+    tags: string[];
+}
+
+interface PasswordManagerHost {
+    uuid: string;
+    type: string | null;
+}
+
+interface SshKeyConfiguration extends PasswordManagerMetadata {
+    identifier: number;
+    name: string;
+    key: string;
+    passphrase?: string;
+}
+
+type SshKeyCreateParameters = Omit<SshKeyConfiguration, 'identifier'>;
+type SshKeyReference = number | Pick<SshKeyConfiguration, 'identifier'> | SshKeyCreateParameters | null;
+
+interface PasswordManagerCredential extends PasswordManagerMetadata {
+    identifier: number;
+    username?: string | null;
+    password?: string | null;
+    sshKey?: SshKeyReference;
+}
+
+type PasswordManagerCredentialCreateParameters = Omit<PasswordManagerCredential, 'identifier'>;
+type PasswordManagerCredentialUpdateParameters = Required<Omit<PasswordManagerCredential, 'identifier'>>;
+type PasswordManagerCredentialDetail = PasswordManagerCredential & { hosts: PasswordManagerHost[] }
+
+type CredentialsListingEntry = Omit<PasswordManagerCredential, 'sshKey' | 'password'> & { sshKeyId: number | null, sshKeyName: string | null };
+
+
 declare interface SshKey {
     identifier: number;
     key: string;
@@ -24,13 +59,6 @@ export declare class PasswordManager {
     static #getKey(dbKeyFile: string): Buffer;
 
     public clearUserData(user: string, organisation?: string): void;
-
-    public getResourceCredentials(
-        user: string,
-        organisation: string,
-        resourceUuid: string,
-        resourceType?: string
-    ): Omit<Credential, 'resources'>[];
 
     /**
      * Register a credential in the DB for a user/org.
@@ -67,6 +95,13 @@ export declare class PasswordManager {
         resourceType?: string
     ): void;
 
+    public getResourceCredentials(
+        user: string,
+        organisation: string,
+        resourceUuid: string,
+        resourceType?: string
+    ): Omit<Credential, 'resources'>[];
+
     public removeResourceForCredential(
         user: string,
         organisation: string,
@@ -74,8 +109,10 @@ export declare class PasswordManager {
         resourceUuid: string
     ): void;
 
-    public getUserSshKeys(user: string, organisation: string): SshKey[];
-    public updateSshKey(user: string, organisation: string, keyIdentifier: number, data: Partial<SshKey>): number;
+    public createSshKey(user: string, organisation: string, sshKey: SshKeyCreateParameters): number;
+    public getUserSshKeys(user: string, organisation: string): SshKeyConfiguration[];
+    public getSshKey(user: string, organisation: string, keyId: number): Omit<SshKeyConfiguration, 'passphrase'> | null;
+    public updateSshKey(user: string, organisation: string, keyIdentifier: number, data: SshKeyCreateParameters): number;
     public deleteSshKey(user: string, organisation: string, keyIdentifier: number): void;
 
     public close(): void;

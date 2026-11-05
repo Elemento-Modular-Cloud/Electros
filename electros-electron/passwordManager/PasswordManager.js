@@ -65,7 +65,7 @@ INSERT INTO credentials (username, passwordEncrypted, sshKey, owner, userMetadat
 VALUES (?, ?, ?, ?, ?, ?, ?);
         `);
 
-        const ownerId = this.#getOwnerId(user, organisation);
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
         const keyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
         const info = stmt.run(
             username ?? null,
@@ -86,7 +86,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
      */
     getUserCredentials(user, organisation) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
-        const ownerId = this.#getOwnerId(user, organisation);
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
 
         const stmt = this.database.prepare(`
 SELECT credentials.id               AS credentialId,
@@ -130,7 +130,7 @@ GROUP BY credentials.id,
      */
     getUserCredential(user, organisation, credentialIdentifier) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
-        const ownerId = this.#getOwnerId(user, organisation);
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
 
         const stmt = this.database.prepare(`
 SELECT credentials.id AS credentialId,
@@ -190,7 +190,7 @@ WHERE credentials.owner = ? AND credentials.id = ?
     ) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
-        const ownerId = this.#getOwnerId(user, organisation);
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
         const newKeyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
 
         const stmt = this.database.prepare(`
@@ -224,9 +224,142 @@ WHERE credentials.id = @credId
      */
     deleteCredential(user, organisation, credentialIdentifier) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
-        const ownerId = this.#getOwnerId(user, organisation);
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
         const statement = this.database.prepare(`DELETE FROM credentials WHERE credentials.owner = ? AND credentials.id = ?;`);
         statement.run(ownerId, credentialIdentifier);
+    }
+
+    /**
+     *
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {string} resourceUuid
+     * @param {string | null} resourceType
+     */
+    addResourceForCredential( user, organisation, credentialIdentifier, resourceUuid, resourceType = null ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        // todo))
+    }
+
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {SshKeyCreateParameters} data
+     * @returns { number | bigint }
+     */
+    createSshKey(user, organisation, sshKey) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+        return this.#createSshKey(ownerId, sshKey);
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @returns {SshKeyConfiguration[] | null}
+     */
+    getUserSshKeys(user, organisation) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const results = this.database.prepare(`
+SELECT sshKeys.id,
+       sshKeys.id AS id,
+       sshKeys.name AS name,
+       sshKeys.keyEncrypted AS key,
+--        sshKeys.passphraseEncrypted AS passphrase,
+       sshKeys.userMetadata AS meta,
+       sshKeys.internalMetadata AS internalMeta,
+       sshKeys.tags AS tags
+FROM sshKeys
+WHERE owner = ?;
+        `).all(ownerId);
+
+        return results.map(result => {
+            return {
+                identifier: results.id,
+                key: results.key,
+                // passphrase: results.passphrase,
+                name: results.name,
+                userMetadata: JSON.parse(results.meta),
+                internalMetadata: JSON.parse(results.internalMeta),
+                tags: JSON.parse(results.tags)
+            }
+        });
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} keyId
+     * @returns {SshKeyConfiguration | null}
+     */
+    getSshKey(user, organisation, keyId) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const result = this.database.prepare(`
+SELECT sshKeys.id,
+       sshKeys.id AS id,
+       sshKeys.name AS name,
+       sshKeys.keyEncrypted AS key,
+       sshKeys.passphraseEncrypted AS passphrase,
+       sshKeys.userMetadata AS meta,
+       sshKeys.internalMetadata AS internalMeta,
+       sshKeys.tags AS tags
+FROM sshKeys
+WHERE owner = ?
+  AND id = ?;
+        `).get(ownerId, keyId);
+        if (!result) { return null; }
+
+        return {
+            identifier: result.id,
+            key: result.key,
+            passphrase: result.passphrase,
+            name: result.name,
+            userMetadata: JSON.parse(result.meta),
+            internalMetadata: JSON.parse(result.internalMeta),
+            tags: JSON.parse(result.tags)
+        };
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} keyId
+     * @param {SshKeyCreateParameters} data
+     */
+    updateSshKey(
+        user,
+        organisation,
+        keyId, {
+            name,
+            key,
+            passphrase,
+            userMetadata,
+            internalMetadata,
+            tags
+        }
+    ) {
+
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} keyId
+     */
+    deleteSshKey(user, organisation, keyId) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const statement = this.database.prepare(` DELETE FROM sshKeys WHERE owner = ? AND id = ?; `);
+        statement.run(ownerId, keyId);
     }
 
     /**
@@ -268,7 +401,7 @@ VALUES (?, ?, ?, ?);
      * @param {string} org
      * @return {number|bigint}
      */
-    #getOwnerId(user, org) {
+    #getOrCreateOwnerId(user, org) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
         const userId = this.database
