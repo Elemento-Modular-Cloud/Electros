@@ -183,9 +183,9 @@ WHERE credentials.owner = ? AND credentials.id = ?
             username,
             password,
             sshKey,
-            userMetadata = {},
-            internalMetadata = {},
-            tags = []
+            userMetadata = null,
+            internalMetadata = null,
+            tags = null
         }
     ) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
@@ -214,6 +214,19 @@ WHERE credentials.id = @credId
             credId: credentialIdentifier,
             ownerId: ownerId,
         });
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {PasswordManagerCredentialUpdateParameters} param3
+     */
+    deleteCredential(user, organisation, credentialIdentifier) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOwnerId(user, organisation);
+        const statement = this.database.prepare(`DELETE FROM credentials WHERE credentials.owner = ? AND credentials.id = ?;`);
+        statement.run(ownerId, credentialIdentifier);
     }
 
     /**
