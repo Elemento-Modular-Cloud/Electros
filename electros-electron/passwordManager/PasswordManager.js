@@ -603,3 +603,20 @@ VALUES (COALESCE(?, 'SSH Key'), ?, ?, ?, ?, ?, ?);
 
 exports.PasswordManager = PasswordManager;
 exports.DatabaseUnavailableException = DatabaseUnavailableException;
+exports.PasswordManagerIpc = [
+    "pm-create-credential",
+    "pm-delete-credential",
+    "pm-get-credential",
+    "pm-list-credentials",
+    "pm-update-credential",
+
+    "pm-add-resource-credential",
+    "pm-remove-resource-credential",
+    "pm-list-resource-credentials",
+
+    "pm-create-sshkey",
+    "pm-delete-sshkey",
+    "pm-get-sshkey",
+    "pm-list-sshkey",
+    "pm-update-sshkey"
+];
