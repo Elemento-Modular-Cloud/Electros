@@ -109,17 +109,7 @@ GROUP BY credentials.id,
          sshKeys.name;
         `);
 
-        return stmt.all(ownerId).map(r => {
-            return {
-                identifier: r.credentialId,
-                username: r.username,
-                userMetadata: JSON.parse(r.userMetadata),
-                internalMetadata: JSON.parse(r.internalMetadata),
-                tags: JSON.parse(r.credentialTags),
-                sshKeyId: r.sshKeyId,
-                sshKeyName: r.sshKeyName,
-            };
-        });
+        return stmt.all(ownerId).map(r => this.#toCredentialsListingEntry(r));
     }
 
     /**
@@ -231,18 +221,102 @@ WHERE id = @credId
     }
 
     /**
+     * Links a credential to a resource (host), registering the resource for the owner if missing.
+     * An already registered resource keeps its type when `resourceType` is null.
      *
      * @param {string} user
      * @param {string} organisation
      * @param {number} credentialIdentifier
      * @param {string} resourceUuid
-     * @param {string | null} resourceType
+     * @param {string | null} [resourceType]
+     * @returns {void}
      */
     addResourceForCredential( user, organisation, credentialIdentifier, resourceUuid, resourceType = null ) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
         const ownerId = this.#getOrCreateOwnerId(user, organisation);
 
-        // todo))
+        const upsertHost = this.database.prepare(`
+INSERT INTO hosts (resourceUuid, resourceType, owner)
+VALUES (@resourceUuid, @resourceType, @ownerId)
+ON CONFLICT (owner, resourceUuid) DO UPDATE
+    SET resourceType = COALESCE(excluded.resourceType, hosts.resourceType);
+        `);
+        const link = this.database.prepare(`
+INSERT OR IGNORE INTO hostsCredentials (owner, resourceUuid, credential)
+VALUES (@ownerId, @resourceUuid, @credId);
+        `);
+
+        this.database.transaction(() => {
+            upsertHost.run({ resourceUuid: resourceUuid, resourceType: resourceType ?? null, ownerId: ownerId });
+            link.run({ ownerId: ownerId, resourceUuid: resourceUuid, credId: credentialIdentifier });
+        })();
+    }
+
+    /**
+     * Lists the credentials linked to a resource (host).
+     * When `resourceType` is undefined only `resourceUuid` is matched; when null or a string,
+     * the resource type must match it strictly too (null only matches resources without a type).
+     *
+     * @param {string} user
+     * @param {string} organisation
+     * @param {string} resourceUuid
+     * @param {string | null} [resourceType]
+     * @returns {CredentialsListingEntry[]}
+     */
+    getResourceCredentials(user, organisation, resourceUuid, resourceType) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+SELECT credentials.id               AS credentialId,
+       credentials.username         AS username,
+       credentials.userMetadata     AS userMetadata,
+       credentials.internalMetadata AS internalMetadata,
+       credentials.tags             AS credentialTags,
+       sshKeys.id                   AS sshKeyId,
+       sshKeys.name                 AS sshKeyName
+FROM credentials
+         INNER JOIN hostsCredentials hC
+                    ON credentials.id = hC.credential
+                        AND credentials.owner = hC.owner
+         INNER JOIN hosts h
+                    ON hC.owner = h.owner
+                        AND hC.resourceUuid = h.resourceUuid
+         LEFT OUTER JOIN sshKeys
+                         ON sshKeys.id = credentials.sshKey
+WHERE credentials.owner = @ownerId
+  AND h.resourceUuid = @resourceUuid
+  AND (@matchType = 0 OR h.resourceType IS @resourceType);
+        `);
+
+        return stmt.all({
+            ownerId: ownerId,
+            resourceUuid: resourceUuid,
+            matchType: resourceType === undefined ? 0 : 1,
+            resourceType: resourceType ?? null,
+        }).map(r => this.#toCredentialsListingEntry(r));
+    }
+
+    /**
+     * Unlinks a credential from a resource (host). The resource itself stays registered.
+     *
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {string} resourceUuid
+     * @returns {void}
+     */
+    removeResourceForCredential(user, organisation, credentialIdentifier, resourceUuid) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const statement = this.database.prepare(`
+DELETE FROM hostsCredentials
+WHERE owner = ?
+  AND resourceUuid = ?
+  AND credential = ?;
+        `);
+        statement.run(ownerId, resourceUuid, credentialIdentifier);
     }
 
 
@@ -282,13 +356,13 @@ WHERE owner = ?;
 
         return results.map(result => {
             return {
-                identifier: results.id,
-                key: results.key,
-                // passphrase: results.passphrase,
-                name: results.name,
-                userMetadata: JSON.parse(results.meta),
-                internalMetadata: JSON.parse(results.internalMeta),
-                tags: JSON.parse(results.tags)
+                identifier: result.id,
+                key: result.key,
+                // passphrase: result.passphrase,
+                name: result.name,
+                userMetadata: JSON.parse(result.meta),
+                internalMetadata: JSON.parse(result.internalMeta),
+                tags: JSON.parse(result.tags)
             }
         });
     }
@@ -392,14 +466,31 @@ WHERE id = @keyId
      * @param {SshKeyCreateParameters} param1
      * @return {number | bigint}
      */
-    #createSshKey(ownerId, { key, passphrase, name }) {
+    #createSshKey(
+        ownerId, {
+            key,
+            passphrase,
+            name,
+            tags = [],
+            userMetadata = {},
+            internalMetadata = {}
+        }
+    ) {
         if (this.database === null) { throw new DatabaseUnavailableException(); }
 
         const insert = this.database.prepare(`
-INSERT INTO sshKeys (name, keyEncrypted, passphraseEncrypted, owner)
-VALUES (?, ?, ?, ?);
+INSERT INTO sshKeys (name, keyEncrypted, passphraseEncrypted, owner, tags, userMetadata, internalMetadata)
+VALUES (COALESCE(?, 'SSH Key'), ?, ?, ?, ?, ?, ?);
         `);
-        const info = insert.run(name ?? null, key, passphrase ?? null, ownerId);
+        const info = insert.run(
+            name ?? null,
+            key,
+            passphrase ?? null,
+            ownerId,
+            JSON.stringify(tags),
+            JSON.stringify(userMetadata),
+            JSON.stringify(internalMetadata)
+        );
         return info.lastInsertRowid;
     }
 
@@ -419,6 +510,30 @@ VALUES (?, ?, ?, ?);
             return sshKey;
         }
         return null;
+    }
+
+    /**
+     * @param {{
+     *     credentialId: number,
+     *     username: string | null,
+     *     userMetadata: string,
+     *     internalMetadata: string,
+     *     credentialTags: string,
+     *     sshKeyId: number | null,
+     *     sshKeyName: string | null
+     * }} row
+     * @return {CredentialsListingEntry}
+     */
+    #toCredentialsListingEntry(row) {
+        return {
+            identifier: row.credentialId,
+            username: row.username,
+            userMetadata: JSON.parse(row.userMetadata),
+            internalMetadata: JSON.parse(row.internalMetadata),
+            tags: JSON.parse(row.credentialTags),
+            sshKeyId: row.sshKeyId,
+            sshKeyName: row.sshKeyName,
+        };
     }
 
     /**

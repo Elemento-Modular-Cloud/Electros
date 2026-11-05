@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS sshKeys
 
     userMetadata        TEXT             DEFAULT '{}',
     internalMetadata    TEXT             DEFAULT '{}',
-    tags                TEXT             DEFAULT '',
+    tags                TEXT             DEFAULT '[]',
 
     owner               INTEGER NOT NULL,
 
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS credentials
 
     userMetadata      TEXT             DEFAULT '{}',
     internalMetadata  TEXT             DEFAULT '{}',
-    tags              TEXT             DEFAULT '',
+    tags              TEXT             DEFAULT '[]',
 
     CHECK (username IS NOT NULL OR passwordEncrypted IS NOT NULL or sshKey IS NOT NULL),
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS hosts
 
     userMetadata     TEXT DEFAULT '{}',
     internalMetadata TEXT DEFAULT '{}',
-    tags             TEXT DEFAULT '',
+    tags             TEXT DEFAULT '[]',
 
     UNIQUE (owner, resourceUuid),
 

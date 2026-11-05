@@ -92,15 +92,15 @@ export declare class PasswordManager {
         organisation: string,
         credentialIdentifier: number,
         resourceUuid: string,
-        resourceType?: string
+        resourceType?: string | null
     ): void;
 
     public getResourceCredentials(
         user: string,
         organisation: string,
         resourceUuid: string,
-        resourceType?: string
-    ): Omit<Credential, 'resources'>[];
+        resourceType?: string | null
+    ): CredentialsListingEntry[];
 
     public removeResourceForCredential(
         user: string,
