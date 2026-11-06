@@ -6,6 +6,107 @@ const {join} = require("path");
 
 class DatabaseUnavailableException extends Error { name = "DatabaseUnavailableException"; }
 
+/** @param {Buffer} buf @return {Buffer} SSH wire-format `string` */
+function sshString(buf) {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(buf.length);
+    return Buffer.concat([len, buf]);
+}
+
+/** @param {Buffer} unsignedBe big-endian unsigned integer @return {Buffer} SSH wire-format `mpint` */
+function sshMpint(unsignedBe) {
+    let i = 0;
+    while (i < unsignedBe.length - 1 && unsignedBe[i] === 0) { i++; }
+    let bytes = unsignedBe.subarray(i);
+    if (bytes[0] & 0x80) { bytes = Buffer.concat([Buffer.from([0]), bytes]); }
+    return sshString(bytes);
+}
+
+/**
+ * Extracts the public key blob from an unencrypted-header OpenSSH private key
+ * (the public part is always stored in cleartext, even for passphrase-protected keys).
+ *
+ * @param {string} pem
+ * @return {Buffer}
+ */
+function publicBlobFromOpenSsh(pem) {
+    const b64 = pem
+        .replace(/-----(BEGIN|END) OPENSSH PRIVATE KEY-----/g, '')
+        .replace(/\s+/g, '');
+    const data = Buffer.from(b64, 'base64');
+    const magic = Buffer.from('openssh-key-v1\0');
+    if (!data.subarray(0, magic.length).equals(magic)) { throw new Error('Not an OpenSSH key'); }
+
+    let offset = magic.length;
+    const readString = () => {
+        const len = data.readUInt32BE(offset);
+        const value = data.subarray(offset + 4, offset + 4 + len);
+        offset += 4 + len;
+        return value;
+    };
+    readString();                       // cipher name
+    readString();                       // kdf name
+    readString();                       // kdf options
+    const keyCount = data.readUInt32BE(offset);
+    offset += 4;
+    if (keyCount < 1) { throw new Error('OpenSSH key holds no keys'); }
+    return readString();                // first public key blob
+}
+
+/**
+ * Builds the SSH public key blob out of a PEM private key (PKCS#1, PKCS#8, SEC1) using node:crypto.
+ *
+ * @param {string} pem
+ * @param {string | undefined} passphrase needed only for encrypted PEM keys
+ * @return {Buffer}
+ */
+function publicBlobFromPem(pem, passphrase) {
+    const privateKey = crypto.createPrivateKey({ key: pem, passphrase: passphrase ?? undefined });
+    const jwk = crypto.createPublicKey(privateKey).export({ format: 'jwk' });
+    const b64u = (v) => Buffer.from(v, 'base64url');
+
+    switch (jwk.kty) {
+        case 'RSA':
+            return Buffer.concat([sshString(Buffer.from('ssh-rsa')), sshMpint(b64u(jwk.e)), sshMpint(b64u(jwk.n))]);
+        case 'OKP':
+            if (jwk.crv !== 'Ed25519') { throw new Error(`Unsupported OKP curve ${jwk.crv}`); }
+            return Buffer.concat([sshString(Buffer.from('ssh-ed25519')), sshString(b64u(jwk.x))]);
+        case 'EC': {
+            const curve = { 'P-256': 'nistp256', 'P-384': 'nistp384', 'P-521': 'nistp521' }[jwk.crv];
+            if (!curve) { throw new Error(`Unsupported EC curve ${jwk.crv}`); }
+            const point = Buffer.concat([Buffer.from([0x04]), b64u(jwk.x), b64u(jwk.y)]);
+            return Buffer.concat([
+                sshString(Buffer.from(`ecdsa-sha2-${curve}`)),
+                sshString(Buffer.from(curve)),
+                sshString(point)
+            ]);
+        }
+        default:
+            throw new Error(`Unsupported key type ${jwk.kty}`);
+    }
+}
+
+/**
+ * Computes the OpenSSH-style fingerprint (`SHA256:<base64 without padding>`, as printed by `ssh-keygen -lf`)
+ * of a private key.
+ *
+ * @param {string | null | undefined} key the private key as stored (PEM / OpenSSH format)
+ * @param {string | null | undefined} [passphrase] only required for passphrase-protected PEM keys
+ * @return {string | null} the fingerprint, or null if the key cannot be parsed
+ */
+function computeKeyFingerprint(key, passphrase) {
+    if (typeof key !== 'string' || key.trim() === '') { return null; }
+    try {
+        const pem = key.trim();
+        const blob = pem.includes('BEGIN OPENSSH PRIVATE KEY')
+            ? publicBlobFromOpenSsh(pem)
+            : publicBlobFromPem(pem, passphrase ?? undefined);
+        return `SHA256:${crypto.createHash('sha256').update(blob).digest('base64').replace(/=+$/, '')}`;
+    } catch (error) {
+        return null;
+    }
+}
+
 
 class PasswordManager {
     static #getKey(dbKeyFile) {
@@ -404,7 +505,7 @@ SELECT sshKeys.id,
        sshKeys.id AS id,
        sshKeys.name AS name,
        sshKeys.keyEncrypted AS key,
---        sshKeys.passphraseEncrypted AS passphrase,
+       sshKeys.passphraseEncrypted AS passphrase,
        sshKeys.userMetadata AS meta,
        sshKeys.internalMetadata AS internalMeta,
        sshKeys.tags AS tags
@@ -416,6 +517,7 @@ WHERE owner = ?;
             return {
                 identifier: result.id,
                 key: result.key,
+                keyFingerprint: computeKeyFingerprint(result.key, result.passphrase),
                 // passphrase: result.passphrase,
                 name: result.name,
                 userMetadata: JSON.parse(result.meta),
@@ -453,6 +555,7 @@ WHERE owner = ?
         return {
             identifier: result.id,
             key: result.key,
+            keyFingerprint: computeKeyFingerprint(result.key, result.passphrase),
             passphrase: result.passphrase,
             name: result.name,
             userMetadata: JSON.parse(result.meta),
