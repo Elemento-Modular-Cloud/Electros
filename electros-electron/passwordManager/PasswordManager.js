@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { safeStorage } = require('electron');
+const { safeStorage, ipcMain} = require('electron');
 const crypto = require('node:crypto');
 const {join} = require("path");
 
@@ -38,7 +38,26 @@ class PasswordManager {
 
             this.#clearDbTables(); // FIXME)) !!!!!!!!!! TO BE REMOVED !!!!!!!!! LITERALLY DROPS THE WHOLE DB !!!!!!!!!!
             this.#initDbTables();
+            this.#attachIpcHandles();
         }
+    }
+
+    #attachIpcHandles() {
+        ipcMain.handle("pm-create-credential", () => {});
+        ipcMain.handle('pm-delete-credential', () => {});
+        ipcMain.handle('pm-get-credential', () => {});
+        ipcMain.handle('pm-list-credentials', () => {});
+        ipcMain.handle('pm-update-credential', () => {});
+
+        ipcMain.handle('pm-add-resource-credential', () => {});
+        ipcMain.handle('pm-remove-resource-credential', () => {});
+        ipcMain.handle('pm-list-resource-credentials', () => {});
+
+        ipcMain.handle('pm-create-sshkey', () => {});
+        ipcMain.handle('pm-delete-sshkey', () => {});
+        ipcMain.handle('pm-get-sshkey', () => {});
+        ipcMain.handle('pm-list-sshkey', () => {});
+        ipcMain.handle('pm-update-sshkey', () => {});
     }
 
     /**
@@ -524,7 +543,7 @@ VALUES (COALESCE(?, 'SSH Key'), ?, ?, ?, ?, ?, ?);
      * }} row
      * @return {CredentialsListingEntry}
      */
-    #toCredentialsListingEntry(row) {
+    #toCredentialsListingEntry(row) { // FIXME)) # of hosts
         return {
             identifier: row.credentialId,
             username: row.username,
