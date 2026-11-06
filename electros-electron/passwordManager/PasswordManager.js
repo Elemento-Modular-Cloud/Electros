@@ -36,7 +36,6 @@ class PasswordManager {
             this.database.pragma('journal_mode = WAL');
             this.database.pragma('foreign_keys = on');
 
-            this.#clearDbTables(); // FIXME)) !!!!!!!!!! TO BE REMOVED !!!!!!!!! LITERALLY DROPS THE WHOLE DB !!!!!!!!!!
             this.#initDbTables();
             this.#attachIpcHandles();
         }
