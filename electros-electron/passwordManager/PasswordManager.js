@@ -43,21 +43,63 @@ class PasswordManager {
     }
 
     #attachIpcHandles() {
-        ipcMain.handle("pm-create-credential", () => {});
-        ipcMain.handle('pm-delete-credential', () => {});
-        ipcMain.handle('pm-get-credential', () => {});
-        ipcMain.handle('pm-list-credentials', () => {});
-        ipcMain.handle('pm-update-credential', () => {});
+        // All handlers receive (event, user, organisation, ...args), user and organisation being UUIDs provided by the frontend
+        ipcMain.handle("pm-create-credential", (event, user, organisation, data) => {
+            return this.createCredential(user, organisation, data);
+        });
+        ipcMain.handle('pm-delete-credential', (event, user, organisation, id) => {
+            return this.deleteCredential(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-get-credential', (event, user, organisation, id) => {
+            return this.getUserCredential(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-list-credentials', (event, user, organisation) => {
+            return this.getUserCredentials(user, organisation);
+        });
+        ipcMain.handle('pm-update-credential', (event, user, organisation, id, data) => {
+            return this.updateCredentials(user, organisation, PasswordManager.#toIdentifier(id), data);
+        });
 
-        ipcMain.handle('pm-add-resource-credential', () => {});
-        ipcMain.handle('pm-remove-resource-credential', () => {});
-        ipcMain.handle('pm-list-resource-credentials', () => {});
+        ipcMain.handle('pm-add-resource-credential', (event, user, organisation, credential, resource) => {
+            const resourceUuid = typeof resource === 'string' ? resource : resource.uuid;
+            const resourceType = typeof resource === 'string' ? null : (resource.type ?? null);
+            return this.addResourceForCredential(
+                user, organisation, PasswordManager.#toIdentifier(credential), resourceUuid, resourceType
+            );
+        });
+        ipcMain.handle('pm-remove-resource-credential', (event, user, organisation, credential, resource) => {
+            const resourceUuid = typeof resource === 'string' ? resource : resource.uuid;
+            return this.removeResourceForCredential(
+                user, organisation, PasswordManager.#toIdentifier(credential), resourceUuid
+            );
+        });
+        ipcMain.handle('pm-list-resource-credentials', () => {}); // frontend return type still `unknown[]`
 
-        ipcMain.handle('pm-create-sshkey', () => {});
-        ipcMain.handle('pm-delete-sshkey', () => {});
-        ipcMain.handle('pm-get-sshkey', () => {});
-        ipcMain.handle('pm-list-sshkey', () => {});
-        ipcMain.handle('pm-update-sshkey', () => {});
+        ipcMain.handle('pm-create-sshkey', (event, user, organisation, data) => {
+            return this.createSshKey(user, organisation, data);
+        });
+        ipcMain.handle('pm-delete-sshkey', (event, user, organisation, id) => {
+            return this.deleteSshKey(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-get-sshkey', (event, user, organisation, id) => {
+            return this.getSshKey(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-list-sshkey', (event, user, organisation) => {
+            return this.getUserSshKeys(user, organisation);
+        });
+        ipcMain.handle('pm-update-sshkey', (event, user, organisation, id, data) => {
+            return this.updateSshKey(user, organisation, PasswordManager.#toIdentifier(id), data);
+        });
+    }
+
+    /**
+     * Normalises an identifier given either as a bare value or wrapped in an object (`{ identifier }`)
+     *
+     * @param {number | bigint | { identifier: number | bigint }} id
+     * @return {number | bigint}
+     */
+    static #toIdentifier(id) {
+        return (typeof id === 'object' && id !== null) ? id.identifier : id;
     }
 
     /**
@@ -114,21 +156,15 @@ SELECT credentials.id               AS credentialId,
        credentials.internalMetadata AS internalMetadata,
        credentials.tags             AS credentialTags,
        sshKeys.id                   AS sshKeyId,
-       sshKeys.name                 AS sshKeyName,
-       COUNT(hC.resourceUuid)       as hostCredentials
+       sshKeys.name                 AS sshKeyName
 FROM credentials
          LEFT OUTER JOIN sshKeys
                          ON sshKeys.id = credentials.sshKey
-         LEFT OUTER JOIN hostsCredentials hC
-                         on credentials.id = hC.credential
-WHERE credentials.owner = ?
-GROUP BY credentials.id,
-         credentials.username,
-         credentials.passwordEncrypted,
-         sshKeys.name;
+WHERE credentials.owner = ?;
         `);
+        const hosts = this.#getCredentialsHosts(ownerId);
 
-        return stmt.all(ownerId).map(r => this.#toCredentialsListingEntry(r));
+        return stmt.all(ownerId).map(r => this.#toCredentialsListingEntry(r, hosts.get(r.credentialId) ?? []));
     }
 
     /**
@@ -166,7 +202,9 @@ WHERE credentials.owner = ? AND credentials.id = ?
 
         if (results.length === 0) { return null; }
 
-        const hosts = results.map(r => { return { uuid: r.resourceUuid, type: r.resourceType }; });
+        const hosts = results
+            .filter(r => r.resourceUuid !== null)
+            .map(r => { return { uuid: r.resourceUuid, type: r.resourceType }; });
         return {
             identifier: results[0].credentialId,
             username: results[0].username,
@@ -308,12 +346,14 @@ WHERE credentials.owner = @ownerId
   AND (@matchType = 0 OR h.resourceType IS @resourceType);
         `);
 
+        const hosts = this.#getCredentialsHosts(ownerId);
+
         return stmt.all({
             ownerId: ownerId,
             resourceUuid: resourceUuid,
             matchType: resourceType === undefined ? 0 : 1,
             resourceType: resourceType ?? null,
-        }).map(r => this.#toCredentialsListingEntry(r));
+        }).map(r => this.#toCredentialsListingEntry(r, hosts.get(r.credentialId) ?? []));
     }
 
     /**
@@ -532,6 +572,30 @@ VALUES (COALESCE(?, 'SSH Key'), ?, ?, ?, ?, ?, ?);
     }
 
     /**
+     * @param {number | bigint} ownerId
+     * @return {Map<number, PmResourceBrief[]>} the hosts linked to each credential, keyed by credential id
+     */
+    #getCredentialsHosts(ownerId) {
+        const rows = this.database.prepare(`
+SELECT hC.credential     AS credentialId,
+       h.resourceUuid    AS uuid,
+       h.resourceType    AS type
+FROM hostsCredentials hC
+         INNER JOIN hosts h
+                    ON hC.owner = h.owner
+                        AND hC.resourceUuid = h.resourceUuid
+WHERE hC.owner = ?;
+        `).all(ownerId);
+
+        const hosts = new Map();
+        for (const row of rows) {
+            if (!hosts.has(row.credentialId)) { hosts.set(row.credentialId, []); }
+            hosts.get(row.credentialId).push({ uuid: row.uuid, type: row.type });
+        }
+        return hosts;
+    }
+
+    /**
      * @param {{
      *     credentialId: number,
      *     username: string | null,
@@ -541,17 +605,18 @@ VALUES (COALESCE(?, 'SSH Key'), ?, ?, ?, ?, ?, ?);
      *     sshKeyId: number | null,
      *     sshKeyName: string | null
      * }} row
+     * @param {{ uuid: string, type: string | null }[]} hosts
      * @return {CredentialsListingEntry}
      */
-    #toCredentialsListingEntry(row) { // FIXME)) # of hosts
+    #toCredentialsListingEntry(row, hosts) {
         return {
             identifier: row.credentialId,
             username: row.username,
+            sshKey: { identifier: row.sshKeyId, name: row.sshKeyName },
+            hosts: hosts,
             userMetadata: JSON.parse(row.userMetadata),
             internalMetadata: JSON.parse(row.internalMetadata),
             tags: JSON.parse(row.credentialTags),
-            sshKeyId: row.sshKeyId,
-            sshKeyName: row.sshKeyName,
         };
     }
 
