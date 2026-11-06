@@ -21,6 +21,8 @@ const {DaemonsNotEnabledError} = require("./common/Daemons.js");
 const fs = require("fs");
 const {homedir} = require("node:os");
 const {WindowProvider} = require("./windows/WindowProvider.js");
+const { PasswordManager } = require("./passwordManager/PasswordManager.js");
+const os = require("os");
 
 let mainWindow = null;
 
@@ -38,6 +40,7 @@ if (process.env.NODE_ENV === 'development') {
 
 let pendingUrl = process.argv.find(arg => arg.startsWith('electros://'));
 
+const passwdManager = new PasswordManager(path.join(os.homedir(), '.elemento'));
 
 // macOS URL handling
 app.on('open-url', (event, url) => {

@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const { PasswordManagerIpc } = require("./passwordManager/PasswordManager");
 
 contextBridge.exposeInMainWorld('electron', {
     invoke: (channel, ...args) => {
@@ -34,7 +35,8 @@ contextBridge.exposeInMainWorld('electron', {
             'background-import',
             'background-providers',
             'read-ai-config',
-            'write-ai-config'
+            'write-ai-config',
+            ...PasswordManagerIpc
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

@@ -1,0 +1,808 @@
+const fs = require('fs');
+const { safeStorage, ipcMain} = require('electron');
+const crypto = require('node:crypto');
+const {join} = require("path");
+
+
+class DatabaseUnavailableException extends Error { name = "DatabaseUnavailableException"; }
+
+/** @param {Buffer} buf @return {Buffer} SSH wire-format `string` */
+function sshString(buf) {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(buf.length);
+    return Buffer.concat([len, buf]);
+}
+
+/** @param {Buffer} unsignedBe big-endian unsigned integer @return {Buffer} SSH wire-format `mpint` */
+function sshMpint(unsignedBe) {
+    let i = 0;
+    while (i < unsignedBe.length - 1 && unsignedBe[i] === 0) { i++; }
+    let bytes = unsignedBe.subarray(i);
+    if (bytes[0] & 0x80) { bytes = Buffer.concat([Buffer.from([0]), bytes]); }
+    return sshString(bytes);
+}
+
+/**
+ * Extracts the public key blob from an unencrypted-header OpenSSH private key
+ * (the public part is always stored in cleartext, even for passphrase-protected keys).
+ *
+ * @param {string} pem
+ * @return {Buffer}
+ */
+function publicBlobFromOpenSsh(pem) {
+    const b64 = pem
+        .replace(/-----(BEGIN|END) OPENSSH PRIVATE KEY-----/g, '')
+        .replace(/\s+/g, '');
+    const data = Buffer.from(b64, 'base64');
+    const magic = Buffer.from('openssh-key-v1\0');
+    if (!data.subarray(0, magic.length).equals(magic)) { throw new Error('Not an OpenSSH key'); }
+
+    let offset = magic.length;
+    const readString = () => {
+        const len = data.readUInt32BE(offset);
+        const value = data.subarray(offset + 4, offset + 4 + len);
+        offset += 4 + len;
+        return value;
+    };
+    readString();                       // cipher name
+    readString();                       // kdf name
+    readString();                       // kdf options
+    const keyCount = data.readUInt32BE(offset);
+    offset += 4;
+    if (keyCount < 1) { throw new Error('OpenSSH key holds no keys'); }
+    return readString();                // first public key blob
+}
+
+/**
+ * Builds the SSH public key blob out of a PEM private key (PKCS#1, PKCS#8, SEC1) using node:crypto.
+ *
+ * @param {string} pem
+ * @param {string | undefined} passphrase needed only for encrypted PEM keys
+ * @return {Buffer}
+ */
+function publicBlobFromPem(pem, passphrase) {
+    const privateKey = crypto.createPrivateKey({ key: pem, passphrase: passphrase ?? undefined });
+    const jwk = crypto.createPublicKey(privateKey).export({ format: 'jwk' });
+    const b64u = (v) => Buffer.from(v, 'base64url');
+
+    switch (jwk.kty) {
+        case 'RSA':
+            return Buffer.concat([sshString(Buffer.from('ssh-rsa')), sshMpint(b64u(jwk.e)), sshMpint(b64u(jwk.n))]);
+        case 'OKP':
+            if (jwk.crv !== 'Ed25519') { throw new Error(`Unsupported OKP curve ${jwk.crv}`); }
+            return Buffer.concat([sshString(Buffer.from('ssh-ed25519')), sshString(b64u(jwk.x))]);
+        case 'EC': {
+            const curve = { 'P-256': 'nistp256', 'P-384': 'nistp384', 'P-521': 'nistp521' }[jwk.crv];
+            if (!curve) { throw new Error(`Unsupported EC curve ${jwk.crv}`); }
+            const point = Buffer.concat([Buffer.from([0x04]), b64u(jwk.x), b64u(jwk.y)]);
+            return Buffer.concat([
+                sshString(Buffer.from(`ecdsa-sha2-${curve}`)),
+                sshString(Buffer.from(curve)),
+                sshString(point)
+            ]);
+        }
+        default:
+            throw new Error(`Unsupported key type ${jwk.kty}`);
+    }
+}
+
+/**
+ * Computes the OpenSSH-style fingerprint (`SHA256:<base64 without padding>`, as printed by `ssh-keygen -lf`)
+ * of a private key.
+ *
+ * @param {string | null | undefined} key the private key as stored (PEM / OpenSSH format)
+ * @param {string | null | undefined} [passphrase] only required for passphrase-protected PEM keys
+ * @return {string | null} the fingerprint, or null if the key cannot be parsed
+ */
+function computeKeyFingerprint(key, passphrase) {
+    if (typeof key !== 'string' || key.trim() === '') { return null; }
+    try {
+        const pem = key.trim();
+        const blob = pem.includes('BEGIN OPENSSH PRIVATE KEY')
+            ? publicBlobFromOpenSsh(pem)
+            : publicBlobFromPem(pem, passphrase ?? undefined);
+        return `SHA256:${crypto.createHash('sha256').update(blob).digest('base64').replace(/=+$/, '')}`;
+    } catch (error) {
+        return null;
+    }
+}
+
+
+class PasswordManager {
+    static #getKey(dbKeyFile) {
+        if (!fs.existsSync(dbKeyFile)) {
+            const randomData = crypto.randomBytes(32).toString('hex');
+            const ciphered = safeStorage.encryptString(randomData);
+            fs.writeFileSync(dbKeyFile, ciphered, { flush: true });
+            return Buffer.from(randomData);
+        } else {
+            const binCiphered = fs.readFileSync(dbKeyFile);
+            return Buffer.from(safeStorage.decryptString(binCiphered));
+        }
+    }
+
+    constructor(elementoHome) {
+        if (!safeStorage.isEncryptionAvailable()) {
+            console.error('[ERROR] Keychain is unavailable; Password Manager unavailable');
+            this.database = null;
+        } else {
+            if (!fs.existsSync(join(elementoHome, 'cdb'))) { fs.mkdirSync(join(elementoHome, 'cdb'), { recursive: true }); }
+            const targetDbFile = join(elementoHome, 'cdb', `credentials-store`);
+
+            if (!fs.existsSync(targetDbFile)) { console.info("[INFO] Database file missing, creating."); }
+
+            this.database = require("better-sqlite3-multiple-ciphers")(targetDbFile);
+            this.database.pragma('cipher_memory_security = ON');
+            this.database.key(PasswordManager.#getKey(`${targetDbFile}.key`));
+            this.database.pragma('journal_mode = WAL');
+            this.database.pragma('foreign_keys = on');
+
+            this.#initDbTables();
+            this.#attachIpcHandles();
+        }
+    }
+
+    #attachIpcHandles() {
+        // All handlers receive (event, user, organisation, ...args), user and organisation being UUIDs provided by the frontend
+        ipcMain.handle("pm-create-credential", (event, user, organisation, data) => {
+            return this.createCredential(user, organisation, data);
+        });
+        ipcMain.handle('pm-delete-credential', (event, user, organisation, id) => {
+            return this.deleteCredential(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-get-credential', (event, user, organisation, id) => {
+            return this.getUserCredential(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-list-credentials', (event, user, organisation) => {
+            return this.getUserCredentials(user, organisation);
+        });
+        ipcMain.handle('pm-update-credential', (event, user, organisation, id, data) => {
+            return this.updateCredentials(user, organisation, PasswordManager.#toIdentifier(id), data);
+        });
+
+        ipcMain.handle('pm-add-resource-credential', (event, user, organisation, credential, resource) => {
+            const resourceUuid = typeof resource === 'string' ? resource : resource.uuid;
+            const resourceType = typeof resource === 'string' ? null : (resource.type ?? null);
+            return this.addResourceForCredential(
+                user, organisation, PasswordManager.#toIdentifier(credential), resourceUuid, resourceType
+            );
+        });
+        ipcMain.handle('pm-remove-resource-credential', (event, user, organisation, credential, resource) => {
+            const resourceUuid = typeof resource === 'string' ? resource : resource.uuid;
+            return this.removeResourceForCredential(
+                user, organisation, PasswordManager.#toIdentifier(credential), resourceUuid
+            );
+        });
+        ipcMain.handle('pm-list-resource-credentials', () => {}); // frontend return type still `unknown[]`
+
+        ipcMain.handle('pm-create-sshkey', (event, user, organisation, data) => {
+            return this.createSshKey(user, organisation, data);
+        });
+        ipcMain.handle('pm-delete-sshkey', (event, user, organisation, id) => {
+            return this.deleteSshKey(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-get-sshkey', (event, user, organisation, id) => {
+            return this.getSshKey(user, organisation, PasswordManager.#toIdentifier(id));
+        });
+        ipcMain.handle('pm-list-sshkey', (event, user, organisation) => {
+            return this.getUserSshKeys(user, organisation);
+        });
+        ipcMain.handle('pm-update-sshkey', (event, user, organisation, id, data) => {
+            return this.updateSshKey(user, organisation, PasswordManager.#toIdentifier(id), data);
+        });
+    }
+
+    /**
+     * Normalises an identifier given either as a bare value or wrapped in an object (`{ identifier }`)
+     *
+     * @param {number | bigint | { identifier: number | bigint }} id
+     * @return {number | bigint}
+     */
+    static #toIdentifier(id) {
+        return (typeof id === 'object' && id !== null) ? id.identifier : id;
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {PasswordManagerCredentialCreateParameters} param2
+     * @return {number | bigint}
+     */
+    createCredential(
+        user,
+        organisation, {
+            username = null,
+            password = null,
+            sshKey = null,
+            userMetadata = {},
+            internalMetadata = {},
+            tags = []
+        }
+    ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const stmt = this.database.prepare(`
+INSERT INTO credentials (username, passwordEncrypted, sshKey, owner, userMetadata, internalMetadata, tags)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+        `);
+
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+        const keyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
+        const info = stmt.run(
+            username ?? null,
+            password ?? null,
+            keyId,
+            ownerId,
+            JSON.stringify(userMetadata),
+            JSON.stringify(internalMetadata),
+            JSON.stringify(tags)
+        )
+        return info.lastInsertRowid;
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @returns { CredentialsListingEntry[] }
+     */
+    getUserCredentials(user, organisation) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+SELECT credentials.id               AS credentialId,
+       credentials.username         AS username,
+       credentials.userMetadata     AS userMetadata,
+       credentials.internalMetadata AS internalMetadata,
+       credentials.tags             AS credentialTags,
+       sshKeys.id                   AS sshKeyId,
+       sshKeys.name                 AS sshKeyName
+FROM credentials
+         LEFT OUTER JOIN sshKeys
+                         ON sshKeys.id = credentials.sshKey
+WHERE credentials.owner = ?;
+        `);
+        const hosts = this.#getCredentialsHosts(ownerId);
+
+        return stmt.all(ownerId).map(r => this.#toCredentialsListingEntry(r, hosts.get(r.credentialId) ?? []));
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @returns {PasswordManagerCredentialDetail | null}
+     */
+    getUserCredential(user, organisation, credentialIdentifier) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+SELECT credentials.id AS credentialId,
+       credentials.username AS username,
+       credentials.passwordEncrypted AS password,
+       credentials.userMetadata AS userMetadata,
+       credentials.internalMetadata AS internalMetadata,
+       credentials.tags AS tags,
+       sshKeys.id AS sshKeyId,
+       sshKeys.name AS sshKeyName,
+       h.resourceUuid AS resourceUuid,
+       h.resourceType AS resourceType
+FROM credentials
+         LEFT OUTER JOIN sshKeys
+                         ON sshKeys.id = credentials.sshKey
+         LEFT OUTER JOIN hostsCredentials hC
+                         ON credentials.id = hC.credential
+         LEFT OUTER JOIN hosts h
+                         ON hC.resourceUuid = h.resourceUuid
+WHERE credentials.owner = ? AND credentials.id = ?
+        `);
+
+        const results = stmt.all(ownerId, credentialIdentifier);
+
+        if (results.length === 0) { return null; }
+
+        const hosts = results
+            .filter(r => r.resourceUuid !== null)
+            .map(r => { return { uuid: r.resourceUuid, type: r.resourceType }; });
+        return {
+            identifier: results[0].credentialId,
+            username: results[0].username,
+            password: results[0].password,
+            sshKey: { identifier: results[0].sshKeyId, name: results[0].sshKeyName },
+            hosts: hosts,
+            tags: JSON.parse(results[0].tags),
+            internalMetadata: JSON.parse(results[0].internalMetadata),
+            userMetadata: JSON.parse(results[0].userMetadata)
+        };
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {PasswordManagerCredentialUpdateParameters} param3
+     */
+    updateCredentials(
+        user,
+        organisation,
+        credentialIdentifier, {
+            username,
+            password,
+            sshKey,
+            userMetadata = null,
+            internalMetadata = null,
+            tags = null
+        }
+    ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+        const newKeyId = this.#getOrCreateSshKeyId(ownerId, sshKey);
+
+        const stmt = this.database.prepare(`
+UPDATE credentials
+SET tags = COALESCE(@tags, tags),
+    userMetadata = COALESCE(@userMetadata, userMetadata),
+    internalMetadata = COALESCE(@internalMetadata, internalMetadata),
+    username = @username,
+    passwordEncrypted = @password,
+    sshKey = @sshKeyId,
+    updatedAt = CURRENT_TIMESTAMP
+WHERE id = @credId
+  AND owner = @ownerId;`);
+
+        stmt.run({
+            username: username ?? null,
+            password: password ?? null,
+            sshKeyId: newKeyId ?? null,
+            internalMetadata: internalMetadata === null ? null : JSON.stringify(internalMetadata),
+            userMetadata: userMetadata === null ? null : JSON.stringify(userMetadata),
+            tags: tags === null ? null : JSON.stringify(tags),
+            credId: credentialIdentifier,
+            ownerId: ownerId,
+        });
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {PasswordManagerCredentialUpdateParameters} param3
+     */
+    deleteCredential(user, organisation, credentialIdentifier) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+        const statement = this.database.prepare(`DELETE FROM credentials WHERE credentials.owner = ? AND credentials.id = ?;`);
+        statement.run(ownerId, credentialIdentifier);
+    }
+
+    /**
+     * Links a credential to a resource (host), registering the resource for the owner if missing.
+     * An already registered resource keeps its type when `resourceType` is null.
+     *
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {string} resourceUuid
+     * @param {string | null} [resourceType]
+     * @returns {void}
+     */
+    addResourceForCredential( user, organisation, credentialIdentifier, resourceUuid, resourceType = null ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const upsertHost = this.database.prepare(`
+INSERT INTO hosts (resourceUuid, resourceType, owner)
+VALUES (@resourceUuid, @resourceType, @ownerId)
+ON CONFLICT (owner, resourceUuid) DO UPDATE
+    SET resourceType = COALESCE(excluded.resourceType, hosts.resourceType);
+        `);
+        const link = this.database.prepare(`
+INSERT OR IGNORE INTO hostsCredentials (owner, resourceUuid, credential)
+VALUES (@ownerId, @resourceUuid, @credId);
+        `);
+
+        this.database.transaction(() => {
+            upsertHost.run({ resourceUuid: resourceUuid, resourceType: resourceType ?? null, ownerId: ownerId });
+            link.run({ ownerId: ownerId, resourceUuid: resourceUuid, credId: credentialIdentifier });
+        })();
+    }
+
+    /**
+     * Lists the credentials linked to a resource (host).
+     * When `resourceType` is undefined only `resourceUuid` is matched; when null or a string,
+     * the resource type must match it strictly too (null only matches resources without a type).
+     *
+     * @param {string} user
+     * @param {string} organisation
+     * @param {string} resourceUuid
+     * @param {string | null} [resourceType]
+     * @returns {CredentialsListingEntry[]}
+     */
+    getResourceCredentials(user, organisation, resourceUuid, resourceType) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+SELECT credentials.id               AS credentialId,
+       credentials.username         AS username,
+       credentials.userMetadata     AS userMetadata,
+       credentials.internalMetadata AS internalMetadata,
+       credentials.tags             AS credentialTags,
+       sshKeys.id                   AS sshKeyId,
+       sshKeys.name                 AS sshKeyName
+FROM credentials
+         INNER JOIN hostsCredentials hC
+                    ON credentials.id = hC.credential
+                        AND credentials.owner = hC.owner
+         INNER JOIN hosts h
+                    ON hC.owner = h.owner
+                        AND hC.resourceUuid = h.resourceUuid
+         LEFT OUTER JOIN sshKeys
+                         ON sshKeys.id = credentials.sshKey
+WHERE credentials.owner = @ownerId
+  AND h.resourceUuid = @resourceUuid
+  AND (@matchType = 0 OR h.resourceType IS @resourceType);
+        `);
+
+        const hosts = this.#getCredentialsHosts(ownerId);
+
+        return stmt.all({
+            ownerId: ownerId,
+            resourceUuid: resourceUuid,
+            matchType: resourceType === undefined ? 0 : 1,
+            resourceType: resourceType ?? null,
+        }).map(r => this.#toCredentialsListingEntry(r, hosts.get(r.credentialId) ?? []));
+    }
+
+    /**
+     * Unlinks a credential from a resource (host). The resource itself stays registered.
+     *
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} credentialIdentifier
+     * @param {string} resourceUuid
+     * @returns {void}
+     */
+    removeResourceForCredential(user, organisation, credentialIdentifier, resourceUuid) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const statement = this.database.prepare(`
+DELETE FROM hostsCredentials
+WHERE owner = ?
+  AND resourceUuid = ?
+  AND credential = ?;
+        `);
+        statement.run(ownerId, resourceUuid, credentialIdentifier);
+    }
+
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {SshKeyCreateParameters} data
+     * @returns { number | bigint }
+     */
+    createSshKey(user, organisation, sshKey) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+        return this.#createSshKey(ownerId, sshKey);
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @returns {SshKeyConfiguration[] | null}
+     */
+    getUserSshKeys(user, organisation) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const results = this.database.prepare(`
+SELECT sshKeys.id,
+       sshKeys.id AS id,
+       sshKeys.name AS name,
+       sshKeys.keyEncrypted AS key,
+       sshKeys.passphraseEncrypted AS passphrase,
+       sshKeys.userMetadata AS meta,
+       sshKeys.internalMetadata AS internalMeta,
+       sshKeys.tags AS tags
+FROM sshKeys
+WHERE owner = ?;
+        `).all(ownerId);
+
+        return results.map(result => {
+            return {
+                identifier: result.id,
+                key: result.key,
+                keyFingerprint: computeKeyFingerprint(result.key, result.passphrase),
+                // passphrase: result.passphrase,
+                name: result.name,
+                userMetadata: JSON.parse(result.meta),
+                internalMetadata: JSON.parse(result.internalMeta),
+                tags: JSON.parse(result.tags)
+            }
+        });
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} keyId
+     * @returns {SshKeyConfiguration | null}
+     */
+    getSshKey(user, organisation, keyId) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const result = this.database.prepare(`
+SELECT sshKeys.id,
+       sshKeys.id AS id,
+       sshKeys.name AS name,
+       sshKeys.keyEncrypted AS key,
+       sshKeys.passphraseEncrypted AS passphrase,
+       sshKeys.userMetadata AS meta,
+       sshKeys.internalMetadata AS internalMeta,
+       sshKeys.tags AS tags
+FROM sshKeys
+WHERE owner = ?
+  AND id = ?;
+        `).get(ownerId, keyId);
+        if (!result) { return null; }
+
+        return {
+            identifier: result.id,
+            key: result.key,
+            keyFingerprint: computeKeyFingerprint(result.key, result.passphrase),
+            passphrase: result.passphrase,
+            name: result.name,
+            userMetadata: JSON.parse(result.meta),
+            internalMetadata: JSON.parse(result.internalMeta),
+            tags: JSON.parse(result.tags)
+        };
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} keyId
+     * @param {SshKeyCreateParameters} data
+     */
+    updateSshKey(
+        user,
+        organisation,
+        keyId, {
+            name = null,
+            key = null,
+            passphrase,
+            userMetadata = null,
+            internalMetadata = null,
+            tags = null
+        }
+    ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const stmt = this.database.prepare(`
+UPDATE sshKeys
+SET name = COALESCE(@name, name),
+    keyEncrypted = COALESCE(@key, keyEncrypted),
+    passphraseEncrypted = @passphrase,
+    userMetadata = COALESCE(@userMetadata, userMetadata),
+    internalMetadata = COALESCE(@internalMetadata, internalMetadata),
+    tags = COALESCE(@tags, tags),
+    updatedAt = CURRENT_TIMESTAMP
+WHERE id = @keyId
+  AND owner = @ownerId;`);
+
+        stmt.run({
+            name: name ?? null,
+            key: key ?? null,
+            passphrase: passphrase ?? null,
+            userMetadata: userMetadata === null ? null : JSON.stringify(userMetadata),
+            internalMetadata: internalMetadata === null ? null : JSON.stringify(internalMetadata),
+            tags: tags === null ? null : JSON.stringify(tags),
+            keyId: keyId,
+            ownerId: ownerId,
+        });
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} organisation
+     * @param {number} keyId
+     */
+    deleteSshKey(user, organisation, keyId) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+        const ownerId = this.#getOrCreateOwnerId(user, organisation);
+
+        const statement = this.database.prepare(` DELETE FROM sshKeys WHERE owner = ? AND id = ?; `);
+        statement.run(ownerId, keyId);
+    }
+
+    /**
+     * @param {number} ownerId
+     * @param {SshKeyCreateParameters} param1
+     * @return {number | bigint}
+     */
+    #createSshKey(
+        ownerId, {
+            key,
+            passphrase,
+            name,
+            tags = [],
+            userMetadata = {},
+            internalMetadata = {}
+        }
+    ) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const insert = this.database.prepare(`
+INSERT INTO sshKeys (name, keyEncrypted, passphraseEncrypted, owner, tags, userMetadata, internalMetadata)
+VALUES (COALESCE(?, 'SSH Key'), ?, ?, ?, ?, ?, ?);
+        `);
+        const info = insert.run(
+            name ?? null,
+            key,
+            passphrase ?? null,
+            ownerId,
+            JSON.stringify(tags),
+            JSON.stringify(userMetadata),
+            JSON.stringify(internalMetadata)
+        );
+        return info.lastInsertRowid;
+    }
+
+    /**
+     *
+     * @param {number} ownerId
+     * @param {SshKeyReference} sshKey
+     * @return {number|bigint|null}
+     */
+    #getOrCreateSshKeyId(ownerId, sshKey) {
+        if (sshKey === null || sshKey === undefined) { return null; }
+        if (typeof sshKey !== "number" && Object.keys(sshKey).includes('identifier')) {
+            return sshKey.identifier;
+        } else if (typeof sshKey !== 'number') {
+            return this.#createSshKey(ownerId, sshKey);
+        } else if (typeof sshKey === 'number') {
+            return sshKey;
+        }
+        return null;
+    }
+
+    /**
+     * @param {number | bigint} ownerId
+     * @return {Map<number, PmResourceBrief[]>} the hosts linked to each credential, keyed by credential id
+     */
+    #getCredentialsHosts(ownerId) {
+        const rows = this.database.prepare(`
+SELECT hC.credential     AS credentialId,
+       h.resourceUuid    AS uuid,
+       h.resourceType    AS type
+FROM hostsCredentials hC
+         INNER JOIN hosts h
+                    ON hC.owner = h.owner
+                        AND hC.resourceUuid = h.resourceUuid
+WHERE hC.owner = ?;
+        `).all(ownerId);
+
+        const hosts = new Map();
+        for (const row of rows) {
+            if (!hosts.has(row.credentialId)) { hosts.set(row.credentialId, []); }
+            hosts.get(row.credentialId).push({ uuid: row.uuid, type: row.type });
+        }
+        return hosts;
+    }
+
+    /**
+     * @param {{
+     *     credentialId: number,
+     *     username: string | null,
+     *     userMetadata: string,
+     *     internalMetadata: string,
+     *     credentialTags: string,
+     *     sshKeyId: number | null,
+     *     sshKeyName: string | null
+     * }} row
+     * @param {{ uuid: string, type: string | null }[]} hosts
+     * @return {CredentialsListingEntry}
+     */
+    #toCredentialsListingEntry(row, hosts) {
+        return {
+            identifier: row.credentialId,
+            username: row.username,
+            sshKey: { identifier: row.sshKeyId, name: row.sshKeyName },
+            hosts: hosts,
+            userMetadata: JSON.parse(row.userMetadata),
+            internalMetadata: JSON.parse(row.internalMetadata),
+            tags: JSON.parse(row.credentialTags),
+        };
+    }
+
+    /**
+     * @param {string} user
+     * @param {string} org
+     * @return {number|bigint}
+     */
+    #getOrCreateOwnerId(user, org) {
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const userId = this.database
+            .prepare(`SELECT id
+                      FROM main.userProfiles
+                      WHERE userUuid = ?
+                        AND organisation = ?;`)
+            .get(user, org);
+
+        if (userId && userId.id) { return userId.id; }
+        return this.#registerUser(user, org);
+    }
+
+    /**
+     * @param {string} userUuid
+     * @param {string} orgUuid
+     * @return {number|bigint}
+     */
+    #registerUser(userUuid, orgUuid) {
+        if (typeof userUuid !== 'string' || typeof orgUuid !== 'string') { throw new TypeError("Parameters userUuid and orgUuid must be strings"); }
+        if (this.database === null) { throw new DatabaseUnavailableException(); }
+
+        const insert = this.database.prepare(`INSERT INTO userProfiles (userUuid, organisation) VALUES (?, ?);`);
+        const info = insert.run(userUuid, orgUuid)
+        return info.lastInsertRowid;
+    }
+
+    #initDbTables() {
+        const tablesSqlFile = join(__dirname, 'tables.sql');
+        const contents = fs.readFileSync(tablesSqlFile, 'utf8').toString();
+        this.database.exec(contents);
+    }
+
+    #clearDbTables() {
+        try {
+            this.database.exec(`
+                DROP TABLE IF EXISTS userProfiles;
+                DROP TABLE IF EXISTS sshKeys;
+                DROP TABLE IF EXISTS hosts;
+                DROP TABLE IF EXISTS credentials;
+                DROP TABLE IF EXISTS hostsCredentials;
+            `);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    dumpUsers() {
+        const q = this.database.prepare(`SELECT * FROM userProfiles;`).all();
+        console.dir(q);
+
+        const q2 = this.database.prepare(`SELECT * FROM credentials;`).all();
+        console.dir(q2);
+
+        const q3 = this.database.prepare(`SELECT * FROM sshKeys;`).all();
+        console.dir(q3);
+    }
+}
+
+exports.PasswordManager = PasswordManager;
+exports.DatabaseUnavailableException = DatabaseUnavailableException;
+exports.PasswordManagerIpc = [
+    "pm-create-credential",
+    "pm-delete-credential",
+    "pm-get-credential",
+    "pm-list-credentials",
+    "pm-update-credential",
+
+    "pm-add-resource-credential",
+    "pm-remove-resource-credential",
+    "pm-list-resource-credentials",
+
+    "pm-create-sshkey",
+    "pm-delete-sshkey",
+    "pm-get-sshkey",
+    "pm-list-sshkey",
+    "pm-update-sshkey"
+];

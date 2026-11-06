@@ -43,12 +43,9 @@ function initializeTitlebar(options = { minimizeOnly: false }) {
     };
 
     Object.entries(buttonActions).forEach(([buttonId, action]) => {
-        const button = document.getElementById(buttonId);
-        if (button) {
-            button.addEventListener('click', () => {
-                window.electron.invoke(action);
-            });
-        }
+        document.getElementById(buttonId)?.addEventListener('click', () => {
+            window.electron.invoke(action);
+        });
     });
 }
 
